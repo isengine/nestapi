@@ -11,7 +11,7 @@ export const getDbConfig = async (
   password: config.get<string>('DB_PASSWORD'),
   port: config.get<number>('DB_PORT'),
 
-  synchronize: true,
+  synchronize: !!config.get<string>('DB_SYNCHRONIZE'),
   autoLoadEntities: true,
   logging: true,
 
