@@ -19,9 +19,6 @@ export const getDbConfig = async (
   entities: [__dirname + 'dist/**/*.entity{.ts,.js}'],
   migrationsTableName: 'migrations',
   migrations: [__dirname + 'src/typeorm/migrations/*.ts'],
-  // dist/mig/*.js
-  // dir = src/mig
-  // run = false
 
   // "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
   // "migration:create": "npm run build && npm run typeorm migration:create -- -n",

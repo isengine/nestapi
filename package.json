@@ -2,8 +2,8 @@
   "name": "nestapi",
   "version": "1.0.0",
   "description": "API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo",
-  "license": "MIT",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -37,6 +37,7 @@
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "dotenv": "^16.3.1",
     "express-session": "^1.17.3",
     "graphql": "^16.6.0",
     "js-yaml": "^4.1.0",
