@@ -9,10 +9,9 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   port: parseInt(process.env.DB_PORT, 10),
 
-  // entities: ['/src/**/*.entity{.ts,.js}'],
   entities: ['./dist/**/*.entity{.ts,.js}'],
-  // migrationsTableName: 'migrations',
-  // migrations: ['./src/typeorm/migrations/*.ts'],
+  migrationsTableName: 'migrations_typeorm',
+  migrations: ['./dist/typeorm/migrations/*{.ts,.js}'],
 });
 
 AppDataSource.initialize()
