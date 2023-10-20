@@ -5,6 +5,9 @@ export class FindInDto {
   @Field({ nullable: true })
   string?: string;
 
+  @Field(() => [String], { nullable: true })
+  array?: Array<string>;
+
   @Field(() => [String])
-  array: Array<string>;
+  fields: Array<string>;
 }
