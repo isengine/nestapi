@@ -1,9 +1,11 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { UsersService } from '@src/users/users.service';
-import { UsersEntity } from '@src/users/users.entity';
 import { UsersDto } from '@src/users/users.dto';
+import { UsersEntity } from '@src/users/users.entity';
+import { UsersSearch } from '@src/users/users.search';
+import { UsersService } from '@src/users/users.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
 
 @Resolver('Users')
 export class UsersResolver {
@@ -60,6 +62,19 @@ export class UsersResolver {
     usersDto: UsersDto,
   ): Promise<UsersEntity> {
     return await this.usersService.usersFindLastBy(usersDto);
+  }
+
+  @Query(() => [UsersSearch])
+  async usersGroupBy(
+    @Args('group')
+    groupByDto: GroupByDto,
+    @Args('where')
+    usersDto?: UsersDto,
+  ): Promise<UsersSearch[]> {
+    return await this.usersService.usersGroupBy(
+      groupByDto,
+      usersDto,
+    );
   }
 
   @Mutation(() => UsersEntity)

@@ -1,11 +1,14 @@
 import { In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesDto } from '@src/categories/categories.dto';
+import { CategoriesEntity } from '@src/categories/categories.entity';
+import { CategoriesSearch } from '@src/categories/categories.search';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
-import { findInWhere } from '@src/typeorm/services/findIn.service';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { findInWhere } from '@src/typeorm/services/findIn.service';
+import { groupByField } from '@src/typeorm/services/groupBy.service';
 
 const relations = ['posts'];
 
@@ -32,11 +35,10 @@ export class CategoriesService {
   async categoriesGetMany(getMany: GetManyDto): Promise<CategoriesEntity[]> {
     const { ids } = getMany;
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
-    const result = await this.categoriesRepository.find({
+    return await this.categoriesRepository.find({
       relations,
       where: { id: In(idsList) },
     });
-    return result;
   }
 
   async categoriesFindIn(findInDto: FindInDto): Promise<CategoriesEntity[]> {
@@ -67,6 +69,18 @@ export class CategoriesService {
       take: 1,
     });
     return result[0];
+  }
+
+  async categoriesGroupBy(
+    groupByDto: GroupByDto,
+    categoriesDto?: CategoriesDto,
+  ): Promise<CategoriesSearch[]> {
+    const result = await this.categoriesRepository.find({
+      relations,
+      where: categoriesDto ? { ...categoriesDto } : undefined,
+      order: { id: 'DESC' },
+    });
+    return await groupByField(result, groupByDto);
   }
 
   async categoriesCreate(

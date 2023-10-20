@@ -4,6 +4,7 @@ import { PostsService } from '@src/posts/posts.service';
 import { PostsDto } from '@src/posts/posts.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -56,6 +57,21 @@ export class PostsController {
     const result = await this.postsService.postsFindLastBy(postsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Get('group_by')
+  async postsGroupBy(
+    @Body() groupByDto: GroupByDto,
+    @Body() postsDto: PostsDto,
+  ) {
+    const result = await this.postsService.postsGroupBy(
+      groupByDto,
+      postsDto,
+    );
+    if (!result) {
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }

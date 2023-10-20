@@ -4,6 +4,7 @@ import { CategoriesService } from '@src/categories/categories.service';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -58,6 +59,21 @@ export class CategoriesController {
     );
     if (!result) {
       throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Get('group_by')
+  async categoriesGroupBy(
+    @Body() groupByDto: GroupByDto,
+    @Body() categoriesDto: CategoriesDto,
+  ) {
+    const result = await this.categoriesService.categoriesGroupBy(
+      groupByDto,
+      categoriesDto,
+    );
+    if (!result) {
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }

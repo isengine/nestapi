@@ -1,12 +1,15 @@
 import { In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
-import { findInWhere } from '@src/typeorm/services/findIn.service';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { UsersEntity } from '@src/users/users.entity';
 import { UsersDto } from '@src/users/users.dto';
+import { UsersEntity } from '@src/users/users.entity';
+import { UsersSearch } from '@src/users/users.search';
 import { PostsService } from '@src/posts/posts.service';
+import { FindInDto } from '@src/typeorm/dto/findIn.dto';
+import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { findInWhere } from '@src/typeorm/services/findIn.service';
+import { groupByField } from '@src/typeorm/services/groupBy.service';
 
 const relations = ['auth', 'posts'];
 
@@ -82,6 +85,18 @@ export class UsersService {
       take: 1,
     });
     return result[0];
+  }
+
+  async usersGroupBy(
+    groupByDto: GroupByDto,
+    usersDto?: UsersDto,
+  ): Promise<UsersSearch[]> {
+    const result = await this.usersRepository.find({
+      relations,
+      where: usersDto ? { ...usersDto } : undefined,
+      order: { id: 'DESC' },
+    });
+    return await groupByField(result, groupByDto);
   }
 
   async usersCreate(usersDto: UsersDto): Promise<UsersEntity> {

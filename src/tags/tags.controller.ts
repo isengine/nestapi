@@ -4,6 +4,7 @@ import { TagsService } from '@src/tags/tags.service';
 import { TagsDto } from '@src/tags/tags.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
 
 @Controller('tags')
 export class TagsController {
@@ -56,6 +57,21 @@ export class TagsController {
     const result = await this.tagsService.tagsFindLastBy(tagsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Get('group_by')
+  async tagsGroupBy(
+    @Body() groupByDto: GroupByDto,
+    @Body() tagsDto: TagsDto,
+  ) {
+    const result = await this.tagsService.tagsGroupBy(
+      groupByDto,
+      tagsDto,
+    );
+    if (!result) {
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }

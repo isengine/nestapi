@@ -1,11 +1,14 @@
 import { In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsDto } from '@src/tags/tags.dto';
+import { TagsEntity } from '@src/tags/tags.entity';
+import { TagsSearch } from '@src/tags/tags.search';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
-import { findInWhere } from '@src/typeorm/services/findIn.service';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { findInWhere } from '@src/typeorm/services/findIn.service';
+import { groupByField } from '@src/typeorm/services/groupBy.service';
 
 const relations = ['posts'];
 
@@ -62,6 +65,18 @@ export class TagsService {
       take: 1,
     });
     return result[0];
+  }
+
+  async tagsGroupBy(
+    groupByDto: GroupByDto,
+    tagsDto?: TagsDto,
+  ): Promise<TagsSearch[]> {
+    const result = await this.tagsRepository.find({
+      relations,
+      where: tagsDto ? { ...tagsDto } : undefined,
+      order: { id: 'DESC' },
+    });
+    return await groupByField(result, groupByDto);
   }
 
   async tagsCreate(tagsDto: TagsDto): Promise<TagsEntity> {

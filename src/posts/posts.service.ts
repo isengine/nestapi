@@ -1,13 +1,16 @@
 import { In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
-import { findInWhere } from '@src/typeorm/services/findIn.service';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsDto } from '@src/posts/posts.dto';
+import { PostsEntity } from '@src/posts/posts.entity';
+import { PostsSearch } from '@src/posts/posts.search';
 import { CategoriesService } from '@src/categories/categories.service';
 import { TagsService } from '@src/tags/tags.service';
+import { FindInDto } from '@src/typeorm/dto/findIn.dto';
+import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
+import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { findInWhere } from '@src/typeorm/services/findIn.service';
+import { groupByField } from '@src/typeorm/services/groupBy.service';
 
 const relations = ['category', 'tags'];
 
@@ -66,6 +69,18 @@ export class PostsService {
       take: 1,
     });
     return result[0];
+  }
+
+  async postsGroupBy(
+    groupByDto: GroupByDto,
+    postsDto?: PostsDto,
+  ): Promise<PostsSearch[]> {
+    const result = await this.postsRepository.find({
+      relations,
+      where: postsDto ? { ...postsDto } : undefined,
+      order: { id: 'DESC' },
+    });
+    return await groupByField(result, groupByDto);
   }
 
   async postsCreate(postsDto: PostsDto): Promise<PostsEntity> {
