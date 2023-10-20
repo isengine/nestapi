@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { AuthService } from '@src/auth/auth.service';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthDto } from '@src/auth/dto/auth.dto';
+import { AuthService } from '@src/auth/auth.service';
 import { MixinDto } from '@src/auth/dto/mixin.dto';
 import { TokensDto } from './dto/tokens.dto';
 
