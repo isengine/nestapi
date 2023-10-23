@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
-import { TagsSearch } from '@src/tags/tags.search';
+import { TagsGroup } from '@src/tags/tags.group';
 import { TagsService } from '@src/tags/tags.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
@@ -56,13 +56,13 @@ export class TagsResolver {
     return await this.tagsService.tagsFindLastBy(tagsDto);
   }
 
-  @Query(() => [TagsSearch])
+  @Query(() => [TagsGroup])
   async tagsGroupBy(
     @Args('group')
     groupByDto: GroupByDto,
     @Args('where')
     tagsDto?: TagsDto,
-  ): Promise<TagsSearch[]> {
+  ): Promise<TagsGroup[]> {
     return await this.tagsService.tagsGroupBy(
       groupByDto,
       tagsDto,

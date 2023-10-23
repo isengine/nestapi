@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
-import { CategoriesSearch } from '@src/categories/categories.search';
+import { CategoriesGroup } from '@src/categories/categories.group';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
@@ -74,7 +74,7 @@ export class CategoriesService {
   async categoriesGroupBy(
     groupByDto: GroupByDto,
     categoriesDto?: CategoriesDto,
-  ): Promise<CategoriesSearch[]> {
+  ): Promise<CategoriesGroup[]> {
     const result = await this.categoriesRepository.find({
       relations,
       where: categoriesDto ? { ...categoriesDto } : undefined,

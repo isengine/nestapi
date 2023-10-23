@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
-import { UsersSearch } from '@src/users/users.search';
+import { UsersGroup } from '@src/users/users.group';
 import { UsersService } from '@src/users/users.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
@@ -64,13 +64,13 @@ export class UsersResolver {
     return await this.usersService.usersFindLastBy(usersDto);
   }
 
-  @Query(() => [UsersSearch])
+  @Query(() => [UsersGroup])
   async usersGroupBy(
     @Args('group')
     groupByDto: GroupByDto,
     @Args('where')
     usersDto?: UsersDto,
-  ): Promise<UsersSearch[]> {
+  ): Promise<UsersGroup[]> {
     return await this.usersService.usersGroupBy(
       groupByDto,
       usersDto,

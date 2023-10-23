@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
-import { UsersSearch } from '@src/users/users.search';
+import { UsersGroup } from '@src/users/users.group';
 import { PostsService } from '@src/posts/posts.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
@@ -90,7 +90,7 @@ export class UsersService {
   async usersGroupBy(
     groupByDto: GroupByDto,
     usersDto?: UsersDto,
-  ): Promise<UsersSearch[]> {
+  ): Promise<UsersGroup[]> {
     const result = await this.usersRepository.find({
       relations,
       where: usersDto ? { ...usersDto } : undefined,

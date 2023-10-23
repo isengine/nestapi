@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
-import { CategoriesSearch } from '@src/categories/categories.search';
+import { CategoriesGroup } from '@src/categories/categories.group';
 import { CategoriesService } from '@src/categories/categories.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
@@ -56,13 +56,13 @@ export class CategoriesResolver {
     return await this.categoriesService.categoriesFindLastBy(categoriesDto);
   }
 
-  @Query(() => [CategoriesSearch])
+  @Query(() => [CategoriesGroup])
   async categoriesGroupBy(
     @Args('group')
     groupByDto: GroupByDto,
     @Args('where')
     categoriesDto?: CategoriesDto,
-  ): Promise<CategoriesSearch[]> {
+  ): Promise<CategoriesGroup[]> {
     return await this.categoriesService.categoriesGroupBy(
       groupByDto,
       categoriesDto,

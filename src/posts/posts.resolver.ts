@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { PostsDto } from '@src/posts/posts.dto';
 import { PostsEntity } from '@src/posts/posts.entity';
-import { PostsSearch } from '@src/posts/posts.search';
+import { PostsGroup } from '@src/posts/posts.group';
 import { PostsService } from '@src/posts/posts.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
@@ -56,13 +56,13 @@ export class PostsResolver {
     return await this.postsService.postsFindLastBy(postsDto);
   }
 
-  @Query(() => [PostsSearch])
+  @Query(() => [PostsGroup])
   async postsGroupBy(
     @Args('group')
     groupByDto: GroupByDto,
     @Args('where')
     postsDto?: PostsDto,
-  ): Promise<PostsSearch[]> {
+  ): Promise<PostsGroup[]> {
     return await this.postsService.postsGroupBy(
       groupByDto,
       postsDto,

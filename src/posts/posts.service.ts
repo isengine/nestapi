@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostsDto } from '@src/posts/posts.dto';
 import { PostsEntity } from '@src/posts/posts.entity';
-import { PostsSearch } from '@src/posts/posts.search';
+import { PostsGroup } from '@src/posts/posts.group';
 import { CategoriesService } from '@src/categories/categories.service';
 import { TagsService } from '@src/tags/tags.service';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
@@ -74,7 +74,7 @@ export class PostsService {
   async postsGroupBy(
     groupByDto: GroupByDto,
     postsDto?: PostsDto,
-  ): Promise<PostsSearch[]> {
+  ): Promise<PostsGroup[]> {
     const result = await this.postsRepository.find({
       relations,
       where: postsDto ? { ...postsDto } : undefined,

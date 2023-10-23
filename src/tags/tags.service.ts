@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
-import { TagsSearch } from '@src/tags/tags.search';
+import { TagsGroup } from '@src/tags/tags.group';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
@@ -70,7 +70,7 @@ export class TagsService {
   async tagsGroupBy(
     groupByDto: GroupByDto,
     tagsDto?: TagsDto,
-  ): Promise<TagsSearch[]> {
+  ): Promise<TagsGroup[]> {
     const result = await this.tagsRepository.find({
       relations,
       where: tagsDto ? { ...tagsDto } : undefined,

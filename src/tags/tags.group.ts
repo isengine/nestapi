@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { TagsEntity } from '@src/tags/tags.entity';
 
 @ObjectType()
-export class TagsSearch {
+export class TagsGroup {
   @Field({ nullable: true })
   name?: string;
 

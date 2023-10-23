@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { UsersEntity } from '@src/users/users.entity';
 
 @ObjectType()
-export class UsersSearch {
+export class UsersGroup {
   @Field({ nullable: true })
   name?: string;
 
