@@ -9,6 +9,7 @@ import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
 import { findInWhere } from '@src/typeorm/services/findIn.service';
 import { groupByField } from '@src/typeorm/services/groupBy.service';
+import { relationsCreate } from '@src/typeorm/services/relations.service';
 
 const relations = ['posts'];
 
@@ -42,12 +43,11 @@ export class CategoriesService {
   }
 
   async categoriesFindIn(findInDto: FindInDto): Promise<CategoriesEntity[]> {
-    const where = findInWhere(findInDto);
-    return await this.categoriesRepository.find({
-      relations,
-      where,
-      order: { id: 'ASC' },
-    });
+    const root = 'categories';
+    const where = findInWhere(findInDto, root);
+    const query = this.categoriesRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
   }
 
   async categoriesFindBy(
