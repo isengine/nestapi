@@ -78,7 +78,7 @@ export class CategoriesService {
     const result = await this.categoriesRepository.find({
       relations,
       where: categoriesDto ? { ...categoriesDto } : undefined,
-      order: { id: 'DESC' },
+      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
     });
     return await groupByField(result, groupByDto);
   }

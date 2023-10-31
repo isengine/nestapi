@@ -7,4 +7,7 @@ export class GroupByDto {
 
   @Field({ nullable: true })
   type?: string;
+
+  @Field({ nullable: true })
+  sort?: string;
 }

@@ -94,7 +94,7 @@ export class UsersService {
     const result = await this.usersRepository.find({
       relations,
       where: usersDto ? { ...usersDto } : undefined,
-      order: { id: 'DESC' },
+      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
     });
     return await groupByField(result, groupByDto);
   }

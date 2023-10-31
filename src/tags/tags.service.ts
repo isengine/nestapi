@@ -74,7 +74,7 @@ export class TagsService {
     const result = await this.tagsRepository.find({
       relations,
       where: tagsDto ? { ...tagsDto } : undefined,
-      order: { id: 'DESC' },
+      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
     });
     return await groupByField(result, groupByDto);
   }

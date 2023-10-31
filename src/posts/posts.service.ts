@@ -78,7 +78,7 @@ export class PostsService {
     const result = await this.postsRepository.find({
       relations,
       where: postsDto ? { ...postsDto } : undefined,
-      order: { id: 'DESC' },
+      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
     });
     return await groupByField(result, groupByDto);
   }
