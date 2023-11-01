@@ -17,8 +17,7 @@ export class PostsController {
   }
 
   @Get('get_one')
-  async postsGetOne(@Body() postsDto: PostsDto) {
-    const { id } = postsDto;
+  async postsGetOne(@Body('id') id: number) {
     const result = await this.postsService.postsGetOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -27,7 +26,7 @@ export class PostsController {
   }
 
   @Get('get_many')
-  async postsGetMany(@Body() getMany: GetManyDto) {
+  async postsGetMany(@Body('ids') getMany: GetManyDto) {
     const result = await this.postsService.postsGetMany(getMany);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -48,7 +47,7 @@ export class PostsController {
   }
 
   @Get('find_in')
-  async postsFindIn(@Body() findInDto: FindInDto) {
+  async postsFindIn(@Body('find') findInDto: FindInDto) {
     const result = await this.postsService.postsFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any entries not found');
@@ -57,7 +56,7 @@ export class PostsController {
   }
 
   @Get('find_last_by')
-  async postsFindLastBy(@Body() postsDto: PostsDto) {
+  async postsFindLastBy(@Body('find') postsDto: PostsDto) {
     const result = await this.postsService.postsFindLastBy(postsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -67,8 +66,8 @@ export class PostsController {
 
   @Get('group')
   async postsGroup(
-    @Body() groupDto: GroupDto,
-    @Body() postsDto: PostsDto,
+    @Body('group') groupDto: GroupDto,
+    @Body('where') postsDto: PostsDto,
   ) {
     const result = await this.postsService.postsGroup(
       groupDto,
@@ -81,19 +80,19 @@ export class PostsController {
   }
 
   @Post('create')
-  async postsCreate(@Body() postsDto: PostsDto) {
+  async postsCreate(@Body('create') postsDto: PostsDto) {
     return await this.postsService.postsCreate(postsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async postsUpdate(@Body() postsDto: PostsDto) {
+  async postsUpdate(@Body('update') postsDto: PostsDto) {
     return await this.postsService.postsUpdate(postsDto);
   }
 
   // @Delete('remove')
   @Post('remove')
-  async postsRemove(@Body() id: number) {
+  async postsRemove(@Body('id') id: number) {
     return await this.postsService.postsRemove(id);
   }
 }

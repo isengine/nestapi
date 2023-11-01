@@ -17,8 +17,7 @@ export class CategoriesController {
   }
 
   @Get('get_one')
-  async categoriesGetOne(@Body() categoriesDto: CategoriesDto) {
-    const { id } = categoriesDto;
+  async categoriesGetOne(@Body('id') id: number) {
     const result = await this.categoriesService.categoriesGetOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -27,7 +26,7 @@ export class CategoriesController {
   }
 
   @Get('get_many')
-  async categoriesGetMany(@Body() getMany: GetManyDto) {
+  async categoriesGetMany(@Body('ids') getMany: GetManyDto) {
     const result = await this.categoriesService.categoriesGetMany(getMany);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -48,7 +47,7 @@ export class CategoriesController {
   }
 
   @Get('find_in')
-  async categoriesFindIn(@Body() findInDto: FindInDto) {
+  async categoriesFindIn(@Body('find') findInDto: FindInDto) {
     const result = await this.categoriesService.categoriesFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any entries not found');
@@ -57,7 +56,7 @@ export class CategoriesController {
   }
 
   @Get('find_last_by')
-  async categoriesFindLastBy(@Body() categoriesDto: CategoriesDto) {
+  async categoriesFindLastBy(@Body('find') categoriesDto: CategoriesDto) {
     const result = await this.categoriesService.categoriesFindLastBy(
       categoriesDto,
     );
@@ -69,8 +68,8 @@ export class CategoriesController {
 
   @Get('group')
   async categoriesGroup(
-    @Body() groupDto: GroupDto,
-    @Body() categoriesDto: CategoriesDto,
+    @Body('group') groupDto: GroupDto,
+    @Body('where') categoriesDto: CategoriesDto,
   ) {
     const result = await this.categoriesService.categoriesGroup(
       groupDto,
@@ -83,19 +82,19 @@ export class CategoriesController {
   }
 
   @Post('create')
-  async categoriesCreate(@Body() categoriesDto: CategoriesDto) {
+  async categoriesCreate(@Body('create') categoriesDto: CategoriesDto) {
     return await this.categoriesService.categoriesCreate(categoriesDto);
   }
 
   // @Put('update')
   @Post('update')
-  async categoriesUpdate(@Body() categoriesDto: CategoriesDto) {
+  async categoriesUpdate(@Body('update') categoriesDto: CategoriesDto) {
     return await this.categoriesService.categoriesUpdate(categoriesDto);
   }
 
   // @Delete('remove')
   @Post('remove')
-  async categoriesRemove(@Body() id: number) {
+  async categoriesRemove(@Body('id') id: number) {
     return await this.categoriesService.categoriesRemove(id);
   }
 }

@@ -21,8 +21,7 @@ export class UsersController {
 
   @Get('get_one')
   @Auth()
-  async usersGetOne(@Body() usersDto: UsersDto) {
-    const { id } = usersDto;
+  async usersGetOne(@Body('id') id: number) {
     const result = await this.usersService.usersGetOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -32,7 +31,7 @@ export class UsersController {
 
   @Get('get_many')
   @Auth()
-  async usersGetMany(@Body() getMany: GetManyDto) {
+  async usersGetMany(@Body('ids') getMany: GetManyDto) {
     const result = await this.usersService.usersGetMany(getMany);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -75,7 +74,7 @@ export class UsersController {
 
   @Get('find_in')
   @Auth('admin')
-  async usersFindIn(@Body() findInDto: FindInDto) {
+  async usersFindIn(@Body('find') findInDto: FindInDto) {
     const result = await this.usersService.usersFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any entries not found');
@@ -85,7 +84,7 @@ export class UsersController {
 
   @Get('find_last_by')
   @Auth('admin')
-  async usersFindLastBy(@Body() usersDto: UsersDto) {
+  async usersFindLastBy(@Body('find') usersDto: UsersDto) {
     const result = await this.usersService.usersFindLastBy(usersDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -96,8 +95,8 @@ export class UsersController {
   @Get('group')
   @Auth('admin')
   async usersGroup(
-    @Body() groupDto: GroupDto,
-    @Body() usersDto: UsersDto,
+    @Body('group') groupDto: GroupDto,
+    @Body('where') usersDto: UsersDto,
   ) {
     const result = await this.usersService.usersGroup(
       groupDto,

@@ -17,8 +17,7 @@ export class TagsController {
   }
 
   @Get('get_one')
-  async tagsGetOne(@Body() tagsDto: TagsDto) {
-    const { id } = tagsDto;
+  async tagsGetOne(@Body('id') id: number) {
     const result = await this.tagsService.tagsGetOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -27,7 +26,7 @@ export class TagsController {
   }
 
   @Get('get_many')
-  async tagsGetMany(@Body() getMany: GetManyDto) {
+  async tagsGetMany(@Body('ids') getMany: GetManyDto) {
     const result = await this.tagsService.tagsGetMany(getMany);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -48,7 +47,7 @@ export class TagsController {
   }
 
   @Get('find_in')
-  async tagsFindIn(@Body() findInDto: FindInDto) {
+  async tagsFindIn(@Body('find') findInDto: FindInDto) {
     const result = await this.tagsService.tagsFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
@@ -57,7 +56,7 @@ export class TagsController {
   }
 
   @Get('find_last_by')
-  async tagsFindLastBy(@Body() tagsDto: TagsDto) {
+  async tagsFindLastBy(@Body('find') tagsDto: TagsDto) {
     const result = await this.tagsService.tagsFindLastBy(tagsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
@@ -67,8 +66,8 @@ export class TagsController {
 
   @Get('group')
   async tagsGroup(
-    @Body() groupDto: GroupDto,
-    @Body() tagsDto: TagsDto,
+    @Body('group') groupDto: GroupDto,
+    @Body('where') tagsDto: TagsDto,
   ) {
     const result = await this.tagsService.tagsGroup(
       groupDto,
@@ -81,19 +80,19 @@ export class TagsController {
   }
 
   @Post('create')
-  async tagsCreate(@Body() tagsDto: TagsDto) {
+  async tagsCreate(@Body('create') tagsDto: TagsDto) {
     return await this.tagsService.tagsCreate(tagsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async tagsUpdate(@Body() tagsDto: TagsDto) {
+  async tagsUpdate(@Body('update') tagsDto: TagsDto) {
     return await this.tagsService.tagsUpdate(tagsDto);
   }
 
   // @Delete('remove')
   @Post('remove')
-  async tagsRemove(@Body() id: number) {
+  async tagsRemove(@Body('id') id: number) {
     return await this.tagsService.tagsRemove(id);
   }
 }
