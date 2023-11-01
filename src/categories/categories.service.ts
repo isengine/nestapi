@@ -4,11 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesGroup } from '@src/categories/categories.group';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { findCreate } from '@src/typeorm/services/find.service';
 import { findInWhere } from '@src/typeorm/services/findIn.service';
-import { groupByField } from '@src/typeorm/services/groupBy.service';
+import { groupService } from '@src/typeorm/services/group.service';
 import { relationsCreate } from '@src/typeorm/services/relations.service';
 
 const relations = ['posts'];
@@ -42,21 +44,23 @@ export class CategoriesService {
     });
   }
 
+  async categoriesFind(
+    categoriesDto: CategoriesDto,
+    findDto?: FindDto,
+  ): Promise<CategoriesEntity[]> {
+    const root = 'categories';
+    const query = this.categoriesRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    findCreate(query, categoriesDto, findDto, root);
+    return await query.getMany();
+  }
+
   async categoriesFindIn(findInDto: FindInDto): Promise<CategoriesEntity[]> {
     const root = 'categories';
     const where = findInWhere(findInDto, root);
     const query = this.categoriesRepository.createQueryBuilder(root);
     relationsCreate(query, relations, root);
     return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
-  }
-
-  async categoriesFindBy(
-    categoriesDto: CategoriesDto,
-  ): Promise<CategoriesEntity[]> {
-    return await this.categoriesRepository.find({
-      relations,
-      where: { ...categoriesDto },
-    });
   }
 
   async categoriesFindLastBy(
@@ -71,16 +75,16 @@ export class CategoriesService {
     return result[0];
   }
 
-  async categoriesGroupBy(
-    groupByDto: GroupByDto,
+  async categoriesGroup(
+    groupDto: GroupDto,
     categoriesDto?: CategoriesDto,
   ): Promise<CategoriesGroup[]> {
     const result = await this.categoriesRepository.find({
       relations,
       where: categoriesDto ? { ...categoriesDto } : undefined,
-      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
+      order: { [groupDto.field]: groupDto.sort || 'DESC' },
     });
-    return await groupByField(result, groupByDto);
+    return await groupService(result, groupDto);
   }
 
   async categoriesCreate(

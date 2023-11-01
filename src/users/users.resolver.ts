@@ -3,9 +3,10 @@ import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
 import { UsersGroup } from '@src/users/users.group';
 import { UsersService } from '@src/users/users.service';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
 
 @Resolver('Users')
 export class UsersResolver {
@@ -41,19 +42,21 @@ export class UsersResolver {
   }
 
   @Query(() => [UsersEntity])
+  async usersFind(
+    @Args('find')
+    usersDto: UsersDto,
+    @Args('options')
+    findDto?: FindDto,
+  ): Promise<UsersEntity[]> {
+    return await this.usersService.usersFind(usersDto, findDto);
+  }
+
+  @Query(() => [UsersEntity])
   async usersFindIn(
     @Args('find')
     findInDto: FindInDto,
   ): Promise<UsersEntity[]> {
     return await this.usersService.usersFindIn(findInDto);
-  }
-
-  @Query(() => [UsersEntity])
-  async usersFindBy(
-    @Args('find')
-    usersDto: UsersDto,
-  ): Promise<UsersEntity[]> {
-    return await this.usersService.usersFindBy(usersDto);
   }
 
   @Query(() => UsersEntity)
@@ -65,14 +68,14 @@ export class UsersResolver {
   }
 
   @Query(() => [UsersGroup])
-  async usersGroupBy(
+  async usersGroup(
     @Args('group')
-    groupByDto: GroupByDto,
+    groupDto: GroupDto,
     @Args('where')
     usersDto?: UsersDto,
   ): Promise<UsersGroup[]> {
-    return await this.usersService.usersGroupBy(
-      groupByDto,
+    return await this.usersService.usersGroup(
+      groupDto,
       usersDto,
     );
   }

@@ -3,9 +3,10 @@ import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsGroup } from '@src/tags/tags.group';
 import { TagsService } from '@src/tags/tags.service';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
 
 @Resolver('Tags')
 export class TagsResolver {
@@ -33,19 +34,21 @@ export class TagsResolver {
   }
 
   @Query(() => [TagsEntity])
+  async tagsFind(
+    @Args('find')
+    tagsDto: TagsDto,
+    @Args('options')
+    findDto?: FindDto,
+  ): Promise<TagsEntity[]> {
+    return await this.tagsService.tagsFind(tagsDto, findDto);
+  }
+
+  @Query(() => [TagsEntity])
   async tagsFindIn(
     @Args('find')
     findInDto: FindInDto,
   ): Promise<TagsEntity[]> {
     return await this.tagsService.tagsFindIn(findInDto);
-  }
-
-  @Query(() => [TagsEntity])
-  async tagsFindBy(
-    @Args('find')
-    tagsDto: TagsDto,
-  ): Promise<TagsEntity[]> {
-    return await this.tagsService.tagsFindBy(tagsDto);
   }
 
   @Query(() => TagsEntity)
@@ -57,14 +60,14 @@ export class TagsResolver {
   }
 
   @Query(() => [TagsGroup])
-  async tagsGroupBy(
+  async tagsGroup(
     @Args('group')
-    groupByDto: GroupByDto,
+    groupDto: GroupDto,
     @Args('where')
     tagsDto?: TagsDto,
   ): Promise<TagsGroup[]> {
-    return await this.tagsService.tagsGroupBy(
-      groupByDto,
+    return await this.tagsService.tagsGroup(
+      groupDto,
       tagsDto,
     );
   }

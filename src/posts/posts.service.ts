@@ -6,11 +6,13 @@ import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsGroup } from '@src/posts/posts.group';
 import { CategoriesService } from '@src/categories/categories.service';
 import { TagsService } from '@src/tags/tags.service';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { findCreate } from '@src/typeorm/services/find.service';
 import { findInWhere } from '@src/typeorm/services/findIn.service';
-import { groupByField } from '@src/typeorm/services/groupBy.service';
+import { groupService } from '@src/typeorm/services/group.service';
 import { relationsCreate } from '@src/typeorm/services/relations.service';
 
 const relations = ['category', 'tags'];
@@ -46,19 +48,23 @@ export class PostsService {
     });
   }
 
+  async postsFind(
+    postsDto: PostsDto,
+    findDto?: FindDto,
+  ): Promise<PostsEntity[]> {
+    const root = 'posts';
+    const query = this.postsRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    findCreate(query, postsDto, findDto, root);
+    return await query.getMany();
+  }
+
   async postsFindIn(findInDto: FindInDto): Promise<PostsEntity[]> {
     const root = 'posts';
     const where = findInWhere(findInDto, root);
     const query = this.postsRepository.createQueryBuilder(root);
     relationsCreate(query, relations, root);
     return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
-  }
-
-  async postsFindBy(postsDto: PostsDto): Promise<PostsEntity[]> {
-    return await this.postsRepository.find({
-      relations,
-      where: { ...postsDto },
-    });
   }
 
   async postsFindLastBy(postsDto: PostsDto): Promise<PostsEntity> {
@@ -71,16 +77,16 @@ export class PostsService {
     return result[0];
   }
 
-  async postsGroupBy(
-    groupByDto: GroupByDto,
+  async postsGroup(
+    groupDto: GroupDto,
     postsDto?: PostsDto,
   ): Promise<PostsGroup[]> {
     const result = await this.postsRepository.find({
       relations,
       where: postsDto ? { ...postsDto } : undefined,
-      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
+      order: { [groupDto.field]: groupDto.sort || 'DESC' },
     });
-    return await groupByField(result, groupByDto);
+    return await groupService(result, groupDto);
   }
 
   async postsCreate(postsDto: PostsDto): Promise<PostsEntity> {

@@ -4,9 +4,10 @@ import { Self } from '@src/users/users.decorator';
 import { Auth } from '@src/auth/decorator/auth.decorator';
 import { UsersService } from '@src/users/users.service';
 import { UsersDto } from '@src/users/users.dto';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
 
 @Controller('users')
 export class UsersController {
@@ -60,20 +61,22 @@ export class UsersController {
     return result;
   }
 
-  @Get('find_in')
-  @Auth('admin')
-  async usersFindIn(@Body() findInDto: FindInDto) {
-    const result = await this.usersService.usersFindIn(findInDto);
+  @Get('find')
+  async usersFind(
+    @Body('find') usersDto: UsersDto,
+    @Body('options') findDto?: FindDto,
+  ) {
+    const result = await this.usersService.usersFind(usersDto, findDto);
     if (!result) {
-      throw new NotFoundException('Any entries not found');
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }
 
-  @Get('find_by')
+  @Get('find_in')
   @Auth('admin')
-  async usersFindBy(@Body() usersDto: UsersDto) {
-    const result = await this.usersService.usersFindBy(usersDto);
+  async usersFindIn(@Body() findInDto: FindInDto) {
+    const result = await this.usersService.usersFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any entries not found');
     }
@@ -90,14 +93,14 @@ export class UsersController {
     return result;
   }
 
-  @Get('group_by')
+  @Get('group')
   @Auth('admin')
-  async usersGroupBy(
-    @Body() groupByDto: GroupByDto,
+  async usersGroup(
+    @Body() groupDto: GroupDto,
     @Body() usersDto: UsersDto,
   ) {
-    const result = await this.usersService.usersGroupBy(
-      groupByDto,
+    const result = await this.usersService.usersGroup(
+      groupDto,
       usersDto,
     );
     if (!result) {

@@ -4,11 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsGroup } from '@src/tags/tags.group';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { findCreate } from '@src/typeorm/services/find.service';
 import { findInWhere } from '@src/typeorm/services/findIn.service';
-import { groupByField } from '@src/typeorm/services/groupBy.service';
+import { groupService } from '@src/typeorm/services/group.service';
 import { relationsCreate } from '@src/typeorm/services/relations.service';
 
 const relations = ['posts'];
@@ -42,19 +44,23 @@ export class TagsService {
     });
   }
 
+  async tagsFind(
+    tagsDto: TagsDto,
+    findDto?: FindDto,
+  ): Promise<TagsEntity[]> {
+    const root = 'tags';
+    const query = this.tagsRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    findCreate(query, tagsDto, findDto, root);
+    return await query.getMany();
+  }
+
   async tagsFindIn(findInDto: FindInDto): Promise<TagsEntity[]> {
     const root = 'tags';
     const where = findInWhere(findInDto, root);
     const query = this.tagsRepository.createQueryBuilder(root);
     relationsCreate(query, relations, root);
     return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
-  }
-
-  async tagsFindBy(tagsDto: TagsDto): Promise<TagsEntity[]> {
-    return await this.tagsRepository.find({
-      relations,
-      where: { ...tagsDto },
-    });
   }
 
   async tagsFindLastBy(tagsDto: TagsDto): Promise<TagsEntity> {
@@ -67,16 +73,16 @@ export class TagsService {
     return result[0];
   }
 
-  async tagsGroupBy(
-    groupByDto: GroupByDto,
+  async tagsGroup(
+    groupDto: GroupDto,
     tagsDto?: TagsDto,
   ): Promise<TagsGroup[]> {
     const result = await this.tagsRepository.find({
       relations,
       where: tagsDto ? { ...tagsDto } : undefined,
-      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
+      order: { [groupDto.field]: groupDto.sort || 'DESC' },
     });
-    return await groupByField(result, groupByDto);
+    return await groupService(result, groupDto);
   }
 
   async tagsCreate(tagsDto: TagsDto): Promise<TagsEntity> {

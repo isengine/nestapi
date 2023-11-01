@@ -2,9 +2,10 @@
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { TagsService } from '@src/tags/tags.service';
 import { TagsDto } from '@src/tags/tags.dto';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
 
 @Controller('tags')
 export class TagsController {
@@ -34,18 +35,21 @@ export class TagsController {
     return result;
   }
 
-  @Get('find_in')
-  async tagsFindIn(@Body() findInDto: FindInDto) {
-    const result = await this.tagsService.tagsFindIn(findInDto);
+  @Get('find')
+  async tagsFind(
+    @Body('find') tagsDto: TagsDto,
+    @Body('options') findDto?: FindDto,
+  ) {
+    const result = await this.tagsService.tagsFind(tagsDto, findDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
     return result;
   }
 
-  @Get('find_by')
-  async tagsFindBy(@Body() tagsDto: TagsDto) {
-    const result = await this.tagsService.tagsFindBy(tagsDto);
+  @Get('find_in')
+  async tagsFindIn(@Body() findInDto: FindInDto) {
+    const result = await this.tagsService.tagsFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -61,13 +65,13 @@ export class TagsController {
     return result;
   }
 
-  @Get('group_by')
-  async tagsGroupBy(
-    @Body() groupByDto: GroupByDto,
+  @Get('group')
+  async tagsGroup(
+    @Body() groupDto: GroupDto,
     @Body() tagsDto: TagsDto,
   ) {
-    const result = await this.tagsService.tagsGroupBy(
-      groupByDto,
+    const result = await this.tagsService.tagsGroup(
+      groupDto,
       tagsDto,
     );
     if (!result) {

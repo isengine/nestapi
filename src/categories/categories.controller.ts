@@ -2,9 +2,10 @@
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { CategoriesService } from '@src/categories/categories.service';
 import { CategoriesDto } from '@src/categories/categories.dto';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -34,18 +35,21 @@ export class CategoriesController {
     return result;
   }
 
-  @Get('find_in')
-  async categoriesFindIn(@Body() findInDto: FindInDto) {
-    const result = await this.categoriesService.categoriesFindIn(findInDto);
+  @Get('find')
+  async categoriesFind(
+    @Body('find') categoriesDto: CategoriesDto,
+    @Body('options') findDto?: FindDto,
+  ) {
+    const result = await this.categoriesService.categoriesFind(categoriesDto, findDto);
     if (!result) {
-      throw new NotFoundException('Any entries not found');
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }
 
-  @Get('find_by')
-  async categoriesFindBy(@Body() categoriesDto: CategoriesDto) {
-    const result = await this.categoriesService.categoriesFindBy(categoriesDto);
+  @Get('find_in')
+  async categoriesFindIn(@Body() findInDto: FindInDto) {
+    const result = await this.categoriesService.categoriesFindIn(findInDto);
     if (!result) {
       throw new NotFoundException('Any entries not found');
     }
@@ -63,13 +67,13 @@ export class CategoriesController {
     return result;
   }
 
-  @Get('group_by')
-  async categoriesGroupBy(
-    @Body() groupByDto: GroupByDto,
+  @Get('group')
+  async categoriesGroup(
+    @Body() groupDto: GroupDto,
     @Body() categoriesDto: CategoriesDto,
   ) {
-    const result = await this.categoriesService.categoriesGroupBy(
-      groupByDto,
+    const result = await this.categoriesService.categoriesGroup(
+      groupDto,
       categoriesDto,
     );
     if (!result) {

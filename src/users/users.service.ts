@@ -5,11 +5,13 @@ import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
 import { UsersGroup } from '@src/users/users.group';
 import { PostsService } from '@src/posts/posts.service';
+import { FindDto } from '@src/typeorm/dto/find.dto';
 import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { findCreate } from '@src/typeorm/services/find.service';
 import { findInWhere } from '@src/typeorm/services/findIn.service';
-import { groupByField } from '@src/typeorm/services/groupBy.service';
+import { groupService } from '@src/typeorm/services/group.service';
 import { relationsCreate } from '@src/typeorm/services/relations.service';
 
 const relations = ['auth', 'posts'];
@@ -62,19 +64,23 @@ export class UsersService {
     return result;
   }
 
+  async usersFind(
+    usersDto: UsersDto,
+    findDto?: FindDto,
+  ): Promise<UsersEntity[]> {
+    const root = 'users';
+    const query = this.usersRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    findCreate(query, usersDto, findDto, root);
+    return await query.getMany();
+  }
+
   async usersFindIn(findInDto: FindInDto): Promise<UsersEntity[]> {
     const root = 'users';
     const where = findInWhere(findInDto, root);
     const query = this.usersRepository.createQueryBuilder(root);
     relationsCreate(query, relations, root);
     return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
-  }
-
-  async usersFindBy(usersDto: UsersDto): Promise<UsersEntity[]> {
-    return await this.usersRepository.find({
-      relations,
-      where: { ...usersDto },
-    });
   }
 
   async usersFindLastBy(usersDto: UsersDto): Promise<UsersEntity> {
@@ -87,16 +93,16 @@ export class UsersService {
     return result[0];
   }
 
-  async usersGroupBy(
-    groupByDto: GroupByDto,
+  async usersGroup(
+    groupDto: GroupDto,
     usersDto?: UsersDto,
   ): Promise<UsersGroup[]> {
     const result = await this.usersRepository.find({
       relations,
       where: usersDto ? { ...usersDto } : undefined,
-      order: { [groupByDto.field]: groupByDto.sort || 'DESC' },
+      order: { [groupDto.field]: groupDto.sort || 'DESC' },
     });
-    return await groupByField(result, groupByDto);
+    return await groupService(result, groupDto);
   }
 
   async usersCreate(usersDto: UsersDto): Promise<UsersEntity> {

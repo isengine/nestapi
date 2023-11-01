@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class GroupByDto {
+export class GroupDto {
   @Field({ nullable: true })
   field: string;
 

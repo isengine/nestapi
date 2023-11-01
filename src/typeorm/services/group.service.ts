@@ -1,11 +1,11 @@
-import { GroupByDto } from '@src/typeorm/dto/groupBy.dto';
+import { GroupDto } from '@src/typeorm/dto/group.dto';
 import * as moment from 'moment';
 
-export const groupByField = async (
+export const groupService = async (
   result,
-  groupByDto: GroupByDto,
+  groupDto: GroupDto,
 ): Promise<any> => {
-  const { field, type } = groupByDto;
+  const { field, type } = groupDto;
   const listNames = [];
   const list = [];
   await result.forEach(async (i) => {
