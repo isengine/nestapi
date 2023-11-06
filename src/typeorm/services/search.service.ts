@@ -1,5 +1,5 @@
-export const findInWhere = (findInDto, root) => {
-  const { string, array, fields } = findInDto;
+export const searchCreate = (searchDto, root) => {
+  const { string, array, fields } = searchDto;
   const ilikes = [];
   if (string) {
     ilikes.push(string);

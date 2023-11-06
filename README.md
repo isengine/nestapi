@@ -54,6 +54,48 @@ API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo
 - timestamp
 - varchar
 
+## Типы сущностей
+
+У каждой сущности есть несколько типов:
+
+- controller
+- DTO
+- entity
+- module
+- resolver
+- service
+
+Дополнительными типами могут быть:
+
+- decrator
+- enum
+- group
+- interface
+
+Также вы можете создать любой нужный вам тип.
+
+Каждый тип сущности представлен в файле, который имеет условный шаблон **сущность.тип.ts**.
+
+## Расширение типов сущностей
+
+Один тип сущности может отвечать как за один метод, так и объединять несколько методов общего вида или значения.
+
+Если вы хотите расширить сущность, вам нужно решать, что лучше:
+
+- создать новый тип,
+- расширить существующий тип.
+
+Если вы хотите создать собственные кастомные типы, предлагаем сделать это в отдельном файле, например **сущность.custom.тип.ts**.
+
+Если типов много, вы можете положить их в отдельную папку. Например:
+
+    сущность
+        тип
+            сущность.first.тип.ts
+            сущность.second.тип.ts
+
+> Не забудьте в этом случае следить за импортами!
+
 # Отношения
 
 Посты по-умолчанию являются базовой единицей. Каждый пост привязан к какому-либо автору, поэтому посты связаны с пользователями отношением многие-к-одному.
@@ -109,7 +151,7 @@ API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo
     {
         "id": 1
     }
-
+    
 # Сервисы
 
 Сервисы представляют собой классы, которые реализуют код сервисных функций. Они представлены файлами с расширением **.service.ts**.
@@ -131,19 +173,6 @@ API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo
 Вы можете даже использовать многоуровневые связи типа **post.category...**, но только если вложенные сущности не дублируют исходную сущность.
 
 Многоуровневые связи типа **post.category.posts** создавать нельзя из-за возникновения перекрестного объединения сущностей.
-
-## Создание сервисов
-
-Если вы хотите создать собственные кастомные сервисы, предлагаем сделать это в отдельном файле, например **.custom.service.ts**.
-
-Если сервисов много, вы можете положить их в отдельную папку. Например:
-
-    posts
-        services
-            posts.first.service.ts
-            posts.second.service.ts
-
-> Не забудьте в этом случае следить за импортами сервисов!
 
 ## Объединение сервисов
 
@@ -183,15 +212,23 @@ API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo
 
 Мы предлагаем реализацию базовых методов для каждой сущности, что покрывает 90% всех потребностей.
 
+Методы условно разбиты на три группы:
+
+- стандартные методы получения данных
+- расширенные методы получения данных, такие как поиск, сортировка и группировка
+- методы изменения данных
+
 Эти методы:
 
 - get all - получить все записи
 - get one - получить одну запись по id
 - get many - получить несколько записей по списку id
+
+- count - подсчитать количество записей, поля которых соответствуют заданным условиям
 - find - найти записи, поля которых соответствуют заданным условиям
-- find in - поиск по записям, которые имеют заданные совпадения в заданных полях
-- find last by - найти одну, последнюю запись, поля которой соответствуют заданным условиям
 - group - найти записи и сгруппировать их по заданному полю
+- search - поиск по записям, которые имеют заданные совпадения в заданных полях
+
 - create - создать новую запись
 - update - обновить запись
 - remove - удалить запись
@@ -205,16 +242,258 @@ API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo
     get_all
     /posts/get_all
 
-# Сервисы
+Далее следует подробная реализация данных методов.
+
+## Метод getAll
+
+Получить все записи
+
+RestAPI:
+
+    GET get_all
+
+GraphQl:
+
+    query getAll {
+        result: getAll {
+            ...
+        }
+    }
+
+Параметры:
+
+    нет
+
+## Метод getOne
+
+Получить одну запись по id
+
+RestAPI:
+
+    GET get_one
+
+GraphQl:
+
+    query getOne($id: Float!) {
+        result: getOne(id: $id) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "id": ...
+    }
+
+## Метод getMany
+
+Получить несколько записей по списку id
+
+RestAPI:
+
+    GET get_many
+
+GraphQl:
+
+    query getMany($ids: GetManyDto!)
+        result: getMany(ids: $ids) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "ids": [...]
+    }
+
+## Метод count (!)
+
+Добавить, полностью дублирует find, только подсчитывает.
+
+Можно попробовать расширить на подсчет avg, min, max
+
+## Метод filter
+
+Найти записи, поля которых соответствуют заданным условиям
+
+RestAPI:
+
+    GET filter
+
+GraphQl:
+
+    query filter($filter: FilterDto!, $where: ...Dto!) {
+        result: filter(filter: $filter, where: $where) {
+            count
+            pages
+            list {
+                id
+                title
+                category {
+                    id
+                    title
+                }
+            }
+        }
+    }
+
+Параметры:
+
+    {
+        "where": {
+            "id": ">= 20",
+            "title": "ilike '%анкета%'",
+            "category": {
+                "title": "ilike '%обучен%'"
+            }
+        },
+        "filter": {
+            "order": "id",
+            "desc": false,
+            "skip": 0,
+            "limit": 10
+        }
+    }
+
+    {
+        "find": {
+            "field": "matched string, number or string in sql raw format"
+        },
+        "options": {
+            "group": "field",
+            "type": "type",
+
+            "order": "field",
+            "desc": true|false,
+
+            "skip": 0,
+            "limit": 10,
+            "page": 1
+        }
+    }
+
+## Метод group
+
+Найти записи и сгруппировать их по заданному полю
+
+RestAPI:
+
+    GET group
+
+GraphQl:
+
+    query group($group: GroupDto!, $where: ...Dto!) {
+        result: groupBy(group: $group, where: $where) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "group": {
+            "field": "field",
+            "type": "type"
+        },
+        "where": {
+            ...
+        }
+    }
+
+## Метод search
+
+Поиск по записям, которые имеют заданные совпадения в заданных полях
+
+RestAPI:
+
+    GET search
+
+GraphQl:
+
+    query search($search: SearchDto!) {
+        result: search(search: $search) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "search": {
+            "string": "value",
+            "array": ["value1", "value2"],
+            "fields": ["field1", "field1"]
+        }
+    }
+
+## Метод create
+
+Создать новую запись
+
+RestAPI:
+
+    GET create
+
+GraphQl:
+
+    mutation create($action: ...Dto!) {
+        create(create: $action) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "action": {
+            ...
+        }
+    }
+
+## Метод update
+
+Обновить запись
+
+RestAPI:
+
+    GET update
+
+GraphQl:
+
+    mutation update($action: ...Dto!) {
+        update(update: $action) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "action": {
+            ...
+        }
+    }
+
+## Метод remove
+
+Удалить запись
+
+RestAPI:
+
+    GET remove
+
+GraphQl:
+
+    mutation remove($id: Float!) {
+        remove: remove(id: $id)
+    }
+
+Параметры:
+
+    {
+        "id": ...
+    }
 
 # Работа с файлами
-
-- users
-
-auth
-files
-
-limit   page    skip    result
-10      1       5       6 - 15
-
-

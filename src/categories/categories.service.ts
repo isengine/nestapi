@@ -5,13 +5,13 @@ import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesGroup } from '@src/categories/categories.group';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { findCreate } from '@src/typeorm/services/find.service';
-import { findInWhere } from '@src/typeorm/services/findIn.service';
 import { groupService } from '@src/typeorm/services/group.service';
 import { relationsCreate } from '@src/typeorm/services/relations.service';
+import { searchCreate } from '@src/typeorm/services/search.service';
 
 const relations = ['posts'];
 
@@ -55,26 +55,6 @@ export class CategoriesService {
     return await query.getMany();
   }
 
-  async categoriesFindIn(findInDto: FindInDto): Promise<CategoriesEntity[]> {
-    const root = 'categories';
-    const where = findInWhere(findInDto, root);
-    const query = this.categoriesRepository.createQueryBuilder(root);
-    relationsCreate(query, relations, root);
-    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
-  }
-
-  async categoriesFindLastBy(
-    categoriesDto: CategoriesDto,
-  ): Promise<CategoriesEntity> {
-    const result = await this.categoriesRepository.find({
-      relations,
-      where: { ...categoriesDto },
-      order: { id: 'DESC' },
-      take: 1,
-    });
-    return result[0];
-  }
-
   async categoriesGroup(
     groupDto: GroupDto,
     categoriesDto?: CategoriesDto,
@@ -85,6 +65,14 @@ export class CategoriesService {
       order: { [groupDto.field]: groupDto.sort || 'DESC' },
     });
     return await groupService(result, groupDto);
+  }
+
+  async categoriesSearch(searchDto: SearchDto): Promise<CategoriesEntity[]> {
+    const root = 'categories';
+    const where = searchCreate(searchDto, root);
+    const query = this.categoriesRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
   }
 
   async categoriesCreate(

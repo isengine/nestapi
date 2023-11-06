@@ -3,9 +3,9 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { PostsService } from '@src/posts/posts.service';
 import { PostsDto } from '@src/posts/posts.dto';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -46,24 +46,6 @@ export class PostsController {
     return result;
   }
 
-  @Get('find_in')
-  async postsFindIn(@Body('find') findInDto: FindInDto) {
-    const result = await this.postsService.postsFindIn(findInDto);
-    if (!result) {
-      throw new NotFoundException('Any entries not found');
-    }
-    return result;
-  }
-
-  @Get('find_last_by')
-  async postsFindLastBy(@Body('find') postsDto: PostsDto) {
-    const result = await this.postsService.postsFindLastBy(postsDto);
-    if (!result) {
-      throw new NotFoundException('Entry not found');
-    }
-    return result;
-  }
-
   @Get('group')
   async postsGroup(
     @Body('group') groupDto: GroupDto,
@@ -75,6 +57,15 @@ export class PostsController {
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
+    }
+    return result;
+  }
+
+  @Get('search')
+  async postsSearch(@Body('search') searchDto: SearchDto) {
+    const result = await this.postsService.postsSearch(searchDto);
+    if (!result) {
+      throw new NotFoundException('Any entries not found');
     }
     return result;
   }

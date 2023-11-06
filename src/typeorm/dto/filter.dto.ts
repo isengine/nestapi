@@ -1,12 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class FindDto {
+export class FilterDto {
   @Field({ nullable: true })
   order?: string;
 
   @Field({ nullable: true })
-  type?: string;
+  desc?: boolean;
 
   @Field({ nullable: true })
   skip?: number;
@@ -16,4 +16,10 @@ export class FindDto {
 
   @Field({ nullable: true })
   page?: number;
+
+  @Field({ nullable: true })
+  group?: string;
+
+  @Field({ nullable: true })
+  type?: string;
 }

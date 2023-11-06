@@ -4,9 +4,9 @@ import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsGroup } from '@src/posts/posts.group';
 import { PostsService } from '@src/posts/posts.service';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Posts')
 export class PostsResolver {
@@ -43,22 +43,6 @@ export class PostsResolver {
     return await this.postsService.postsFind(postsDto, findDto);
   }
 
-  @Query(() => [PostsEntity])
-  async postsFindIn(
-    @Args('find')
-    findInDto: FindInDto,
-  ): Promise<PostsEntity[]> {
-    return await this.postsService.postsFindIn(findInDto);
-  }
-
-  @Query(() => PostsEntity)
-  async postsFindLastBy(
-    @Args('find')
-    postsDto: PostsDto,
-  ): Promise<PostsEntity> {
-    return await this.postsService.postsFindLastBy(postsDto);
-  }
-
   @Query(() => [PostsGroup])
   async postsGroup(
     @Args('group')
@@ -70,6 +54,14 @@ export class PostsResolver {
       groupDto,
       postsDto,
     );
+  }
+
+  @Query(() => [PostsEntity])
+  async postsSearch(
+    @Args('search')
+    searchDto: SearchDto,
+  ): Promise<PostsEntity[]> {
+    return await this.postsService.postsSearch(searchDto);
   }
 
   @Mutation(() => PostsEntity)

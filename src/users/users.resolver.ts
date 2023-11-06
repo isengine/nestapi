@@ -4,9 +4,9 @@ import { UsersEntity } from '@src/users/users.entity';
 import { UsersGroup } from '@src/users/users.group';
 import { UsersService } from '@src/users/users.service';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Users')
 export class UsersResolver {
@@ -51,22 +51,6 @@ export class UsersResolver {
     return await this.usersService.usersFind(usersDto, findDto);
   }
 
-  @Query(() => [UsersEntity])
-  async usersFindIn(
-    @Args('find')
-    findInDto: FindInDto,
-  ): Promise<UsersEntity[]> {
-    return await this.usersService.usersFindIn(findInDto);
-  }
-
-  @Query(() => UsersEntity)
-  async usersFindLastBy(
-    @Args('find')
-    usersDto: UsersDto,
-  ): Promise<UsersEntity> {
-    return await this.usersService.usersFindLastBy(usersDto);
-  }
-
   @Query(() => [UsersGroup])
   async usersGroup(
     @Args('group')
@@ -78,6 +62,14 @@ export class UsersResolver {
       groupDto,
       usersDto,
     );
+  }
+
+  @Query(() => [UsersEntity])
+  async usersSearch(
+    @Args('search')
+    searchDto: SearchDto,
+  ): Promise<UsersEntity[]> {
+    return await this.usersService.usersSearch(searchDto);
   }
 
   @Mutation(() => UsersEntity)

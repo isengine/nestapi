@@ -5,13 +5,13 @@ import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsGroup } from '@src/tags/tags.group';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { findCreate } from '@src/typeorm/services/find.service';
-import { findInWhere } from '@src/typeorm/services/findIn.service';
 import { groupService } from '@src/typeorm/services/group.service';
 import { relationsCreate } from '@src/typeorm/services/relations.service';
+import { searchCreate } from '@src/typeorm/services/search.service';
 
 const relations = ['posts'];
 
@@ -55,24 +55,6 @@ export class TagsService {
     return await query.getMany();
   }
 
-  async tagsFindIn(findInDto: FindInDto): Promise<TagsEntity[]> {
-    const root = 'tags';
-    const where = findInWhere(findInDto, root);
-    const query = this.tagsRepository.createQueryBuilder(root);
-    relationsCreate(query, relations, root);
-    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
-  }
-
-  async tagsFindLastBy(tagsDto: TagsDto): Promise<TagsEntity> {
-    const result = await this.tagsRepository.find({
-      relations,
-      where: { ...tagsDto },
-      order: { id: 'DESC' },
-      take: 1,
-    });
-    return result[0];
-  }
-
   async tagsGroup(
     groupDto: GroupDto,
     tagsDto?: TagsDto,
@@ -83,6 +65,14 @@ export class TagsService {
       order: { [groupDto.field]: groupDto.sort || 'DESC' },
     });
     return await groupService(result, groupDto);
+  }
+
+  async tagsSearch(searchDto: SearchDto): Promise<TagsEntity[]> {
+    const root = 'tags';
+    const where = searchCreate(searchDto, root);
+    const query = this.tagsRepository.createQueryBuilder(root);
+    relationsCreate(query, relations, root);
+    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
   }
 
   async tagsCreate(tagsDto: TagsDto): Promise<TagsEntity> {

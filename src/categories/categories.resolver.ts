@@ -4,9 +4,9 @@ import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesGroup } from '@src/categories/categories.group';
 import { CategoriesService } from '@src/categories/categories.service';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Categories')
 export class CategoriesResolver {
@@ -43,22 +43,6 @@ export class CategoriesResolver {
     return await this.categoriesService.categoriesFind(categoriesDto, findDto);
   }
 
-  @Query(() => [CategoriesEntity])
-  async categoriesFindIn(
-    @Args('find')
-    findInDto: FindInDto,
-  ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesFindIn(findInDto);
-  }
-
-  @Query(() => CategoriesEntity)
-  async categoriesFindLastBy(
-    @Args('find')
-    categoriesDto: CategoriesDto,
-  ): Promise<CategoriesEntity> {
-    return await this.categoriesService.categoriesFindLastBy(categoriesDto);
-  }
-
   @Query(() => [CategoriesGroup])
   async categoriesGroup(
     @Args('group')
@@ -70,6 +54,14 @@ export class CategoriesResolver {
       groupDto,
       categoriesDto,
     );
+  }
+
+  @Query(() => [CategoriesEntity])
+  async categoriesSearch(
+    @Args('search')
+    searchDto: SearchDto,
+  ): Promise<CategoriesEntity[]> {
+    return await this.categoriesService.categoriesSearch(searchDto);
   }
 
   @Mutation(() => CategoriesEntity)

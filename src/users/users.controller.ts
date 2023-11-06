@@ -5,9 +5,9 @@ import { Auth } from '@src/auth/decorator/auth.decorator';
 import { UsersService } from '@src/users/users.service';
 import { UsersDto } from '@src/users/users.dto';
 import { FindDto } from '@src/typeorm/dto/find.dto';
-import { FindInDto } from '@src/typeorm/dto/findIn.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { GroupDto } from '@src/typeorm/dto/group.dto';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('users')
 export class UsersController {
@@ -72,26 +72,6 @@ export class UsersController {
     return result;
   }
 
-  @Get('find_in')
-  @Auth('admin')
-  async usersFindIn(@Body('find') findInDto: FindInDto) {
-    const result = await this.usersService.usersFindIn(findInDto);
-    if (!result) {
-      throw new NotFoundException('Any entries not found');
-    }
-    return result;
-  }
-
-  @Get('find_last_by')
-  @Auth('admin')
-  async usersFindLastBy(@Body('find') usersDto: UsersDto) {
-    const result = await this.usersService.usersFindLastBy(usersDto);
-    if (!result) {
-      throw new NotFoundException('Entry not found');
-    }
-    return result;
-  }
-
   @Get('group')
   @Auth('admin')
   async usersGroup(
@@ -104,6 +84,16 @@ export class UsersController {
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
+    }
+    return result;
+  }
+
+  @Get('search')
+  @Auth('admin')
+  async usersSearch(@Body('search') searchDto: SearchDto) {
+    const result = await this.usersService.usersSearch(searchDto);
+    if (!result) {
+      throw new NotFoundException('Any entries not found');
     }
     return result;
   }
