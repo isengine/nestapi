@@ -31,7 +31,7 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 5000;
   const message = `Server running \n in ${process.env.NODE_ENV} mode on ${port} port \n at http://localhost:${port}`;
 
   await app.listen(port).then(() => {

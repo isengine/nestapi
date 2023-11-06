@@ -18,7 +18,9 @@ export const filterService = (dto) => {
       } else if (!matchEx) {
         value = `= '${value}'`;
       }
-      where[key] = Raw((alias) => `${alias} ${value}`);
+      where[key] = Raw(
+        (alias) => `${alias} ${String(value)?.replace(/\{alias\}/giu, alias)}`,
+      );
     }
   });
   return where;

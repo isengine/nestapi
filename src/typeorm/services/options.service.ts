@@ -84,7 +84,11 @@ export const optionsSkip = (optionsDto: OptionsDto) => {
 export const optionsService = async (
   repository,
   optionsDto: OptionsDto,
-  options,
+  options = {
+    order: undefined,
+    skip: undefined,
+    take: undefined,
+  },
 ) => {
   if (optionsDto.order || optionsDto.group) {
     options.order = optionsOrder(optionsDto);
