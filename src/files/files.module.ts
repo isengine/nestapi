@@ -8,7 +8,7 @@ import { join } from 'path';
   controllers: [FilesController],
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', `/${process.env.UPLOADS}`),
+      rootPath: join(__dirname, '..', '..', `${process.env.UPLOADS}`),
       serveRoot: `/${process.env.UPLOADS}`,
     }),
   ],

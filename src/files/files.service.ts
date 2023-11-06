@@ -103,6 +103,10 @@ export class FilesService {
   }
 
   async convertToWebp(file: Buffer): Promise<Buffer> {
+    // const { pages } = await this.filesImageMetadata(file);
+    // return await sharp(file, { animated: pages && pages > 1 })
+    //   .webp()
+    //   .toBuffer();
     return await sharp(file).webp().toBuffer();
   }
 
