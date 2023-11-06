@@ -1,11 +1,10 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { PostsDto } from '@src/posts/posts.dto';
 import { PostsEntity } from '@src/posts/posts.entity';
-import { PostsGroup } from '@src/posts/posts.group';
+import { PostsFilter } from '@src/posts/posts.filter';
 import { PostsService } from '@src/posts/posts.service';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Posts')
@@ -33,35 +32,24 @@ export class PostsResolver {
     return await this.postsService.postsGetMany(getMany);
   }
 
-  @Query(() => [PostsEntity])
-  async postsFind(
-    @Args('find')
+  @Query(() => [PostsFilter])
+  async postsFilter(
+    @Args('filter')
     postsDto: PostsDto,
     @Args('options')
-    findDto?: FindDto,
-  ): Promise<PostsEntity[]> {
-    return await this.postsService.postsFind(postsDto, findDto);
+    optionsDto: OptionsDto,
+  ): Promise<PostsFilter[]> {
+    return await this.postsService.postsFilter(postsDto, optionsDto);
   }
 
-  @Query(() => [PostsGroup])
-  async postsGroup(
-    @Args('group')
-    groupDto: GroupDto,
-    @Args('where')
-    postsDto?: PostsDto,
-  ): Promise<PostsGroup[]> {
-    return await this.postsService.postsGroup(
-      groupDto,
-      postsDto,
-    );
-  }
-
-  @Query(() => [PostsEntity])
+  @Query(() => [PostsFilter])
   async postsSearch(
     @Args('search')
     searchDto: SearchDto,
-  ): Promise<PostsEntity[]> {
-    return await this.postsService.postsSearch(searchDto);
+    @Args('options')
+    optionsDto: OptionsDto,
+  ): Promise<PostsFilter[]> {
+    return await this.postsService.postsSearch(searchDto, optionsDto);
   }
 
   @Mutation(() => PostsEntity)

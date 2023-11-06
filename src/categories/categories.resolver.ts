@@ -1,11 +1,10 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
-import { CategoriesGroup } from '@src/categories/categories.group';
+import { CategoriesFilter } from '@src/categories/categories.filter';
 import { CategoriesService } from '@src/categories/categories.service';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Categories')
@@ -33,35 +32,24 @@ export class CategoriesResolver {
     return await this.categoriesService.categoriesGetMany(getMany);
   }
 
-  @Query(() => [CategoriesEntity])
-  async categoriesFind(
-    @Args('find')
+  @Query(() => [CategoriesFilter])
+  async categoriesFilter(
+    @Args('filter')
     categoriesDto: CategoriesDto,
     @Args('options')
-    findDto?: FindDto,
-  ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesFind(categoriesDto, findDto);
+    optionsDto: OptionsDto,
+  ): Promise<CategoriesFilter[]> {
+    return await this.categoriesService.categoriesFilter(categoriesDto, optionsDto);
   }
 
-  @Query(() => [CategoriesGroup])
-  async categoriesGroup(
-    @Args('group')
-    groupDto: GroupDto,
-    @Args('where')
-    categoriesDto?: CategoriesDto,
-  ): Promise<CategoriesGroup[]> {
-    return await this.categoriesService.categoriesGroup(
-      groupDto,
-      categoriesDto,
-    );
-  }
-
-  @Query(() => [CategoriesEntity])
+  @Query(() => [CategoriesFilter])
   async categoriesSearch(
     @Args('search')
     searchDto: SearchDto,
-  ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesSearch(searchDto);
+    @Args('options')
+    optionsDto: OptionsDto,
+  ): Promise<CategoriesFilter[]> {
+    return await this.categoriesService.categoriesSearch(searchDto, optionsDto);
   }
 
   @Mutation(() => CategoriesEntity)

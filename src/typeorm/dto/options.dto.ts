@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
-export class FilterDto {
+export class OptionsDto {
   @Field({ nullable: true })
   order?: string;
 

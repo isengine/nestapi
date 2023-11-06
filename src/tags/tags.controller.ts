@@ -2,9 +2,8 @@
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { TagsService } from '@src/tags/tags.service';
 import { TagsDto } from '@src/tags/tags.dto';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('tags')
@@ -34,27 +33,12 @@ export class TagsController {
     return result;
   }
 
-  @Get('find')
-  async tagsFind(
-    @Body('find') tagsDto: TagsDto,
-    @Body('options') findDto?: FindDto,
+  @Get('filter')
+  async tagsFilter(
+    @Body('filter') tagsDto: TagsDto,
+    @Body('options') optionsDto: OptionsDto,
   ) {
-    const result = await this.tagsService.tagsFind(tagsDto, findDto);
-    if (!result) {
-      throw new NotFoundException('Any results not found');
-    }
-    return result;
-  }
-
-  @Get('group')
-  async tagsGroup(
-    @Body('group') groupDto: GroupDto,
-    @Body('where') tagsDto: TagsDto,
-  ) {
-    const result = await this.tagsService.tagsGroup(
-      groupDto,
-      tagsDto,
-    );
+    const result = await this.tagsService.tagsFilter(tagsDto, optionsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -62,8 +46,11 @@ export class TagsController {
   }
 
   @Get('search')
-  async tagsSearch(@Body('search') searchDto: SearchDto) {
-    const result = await this.tagsService.tagsSearch(searchDto);
+  async tagsSearch(
+    @Body('search') searchDto: SearchDto,
+    @Body('options') optionsDto: OptionsDto,
+  ) {
+    const result = await this.tagsService.tagsSearch(searchDto, optionsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

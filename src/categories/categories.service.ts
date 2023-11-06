@@ -3,15 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
-import { CategoriesGroup } from '@src/categories/categories.group';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { CategoriesFilter } from '@src/categories/categories.filter';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
-import { findCreate } from '@src/typeorm/services/find.service';
-import { groupService } from '@src/typeorm/services/group.service';
-import { relationsCreate } from '@src/typeorm/services/relations.service';
-import { searchCreate } from '@src/typeorm/services/search.service';
+import { filterService } from '@src/typeorm/services/filter.service';
+import { optionsService } from '@src/typeorm/services/options.service';
+import { searchService } from '@src/typeorm/services/search.service';
 
 const relations = ['posts'];
 
@@ -44,35 +42,34 @@ export class CategoriesService {
     });
   }
 
-  async categoriesFind(
+  async categoriesFilter(
     categoriesDto: CategoriesDto,
-    findDto?: FindDto,
-  ): Promise<CategoriesEntity[]> {
-    const root = 'categories';
-    const query = this.categoriesRepository.createQueryBuilder(root);
-    relationsCreate(query, relations, root);
-    findCreate(query, categoriesDto, findDto, root);
-    return await query.getMany();
-  }
-
-  async categoriesGroup(
-    groupDto: GroupDto,
-    categoriesDto?: CategoriesDto,
-  ): Promise<CategoriesGroup[]> {
-    const result = await this.categoriesRepository.find({
+    optionsDto: OptionsDto,
+  ): Promise<CategoriesFilter[]> {
+    const where = filterService(categoriesDto);
+    const options = {
       relations,
-      where: categoriesDto ? { ...categoriesDto } : undefined,
-      order: { [groupDto.field]: groupDto.sort || 'DESC' },
-    });
-    return await groupService(result, groupDto);
+      where,
+      order: undefined,
+      skip: undefined,
+      take: undefined,
+    };
+    return await optionsService(this.categoriesRepository, optionsDto, options);
   }
 
-  async categoriesSearch(searchDto: SearchDto): Promise<CategoriesEntity[]> {
-    const root = 'categories';
-    const where = searchCreate(searchDto, root);
-    const query = this.categoriesRepository.createQueryBuilder(root);
-    relationsCreate(query, relations, root);
-    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
+  async categoriesSearch(
+    searchDto: SearchDto,
+    optionsDto: OptionsDto,
+  ): Promise<CategoriesFilter[]> {
+    const where = searchService(searchDto, CategoriesEntity);
+    const options = {
+      relations,
+      where,
+      order: undefined,
+      skip: undefined,
+      take: undefined,
+    };
+    return await optionsService(this.categoriesRepository, optionsDto, options);
   }
 
   async categoriesCreate(

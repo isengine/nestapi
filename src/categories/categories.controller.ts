@@ -2,9 +2,8 @@
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { CategoriesService } from '@src/categories/categories.service';
 import { CategoriesDto } from '@src/categories/categories.dto';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('categories')
@@ -34,27 +33,12 @@ export class CategoriesController {
     return result;
   }
 
-  @Get('find')
-  async categoriesFind(
-    @Body('find') categoriesDto: CategoriesDto,
-    @Body('options') findDto?: FindDto,
+  @Get('filter')
+  async categoriesFilter(
+    @Body('filter') categoriesDto: CategoriesDto,
+    @Body('options') optionsDto: OptionsDto,
   ) {
-    const result = await this.categoriesService.categoriesFind(categoriesDto, findDto);
-    if (!result) {
-      throw new NotFoundException('Any results not found');
-    }
-    return result;
-  }
-
-  @Get('group')
-  async categoriesGroup(
-    @Body('group') groupDto: GroupDto,
-    @Body('where') categoriesDto: CategoriesDto,
-  ) {
-    const result = await this.categoriesService.categoriesGroup(
-      groupDto,
-      categoriesDto,
-    );
+    const result = await this.categoriesService.categoriesFilter(categoriesDto, optionsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -62,10 +46,13 @@ export class CategoriesController {
   }
 
   @Get('search')
-  async categoriesSearch(@Body('search') searchDto: SearchDto) {
-    const result = await this.categoriesService.categoriesSearch(searchDto);
+  async categoriesSearch(
+    @Body('search') searchDto: SearchDto,
+    @Body('options') optionsDto: OptionsDto,
+  ) {
+    const result = await this.categoriesService.categoriesSearch(searchDto, optionsDto);
     if (!result) {
-      throw new NotFoundException('Any entries not found');
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }

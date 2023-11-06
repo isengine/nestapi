@@ -3,15 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
-import { TagsGroup } from '@src/tags/tags.group';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { TagsFilter } from '@src/tags/tags.filter';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
-import { findCreate } from '@src/typeorm/services/find.service';
-import { groupService } from '@src/typeorm/services/group.service';
-import { relationsCreate } from '@src/typeorm/services/relations.service';
-import { searchCreate } from '@src/typeorm/services/search.service';
+import { filterService } from '@src/typeorm/services/filter.service';
+import { optionsService } from '@src/typeorm/services/options.service';
+import { searchService } from '@src/typeorm/services/search.service';
 
 const relations = ['posts'];
 
@@ -44,35 +42,34 @@ export class TagsService {
     });
   }
 
-  async tagsFind(
+  async tagsFilter(
     tagsDto: TagsDto,
-    findDto?: FindDto,
-  ): Promise<TagsEntity[]> {
-    const root = 'tags';
-    const query = this.tagsRepository.createQueryBuilder(root);
-    relationsCreate(query, relations, root);
-    findCreate(query, tagsDto, findDto, root);
-    return await query.getMany();
-  }
-
-  async tagsGroup(
-    groupDto: GroupDto,
-    tagsDto?: TagsDto,
-  ): Promise<TagsGroup[]> {
-    const result = await this.tagsRepository.find({
+    optionsDto: OptionsDto,
+  ): Promise<TagsFilter[]> {
+    const where = filterService(tagsDto);
+    const options = {
       relations,
-      where: tagsDto ? { ...tagsDto } : undefined,
-      order: { [groupDto.field]: groupDto.sort || 'DESC' },
-    });
-    return await groupService(result, groupDto);
+      where,
+      order: undefined,
+      skip: undefined,
+      take: undefined,
+    };
+    return await optionsService(this.tagsRepository, optionsDto, options);
   }
 
-  async tagsSearch(searchDto: SearchDto): Promise<TagsEntity[]> {
-    const root = 'tags';
-    const where = searchCreate(searchDto, root);
-    const query = this.tagsRepository.createQueryBuilder(root);
-    relationsCreate(query, relations, root);
-    return await query.where(where).orderBy(`${root}.id`, 'ASC').getMany();
+  async tagsSearch(
+    searchDto: SearchDto,
+    optionsDto: OptionsDto,
+  ): Promise<TagsFilter[]> {
+    const where = searchService(searchDto, TagsEntity);
+    const options = {
+      relations,
+      where,
+      order: undefined,
+      skip: undefined,
+      take: undefined,
+    };
+    return await optionsService(this.tagsRepository, optionsDto, options);
   }
 
   async tagsCreate(tagsDto: TagsDto): Promise<TagsEntity> {

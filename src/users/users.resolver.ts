@@ -1,11 +1,10 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
-import { UsersGroup } from '@src/users/users.group';
+import { UsersFilter } from '@src/users/users.filter';
 import { UsersService } from '@src/users/users.service';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Users')
@@ -41,35 +40,24 @@ export class UsersResolver {
     return await this.usersService.usersGetByAuthId(authId);
   }
 
-  @Query(() => [UsersEntity])
-  async usersFind(
-    @Args('find')
+  @Query(() => [UsersFilter])
+  async usersFilter(
+    @Args('filter')
     usersDto: UsersDto,
     @Args('options')
-    findDto?: FindDto,
-  ): Promise<UsersEntity[]> {
-    return await this.usersService.usersFind(usersDto, findDto);
+    optionsDto: OptionsDto,
+  ): Promise<UsersFilter[]> {
+    return await this.usersService.usersFilter(usersDto, optionsDto);
   }
 
-  @Query(() => [UsersGroup])
-  async usersGroup(
-    @Args('group')
-    groupDto: GroupDto,
-    @Args('where')
-    usersDto?: UsersDto,
-  ): Promise<UsersGroup[]> {
-    return await this.usersService.usersGroup(
-      groupDto,
-      usersDto,
-    );
-  }
-
-  @Query(() => [UsersEntity])
+  @Query(() => [UsersFilter])
   async usersSearch(
     @Args('search')
     searchDto: SearchDto,
-  ): Promise<UsersEntity[]> {
-    return await this.usersService.usersSearch(searchDto);
+    @Args('options')
+    optionsDto: OptionsDto,
+  ): Promise<UsersFilter[]> {
+    return await this.usersService.usersSearch(searchDto, optionsDto);
   }
 
   @Mutation(() => UsersEntity)

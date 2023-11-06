@@ -1,4 +1,8 @@
-export const searchCreate = (searchDto, root) => {
+import { Raw } from 'typeorm';
+import { SearchDto } from '@src/typeorm/dto/search.dto';
+
+export const searchService = (searchDto: SearchDto, dto) => {
+  const root = dto.name;
   const { string, array, fields } = searchDto;
   const ilikes = [];
   if (string) {
@@ -16,5 +20,5 @@ export const searchCreate = (searchDto, root) => {
       index ? ' and ' : ''
     }${concat} ilike lower('%${ilike}%')`;
   });
-  return where;
+  return { id: Raw(() => `${where}`) };
 };

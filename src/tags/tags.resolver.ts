@@ -1,11 +1,10 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
-import { TagsGroup } from '@src/tags/tags.group';
+import { TagsFilter } from '@src/tags/tags.filter';
 import { TagsService } from '@src/tags/tags.service';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Tags')
@@ -33,35 +32,24 @@ export class TagsResolver {
     return await this.tagsService.tagsGetMany(getMany);
   }
 
-  @Query(() => [TagsEntity])
-  async tagsFind(
-    @Args('find')
+  @Query(() => [TagsFilter])
+  async tagsFilter(
+    @Args('filter')
     tagsDto: TagsDto,
     @Args('options')
-    findDto?: FindDto,
-  ): Promise<TagsEntity[]> {
-    return await this.tagsService.tagsFind(tagsDto, findDto);
+    optionsDto: OptionsDto,
+  ): Promise<TagsFilter[]> {
+    return await this.tagsService.tagsFilter(tagsDto, optionsDto);
   }
 
-  @Query(() => [TagsGroup])
-  async tagsGroup(
-    @Args('group')
-    groupDto: GroupDto,
-    @Args('where')
-    tagsDto?: TagsDto,
-  ): Promise<TagsGroup[]> {
-    return await this.tagsService.tagsGroup(
-      groupDto,
-      tagsDto,
-    );
-  }
-
-  @Query(() => [TagsEntity])
+  @Query(() => [TagsFilter])
   async tagsSearch(
     @Args('search')
     searchDto: SearchDto,
-  ): Promise<TagsEntity[]> {
-    return await this.tagsService.tagsSearch(searchDto);
+    @Args('options')
+    optionsDto: OptionsDto,
+  ): Promise<TagsFilter[]> {
+    return await this.tagsService.tagsSearch(searchDto, optionsDto);
   }
 
   @Mutation(() => TagsEntity)

@@ -4,9 +4,8 @@ import { Self } from '@src/users/users.decorator';
 import { Auth } from '@src/auth/decorator/auth.decorator';
 import { UsersService } from '@src/users/users.service';
 import { UsersDto } from '@src/users/users.dto';
-import { FindDto } from '@src/typeorm/dto/find.dto';
+import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
-import { GroupDto } from '@src/typeorm/dto/group.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('users')
@@ -60,28 +59,12 @@ export class UsersController {
     return result;
   }
 
-  @Get('find')
-  async usersFind(
-    @Body('find') usersDto: UsersDto,
-    @Body('options') findDto?: FindDto,
+  @Get('filter')
+  async usersFilter(
+    @Body('filter') usersDto: UsersDto,
+    @Body('options') optionsDto: OptionsDto,
   ) {
-    const result = await this.usersService.usersFind(usersDto, findDto);
-    if (!result) {
-      throw new NotFoundException('Any results not found');
-    }
-    return result;
-  }
-
-  @Get('group')
-  @Auth('admin')
-  async usersGroup(
-    @Body('group') groupDto: GroupDto,
-    @Body('where') usersDto: UsersDto,
-  ) {
-    const result = await this.usersService.usersGroup(
-      groupDto,
-      usersDto,
-    );
+    const result = await this.usersService.usersFilter(usersDto, optionsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -89,11 +72,13 @@ export class UsersController {
   }
 
   @Get('search')
-  @Auth('admin')
-  async usersSearch(@Body('search') searchDto: SearchDto) {
-    const result = await this.usersService.usersSearch(searchDto);
+  async usersSearch(
+    @Body('search') searchDto: SearchDto,
+    @Body('options') optionsDto: OptionsDto,
+  ) {
+    const result = await this.usersService.usersSearch(searchDto, optionsDto);
     if (!result) {
-      throw new NotFoundException('Any entries not found');
+      throw new NotFoundException('Any results not found');
     }
     return result;
   }
