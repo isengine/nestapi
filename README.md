@@ -1,6 +1,6 @@
-# nestapi
+# NestAPI
 
-API backend service with REST and GrapQL based on Nest.js, TypeORM, Apollo
+API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
 
 Этот бэк предоставляет уже готовые базовые возможности:
 
