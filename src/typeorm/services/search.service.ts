@@ -12,7 +12,9 @@ export const searchService = (searchDto: SearchDto, dto) => {
     ilikes.push(...array);
   }
   const concat = `lower(concat(${fields
-    .map((field) => (field.indexOf('.') < 0 ? `${root}.${field}` : field))
+    .map((field) =>
+      field.indexOf('.') < 0 ? `${root}.${field}` : `${root}__${root}_${field}`,
+    )
     .join(", ' ', ")}))`;
   let where = '';
   ilikes.forEach((ilike, index) => {
@@ -20,5 +22,5 @@ export const searchService = (searchDto: SearchDto, dto) => {
       index ? ' and ' : ''
     }${concat} ilike lower('%${ilike}%')`;
   });
-  return { id: Raw(() => `${where}`) };
+  return { id: Raw(() => where) };
 };
