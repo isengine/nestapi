@@ -63,13 +63,11 @@ export const optionsGroup = (data, optionsDto: OptionsDto) => {
   return result;
 };
 
-export const optionsOrder = (optionsDto: OptionsDto) => {
+export const optionsOrder = (optionsDto: OptionsDto, root = '') => {
   const { order, group, desc } = optionsDto;
-  const asc = !desc || String(desc)?.toLowerCase() !== 'desc';
+  const type = !desc || String(desc)?.toLowerCase() !== 'desc' ? 'ASC' : 'DESC';
   const field = order || group;
-  return {
-    [field]: asc,
-  };
+  return { field: field.indexOf('.') < 0 ? `${root}.${field}` : field, type };
 };
 
 export const optionsSkip = (optionsDto: OptionsDto) => {
@@ -82,32 +80,27 @@ export const optionsSkip = (optionsDto: OptionsDto) => {
 };
 
 export const optionsService = async (
-  repository,
+  query,
   optionsDto: OptionsDto,
-  options = {
-    order: undefined,
-    skip: undefined,
-    take: undefined,
-  },
+  root = '',
 ) => {
   if (optionsDto.order || optionsDto.group) {
-    options.order = optionsOrder(optionsDto);
+    const order = optionsOrder(optionsDto, root);
+    query.orderBy(order.field, order.type);
   }
 
   if (optionsDto.skip || optionsDto.limit) {
     const limits = optionsSkip(optionsDto);
     if (limits.skip) {
-      options.skip = limits.skip;
+      query.skip(limits.skip);
     }
     if (limits.take) {
-      options.take = limits.take;
+      query.take(limits.take);
     }
   }
 
-  const result = await repository.find(options);
-  const count = optionsDto.limit
-    ? await repository.count(options)
-    : result.length;
+  const result = await query.getMany();
+  const count = optionsDto.limit ? await query.count() : result.length;
 
   if (optionsDto.group) {
     return optionsGroup(result, optionsDto);

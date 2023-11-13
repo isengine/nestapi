@@ -9,6 +9,10 @@ import { TagsService } from '@src/tags/tags.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import {
+  commonEntityGetParams,
+  commonRelationsCreate,
+} from '@src/typeorm/services/common.service';
 import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
@@ -50,30 +54,24 @@ export class PostsService {
     postsDto: PostsDto,
     optionsDto: OptionsDto,
   ): Promise<PostsFilter[]> {
-    const where = filterService(postsDto);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.postsRepository, optionsDto, options);
+    const { root } = commonEntityGetParams(PostsEntity);
+    const query = this.postsRepository.createQueryBuilder(root);
+    const where = filterService(postsDto, root);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async postsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
   ): Promise<PostsFilter[]> {
-    const where = searchService(searchDto, PostsEntity);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.postsRepository, optionsDto, options);
+    const { root, core } = commonEntityGetParams(PostsEntity);
+    const query = this.postsRepository.createQueryBuilder(root);
+    const where = searchService(searchDto, root, core);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async postsCreate(postsDto: PostsDto): Promise<PostsEntity> {

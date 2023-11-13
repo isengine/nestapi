@@ -7,6 +7,10 @@ import { TagsFilter } from '@src/tags/tags.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import {
+  commonEntityGetParams,
+  commonRelationsCreate,
+} from '@src/typeorm/services/common.service';
 import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
@@ -46,30 +50,24 @@ export class TagsService {
     tagsDto: TagsDto,
     optionsDto: OptionsDto,
   ): Promise<TagsFilter[]> {
-    const where = filterService(tagsDto);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.tagsRepository, optionsDto, options);
+    const { root } = commonEntityGetParams(TagsEntity);
+    const query = this.tagsRepository.createQueryBuilder(root);
+    const where = filterService(tagsDto, root);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async tagsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
   ): Promise<TagsFilter[]> {
-    const where = searchService(searchDto, TagsEntity);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.tagsRepository, optionsDto, options);
+    const { root, core } = commonEntityGetParams(TagsEntity);
+    const query = this.tagsRepository.createQueryBuilder(root);
+    const where = searchService(searchDto, root, core);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async tagsCreate(tagsDto: TagsDto): Promise<TagsEntity> {

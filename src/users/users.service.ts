@@ -8,6 +8,10 @@ import { PostsService } from '@src/posts/posts.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import {
+  commonEntityGetParams,
+  commonRelationsCreate,
+} from '@src/typeorm/services/common.service';
 import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
@@ -66,30 +70,24 @@ export class UsersService {
     usersDto: UsersDto,
     optionsDto: OptionsDto,
   ): Promise<UsersFilter[]> {
-    const where = filterService(usersDto);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.usersRepository, optionsDto, options);
+    const { root } = commonEntityGetParams(UsersEntity);
+    const query = this.usersRepository.createQueryBuilder(root);
+    const where = filterService(usersDto, root);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async usersSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
   ): Promise<UsersFilter[]> {
-    const where = searchService(searchDto, UsersEntity);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.usersRepository, optionsDto, options);
+    const { root, core } = commonEntityGetParams(UsersEntity);
+    const query = this.usersRepository.createQueryBuilder(root);
+    const where = searchService(searchDto, root, core);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async usersCreate(usersDto: UsersDto): Promise<UsersEntity> {

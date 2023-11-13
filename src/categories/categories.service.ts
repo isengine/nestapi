@@ -7,6 +7,10 @@ import { CategoriesFilter } from '@src/categories/categories.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import {
+  commonEntityGetParams,
+  commonRelationsCreate,
+} from '@src/typeorm/services/common.service';
 import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
@@ -46,30 +50,24 @@ export class CategoriesService {
     categoriesDto: CategoriesDto,
     optionsDto: OptionsDto,
   ): Promise<CategoriesFilter[]> {
-    const where = filterService(categoriesDto);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.categoriesRepository, optionsDto, options);
+    const { root } = commonEntityGetParams(CategoriesEntity);
+    const query = this.categoriesRepository.createQueryBuilder(root);
+    const where = filterService(categoriesDto, root);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async categoriesSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
   ): Promise<CategoriesFilter[]> {
-    const where = searchService(searchDto, CategoriesEntity);
-    const options = {
-      relations,
-      where,
-      order: undefined,
-      skip: undefined,
-      take: undefined,
-    };
-    return await optionsService(this.categoriesRepository, optionsDto, options);
+    const { root, core } = commonEntityGetParams(CategoriesEntity);
+    const query = this.categoriesRepository.createQueryBuilder(root);
+    const where = searchService(searchDto, root, core);
+    query.where(where);
+    commonRelationsCreate(query, relations, root);
+    return await optionsService(query, optionsDto, root);
   }
 
   async categoriesCreate(
