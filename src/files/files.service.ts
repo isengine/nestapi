@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { FilesInterface } from './files.interface';
+import { FilesInterface } from '@src/files/files.interface';
 import { access, mkdir, writeFile } from 'fs/promises';
 import * as sharp from 'sharp';
 import { join } from 'path';

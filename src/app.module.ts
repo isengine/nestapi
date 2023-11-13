@@ -20,6 +20,7 @@ import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
 
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   controllers: [AppController],
@@ -42,6 +43,7 @@ import { NogqlModule } from '@src/typeorm/module/nogql.module';
     AuthModule,
     CategoriesModule,
     FilesModule,
+    MailModule,
     PostsModule,
     TagsModule,
     UsersModule,
