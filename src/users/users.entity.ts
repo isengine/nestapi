@@ -4,6 +4,7 @@ import { CommonEntity } from '@src/typeorm/entity/common.entity';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { PostsEntity } from '@src/posts/posts.entity';
 import { GenderUsers } from '@src/users/users.enum';
+import { EventsEntity } from '@src/events/events.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -65,4 +66,11 @@ export class UsersEntity extends CommonEntity {
     onUpdate: 'CASCADE',
   })
   posts: PostsEntity[];
+
+  @OneToMany(() => EventsEntity, (event) => event.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  events: EventsEntity[];
 }

@@ -13,6 +13,8 @@ import { AppService } from '@src/app.service';
 import { AuthModule } from '@src/auth/auth.module';
 import { CategoriesModule } from '@src/categories/categories.module';
 // import { ConfirmModule } from '@src/confirm/confirm.module';
+import { EventsModule } from './events/events.module';
+import { EventsThemesModule } from './events.themes/events.themes.module';
 import { FilesModule } from '@src/files/files.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
@@ -42,6 +44,8 @@ import { NogqlModule } from '@src/typeorm/module/nogql.module';
     PassportModule.register({ session: true }),
     AuthModule,
     CategoriesModule,
+    EventsModule,
+    EventsThemesModule,
     FilesModule,
     MailModule,
     PostsModule,
