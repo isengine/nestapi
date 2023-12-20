@@ -5,7 +5,6 @@ import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesFilter } from '@src/categories/categories.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -37,8 +36,9 @@ export class CategoriesService {
     });
   }
 
-  async categoriesGetMany(getMany: GetManyDto): Promise<CategoriesEntity[]> {
-    const { ids } = getMany;
+  async categoriesGetMany(
+    ids: Array<number | string>,
+  ): Promise<CategoriesEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.categoriesRepository.find({
       relations,

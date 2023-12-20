@@ -14,6 +14,9 @@ export class PostsDto extends CommonDto {
   @Field({ nullable: true })
   publishedAt: Date;
 
+  @Field({ nullable: true })
+  isPublished: boolean;
+
   @Field(() => CategoriesDto, { nullable: true })
   category?: CategoriesDto;
 
@@ -25,4 +28,7 @@ export class PostsDto extends CommonDto {
 
   @Field(() => [String || Number], { nullable: true })
   tagsList?: Array<string | number>;
+
+  @Field(() => [String || Number], { nullable: true })
+  userId?: number;
 }

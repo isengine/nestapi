@@ -5,7 +5,6 @@ import { EventsThemesDto } from '@src/events.themes/events.themes.dto';
 import { EventsThemesEntity } from '@src/events.themes/events.themes.entity';
 import { EventsThemesFilter } from '@src/events.themes/events.themes.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -38,9 +37,8 @@ export class EventsThemesService {
   }
 
   async eventsThemesGetMany(
-    getMany: GetManyDto,
+    ids: Array<number | string>,
   ): Promise<EventsThemesEntity[]> {
-    const { ids } = getMany;
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.eventsThemesRepository.find({
       relations,

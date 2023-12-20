@@ -3,7 +3,6 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { CategoriesService } from '@src/categories/categories.service';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('categories')
@@ -25,8 +24,8 @@ export class CategoriesController {
   }
 
   @Get('get_many')
-  async categoriesGetMany(@Body('ids') getMany: GetManyDto) {
-    const result = await this.categoriesService.categoriesGetMany(getMany);
+  async categoriesGetMany(@Body('ids') ids: Array<number | string>) {
+    const result = await this.categoriesService.categoriesGetMany(ids);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -38,7 +37,10 @@ export class CategoriesController {
     @Body('filter') categoriesDto: CategoriesDto,
     @Body('options') optionsDto: OptionsDto,
   ) {
-    const result = await this.categoriesService.categoriesFilter(categoriesDto, optionsDto);
+    const result = await this.categoriesService.categoriesFilter(
+      categoriesDto,
+      optionsDto,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -50,7 +52,10 @@ export class CategoriesController {
     @Body('search') searchDto: SearchDto,
     @Body('options') optionsDto: OptionsDto,
   ) {
-    const result = await this.categoriesService.categoriesSearch(searchDto, optionsDto);
+    const result = await this.categoriesService.categoriesSearch(
+      searchDto,
+      optionsDto,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

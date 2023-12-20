@@ -38,6 +38,14 @@ export class PostsEntity extends CommonEntity {
   })
   publishedAt: Date;
 
+  @Field({ nullable: true })
+  @Column({
+    type: 'boolean',
+    nullable: true,
+    name: 'is_published',
+  })
+  isPublished: boolean;
+
   @ManyToOne(() => UsersEntity, (user) => user.posts, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

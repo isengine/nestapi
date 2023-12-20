@@ -4,7 +4,6 @@ import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 import { UsersService } from '@src/users/users.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Users')
@@ -26,10 +25,10 @@ export class UsersResolver {
 
   @Query(() => [UsersEntity])
   async usersGetMany(
-    @Args('ids')
-    getMany: GetManyDto,
+    @Args('ids', { type: () => [Number || String] })
+    ids: Array<number | string>,
   ): Promise<UsersEntity[]> {
-    return await this.usersService.usersGetMany(getMany);
+    return await this.usersService.usersGetMany(ids);
   }
 
   @Query(() => UsersEntity)

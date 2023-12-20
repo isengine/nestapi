@@ -5,7 +5,6 @@ import { Auth } from '@src/auth/decorator/auth.decorator';
 import { UsersService } from '@src/users/users.service';
 import { UsersDto } from '@src/users/users.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('users')
@@ -30,8 +29,8 @@ export class UsersController {
 
   @Get('get_many')
   @Auth()
-  async usersGetMany(@Body('ids') getMany: GetManyDto) {
-    const result = await this.usersService.usersGetMany(getMany);
+  async usersGetMany(@Body('ids') ids: Array<number | string>) {
+    const result = await this.usersService.usersGetMany(ids);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }

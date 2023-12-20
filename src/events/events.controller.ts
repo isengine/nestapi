@@ -3,7 +3,6 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { EventsService } from '@src/events/events.service';
 import { EventsDto } from '@src/events/events.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('events')
@@ -25,8 +24,8 @@ export class EventsController {
   }
 
   @Get('get_many')
-  async eventsGetMany(@Body('ids') getMany: GetManyDto) {
-    const result = await this.eventsService.eventsGetMany(getMany);
+  async eventsGetMany(@Body('ids') ids: Array<number | string>) {
+    const result = await this.eventsService.eventsGetMany(ids);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }

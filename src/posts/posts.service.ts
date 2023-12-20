@@ -7,7 +7,6 @@ import { PostsFilter } from '@src/posts/posts.filter';
 import { CategoriesService } from '@src/categories/categories.service';
 import { TagsService } from '@src/tags/tags.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -41,8 +40,7 @@ export class PostsService {
     });
   }
 
-  async postsGetMany(getMany: GetManyDto): Promise<PostsEntity[]> {
-    const { ids } = getMany;
+  async postsGetMany(ids: Array<number | string>): Promise<PostsEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.postsRepository.find({
       relations,
@@ -85,7 +83,7 @@ export class PostsService {
     delete postsDto.categoryId;
     const { tagsList } = postsDto;
     if (tagsList && tagsList.length) {
-      const tags = await this.tagsService.tagsGetMany({ ids: tagsList });
+      const tags = await this.tagsService.tagsGetMany(tagsList);
       postsDto.tags = (postsDto.tags || []).concat(tags);
     }
     delete postsDto.tagsList;

@@ -4,7 +4,6 @@ import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesFilter } from '@src/categories/categories.filter';
 import { CategoriesService } from '@src/categories/categories.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Categories')
@@ -26,10 +25,10 @@ export class CategoriesResolver {
 
   @Query(() => [CategoriesEntity])
   async categoriesGetMany(
-    @Args('ids')
-    getMany: GetManyDto,
+    @Args('ids', { type: () => [Number || String] })
+    ids: Array<number | string>,
   ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesGetMany(getMany);
+    return await this.categoriesService.categoriesGetMany(ids);
   }
 
   @Query(() => [CategoriesFilter])
@@ -39,7 +38,10 @@ export class CategoriesResolver {
     @Args('options')
     optionsDto: OptionsDto,
   ): Promise<CategoriesFilter[]> {
-    return await this.categoriesService.categoriesFilter(categoriesDto, optionsDto);
+    return await this.categoriesService.categoriesFilter(
+      categoriesDto,
+      optionsDto,
+    );
   }
 
   @Query(() => [CategoriesFilter])

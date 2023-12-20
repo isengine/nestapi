@@ -5,7 +5,6 @@ import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsFilter } from '@src/tags/tags.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -37,8 +36,7 @@ export class TagsService {
     });
   }
 
-  async tagsGetMany(getMany: GetManyDto): Promise<TagsEntity[]> {
-    const { ids } = getMany;
+  async tagsGetMany(ids: Array<number | string>): Promise<TagsEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.tagsRepository.find({
       relations,

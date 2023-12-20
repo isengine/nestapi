@@ -4,7 +4,6 @@ import { EventsEntity } from '@src/events/events.entity';
 import { EventsFilter } from '@src/events/events.filter';
 import { EventsService } from '@src/events/events.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Events')
@@ -26,10 +25,10 @@ export class EventsResolver {
 
   @Query(() => [EventsEntity])
   async eventsGetMany(
-    @Args('ids')
-    getMany: GetManyDto,
+    @Args('ids', { type: () => [Number || String] })
+    ids: Array<number | string>,
   ): Promise<EventsEntity[]> {
-    return await this.eventsService.eventsGetMany(getMany);
+    return await this.eventsService.eventsGetMany(ids);
   }
 
   @Query(() => [EventsFilter])

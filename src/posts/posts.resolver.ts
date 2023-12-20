@@ -4,7 +4,6 @@ import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsFilter } from '@src/posts/posts.filter';
 import { PostsService } from '@src/posts/posts.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Posts')
@@ -26,10 +25,10 @@ export class PostsResolver {
 
   @Query(() => [PostsEntity])
   async postsGetMany(
-    @Args('ids')
-    getMany: GetManyDto,
+    @Args('ids', { type: () => [Number || String] })
+    ids: Array<number | string>,
   ): Promise<PostsEntity[]> {
-    return await this.postsService.postsGetMany(getMany);
+    return await this.postsService.postsGetMany(ids);
   }
 
   @Query(() => [PostsFilter])

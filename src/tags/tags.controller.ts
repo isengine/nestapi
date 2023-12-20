@@ -3,7 +3,6 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { TagsService } from '@src/tags/tags.service';
 import { TagsDto } from '@src/tags/tags.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('tags')
@@ -25,8 +24,8 @@ export class TagsController {
   }
 
   @Get('get_many')
-  async tagsGetMany(@Body('ids') getMany: GetManyDto) {
-    const result = await this.tagsService.tagsGetMany(getMany);
+  async tagsGetMany(@Body('ids') ids: Array<number | string>) {
+    const result = await this.tagsService.tagsGetMany(ids);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }

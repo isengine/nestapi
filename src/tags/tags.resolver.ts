@@ -4,7 +4,6 @@ import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsFilter } from '@src/tags/tags.filter';
 import { TagsService } from '@src/tags/tags.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Tags')
@@ -26,10 +25,10 @@ export class TagsResolver {
 
   @Query(() => [TagsEntity])
   async tagsGetMany(
-    @Args('ids')
-    getMany: GetManyDto,
+    @Args('ids', { type: () => [Number || String] })
+    ids: Array<number | string>,
   ): Promise<TagsEntity[]> {
-    return await this.tagsService.tagsGetMany(getMany);
+    return await this.tagsService.tagsGetMany(ids);
   }
 
   @Query(() => [TagsFilter])

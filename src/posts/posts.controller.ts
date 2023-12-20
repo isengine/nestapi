@@ -3,7 +3,6 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { PostsService } from '@src/posts/posts.service';
 import { PostsDto } from '@src/posts/posts.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Controller('posts')
@@ -25,8 +24,8 @@ export class PostsController {
   }
 
   @Get('get_many')
-  async postsGetMany(@Body('ids') getMany: GetManyDto) {
-    const result = await this.postsService.postsGetMany(getMany);
+  async postsGetMany(@Body('ids') ids: Array<number | string>) {
+    const result = await this.postsService.postsGetMany(ids);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }

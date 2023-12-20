@@ -6,7 +6,6 @@ import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 import { PostsService } from '@src/posts/posts.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { GetManyDto } from '@src/typeorm/dto/getMany.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -39,8 +38,7 @@ export class UsersService {
     });
   }
 
-  async usersGetMany(getMany: GetManyDto): Promise<UsersEntity[]> {
-    const { ids } = getMany;
+  async usersGetMany(ids: Array<number | string>): Promise<UsersEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.usersRepository.find({
       relations,
@@ -93,7 +91,7 @@ export class UsersService {
   async usersCreate(usersDto: UsersDto): Promise<UsersEntity> {
     const { postsList } = usersDto;
     if (postsList && postsList.length) {
-      const posts = await this.postsService.postsGetMany({ ids: postsList });
+      const posts = await this.postsService.postsGetMany(postsList);
       usersDto.posts = (usersDto.posts || []).concat(posts);
     }
     delete usersDto.postsList;
