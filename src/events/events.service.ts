@@ -15,9 +15,6 @@ import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
 import { EventsThemesService } from '@src/events.themes/events.themes.service';
 
-const relations = [];
-// const relations = ['themes'];
-
 @Injectable()
 export class EventsService {
   constructor(
@@ -26,20 +23,28 @@ export class EventsService {
     private readonly eventsThemesService: EventsThemesService,
   ) {}
 
-  async eventsGetAll(): Promise<EventsEntity[]> {
+  async eventsGetAll(
+    relations: Array<string> = undefined,
+  ): Promise<EventsEntity[]> {
     return await this.eventsRepository.find({
       relations,
     });
   }
 
-  async eventsGetOne(id: number): Promise<EventsEntity> {
+  async eventsGetOne(
+    id: number,
+    relations: Array<string> = undefined,
+  ): Promise<EventsEntity> {
     return await this.eventsRepository.findOne({
       relations,
       where: { id },
     });
   }
 
-  async eventsGetMany(ids: Array<number | string>): Promise<EventsEntity[]> {
+  async eventsGetMany(
+    ids: Array<number | string>,
+    relations: Array<string> = undefined,
+  ): Promise<EventsEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.eventsRepository.find({
       relations,
@@ -50,6 +55,7 @@ export class EventsService {
   async eventsFilter(
     eventsDto: EventsDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<EventsFilter[]> {
     const { root } = commonEntityGetParams(EventsEntity);
     const query = this.eventsRepository.createQueryBuilder(root);
@@ -62,6 +68,7 @@ export class EventsService {
   async eventsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<EventsFilter[]> {
     const { root, core } = commonEntityGetParams(EventsEntity);
     const query = this.eventsRepository.createQueryBuilder(root);
@@ -88,8 +95,7 @@ export class EventsService {
     if (id === undefined) {
       return;
     }
-    await this.eventsCreate(eventsDto);
-    return await this.eventsGetOne(eventsDto.id);
+    return await this.eventsCreate(eventsDto);
   }
 
   async eventsRemove(id: number): Promise<boolean> {

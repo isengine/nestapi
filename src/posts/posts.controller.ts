@@ -10,13 +10,16 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get('get_all')
-  async postsGetAll() {
-    return await this.postsService.postsGetAll();
+  async postsGetAll(@Body('relations') relations: Array<string>) {
+    return await this.postsService.postsGetAll(relations);
   }
 
   @Get('get_one')
-  async postsGetOne(@Body('id') id: number) {
-    const result = await this.postsService.postsGetOne(id);
+  async postsGetOne(
+    @Body('id') id: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.postsService.postsGetOne(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -24,8 +27,11 @@ export class PostsController {
   }
 
   @Get('get_many')
-  async postsGetMany(@Body('ids') ids: Array<number | string>) {
-    const result = await this.postsService.postsGetMany(ids);
+  async postsGetMany(
+    @Body('ids') ids: Array<number | string>,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.postsService.postsGetMany(ids, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -36,8 +42,13 @@ export class PostsController {
   async postsFilter(
     @Body('filter') postsDto: PostsDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.postsService.postsFilter(postsDto, optionsDto);
+    const result = await this.postsService.postsFilter(
+      postsDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -48,8 +59,13 @@ export class PostsController {
   async postsSearch(
     @Body('search') searchDto: SearchDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.postsService.postsSearch(searchDto, optionsDto);
+    const result = await this.postsService.postsSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

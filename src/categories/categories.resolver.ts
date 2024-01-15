@@ -11,24 +11,31 @@ export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Query(() => [CategoriesEntity])
-  async categoriesGetAll(): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesGetAll();
+  async categoriesGetAll(
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
+  ): Promise<CategoriesEntity[]> {
+    return await this.categoriesService.categoriesGetAll(relations);
   }
 
   @Query(() => CategoriesEntity)
   async categoriesGetOne(
     @Args('id')
     id: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<CategoriesEntity> {
-    return await this.categoriesService.categoriesGetOne(id);
+    return await this.categoriesService.categoriesGetOne(id, relations);
   }
 
   @Query(() => [CategoriesEntity])
   async categoriesGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesGetMany(ids);
+    return await this.categoriesService.categoriesGetMany(ids, relations);
   }
 
   @Query(() => [CategoriesFilter])
@@ -37,10 +44,13 @@ export class CategoriesResolver {
     categoriesDto: CategoriesDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<CategoriesFilter[]> {
     return await this.categoriesService.categoriesFilter(
       categoriesDto,
       optionsDto,
+      relations,
     );
   }
 
@@ -50,8 +60,14 @@ export class CategoriesResolver {
     searchDto: SearchDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<CategoriesFilter[]> {
-    return await this.categoriesService.categoriesSearch(searchDto, optionsDto);
+    return await this.categoriesService.categoriesSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
   }
 
   @Mutation(() => CategoriesEntity)

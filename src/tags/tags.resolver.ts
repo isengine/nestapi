@@ -11,24 +11,31 @@ export class TagsResolver {
   constructor(private readonly tagsService: TagsService) {}
 
   @Query(() => [TagsEntity])
-  async tagsGetAll(): Promise<TagsEntity[]> {
-    return await this.tagsService.tagsGetAll();
+  async tagsGetAll(
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
+  ): Promise<TagsEntity[]> {
+    return await this.tagsService.tagsGetAll(relations);
   }
 
   @Query(() => TagsEntity)
   async tagsGetOne(
     @Args('id')
     id: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<TagsEntity> {
-    return await this.tagsService.tagsGetOne(id);
+    return await this.tagsService.tagsGetOne(id, relations);
   }
 
   @Query(() => [TagsEntity])
   async tagsGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<TagsEntity[]> {
-    return await this.tagsService.tagsGetMany(ids);
+    return await this.tagsService.tagsGetMany(ids, relations);
   }
 
   @Query(() => [TagsFilter])
@@ -37,8 +44,10 @@ export class TagsResolver {
     tagsDto: TagsDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<TagsFilter[]> {
-    return await this.tagsService.tagsFilter(tagsDto, optionsDto);
+    return await this.tagsService.tagsFilter(tagsDto, optionsDto, relations);
   }
 
   @Query(() => [TagsFilter])
@@ -47,8 +56,10 @@ export class TagsResolver {
     searchDto: SearchDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<TagsFilter[]> {
-    return await this.tagsService.tagsSearch(searchDto, optionsDto);
+    return await this.tagsService.tagsSearch(searchDto, optionsDto, relations);
   }
 
   @Mutation(() => TagsEntity)

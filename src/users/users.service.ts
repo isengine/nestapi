@@ -15,8 +15,6 @@ import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
 
-const relations = ['auth', 'posts'];
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -25,20 +23,28 @@ export class UsersService {
     private readonly postsService: PostsService,
   ) {}
 
-  async usersGetAll(): Promise<UsersEntity[]> {
+  async usersGetAll(
+    relations: Array<string> = undefined,
+  ): Promise<UsersEntity[]> {
     return await this.usersRepository.find({
       relations,
     });
   }
 
-  async usersGetOne(id: number): Promise<UsersEntity> {
+  async usersGetOne(
+    id: number,
+    relations: Array<string> = undefined,
+  ): Promise<UsersEntity> {
     return await this.usersRepository.findOne({
       relations,
       where: { id },
     });
   }
 
-  async usersGetMany(ids: Array<number | string>): Promise<UsersEntity[]> {
+  async usersGetMany(
+    ids: Array<number | string>,
+    relations: Array<string> = undefined,
+  ): Promise<UsersEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.usersRepository.find({
       relations,
@@ -46,7 +52,10 @@ export class UsersService {
     });
   }
 
-  async usersGetByAuthId(authId: number): Promise<UsersEntity> {
+  async usersGetByAuthId(
+    authId: number,
+    relations: Array<string> = undefined,
+  ): Promise<UsersEntity> {
     const user = await this.usersRepository.find({
       relations,
       where: {
@@ -67,6 +76,7 @@ export class UsersService {
   async usersFilter(
     usersDto: UsersDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<UsersFilter[]> {
     const { root } = commonEntityGetParams(UsersEntity);
     const query = this.usersRepository.createQueryBuilder(root);
@@ -79,6 +89,7 @@ export class UsersService {
   async usersSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<UsersFilter[]> {
     const { root, core } = commonEntityGetParams(UsersEntity);
     const query = this.usersRepository.createQueryBuilder(root);
@@ -105,8 +116,7 @@ export class UsersService {
     if (id === undefined) {
       return;
     }
-    await this.usersCreate(usersDto);
-    return await this.usersGetOne(usersDto.id);
+    return await this.usersCreate(usersDto);
   }
 
   async usersUpdateByAuthId(usersDto: UsersDto): Promise<UsersEntity> {

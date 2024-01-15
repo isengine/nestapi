@@ -14,8 +14,6 @@ import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
 
-const relations = ['posts'];
-
 @Injectable()
 export class TagsService {
   constructor(
@@ -23,20 +21,28 @@ export class TagsService {
     private readonly tagsRepository: Repository<TagsEntity>,
   ) {}
 
-  async tagsGetAll(): Promise<TagsEntity[]> {
+  async tagsGetAll(
+    relations: Array<string> = undefined,
+  ): Promise<TagsEntity[]> {
     return await this.tagsRepository.find({
       relations,
     });
   }
 
-  async tagsGetOne(id: number): Promise<TagsEntity> {
+  async tagsGetOne(
+    id: number,
+    relations: Array<string> = undefined,
+  ): Promise<TagsEntity> {
     return await this.tagsRepository.findOne({
       relations,
       where: { id },
     });
   }
 
-  async tagsGetMany(ids: Array<number | string>): Promise<TagsEntity[]> {
+  async tagsGetMany(
+    ids: Array<number | string>,
+    relations: Array<string> = undefined,
+  ): Promise<TagsEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.tagsRepository.find({
       relations,
@@ -47,6 +53,7 @@ export class TagsService {
   async tagsFilter(
     tagsDto: TagsDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<TagsFilter[]> {
     const { root } = commonEntityGetParams(TagsEntity);
     const query = this.tagsRepository.createQueryBuilder(root);
@@ -59,6 +66,7 @@ export class TagsService {
   async tagsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<TagsFilter[]> {
     const { root, core } = commonEntityGetParams(TagsEntity);
     const query = this.tagsRepository.createQueryBuilder(root);
@@ -81,8 +89,7 @@ export class TagsService {
     }
     delete tagsDto.createdAt;
     delete tagsDto.updatedAt;
-    await this.tagsCreate(tagsDto);
-    return await this.tagsGetOne(tagsDto.id);
+    return await this.tagsCreate(tagsDto);
   }
 
   async tagsRemove(id: number): Promise<boolean> {

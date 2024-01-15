@@ -11,24 +11,31 @@ export class EventsThemesResolver {
   constructor(private readonly eventsThemesService: EventsThemesService) {}
 
   @Query(() => [EventsThemesEntity])
-  async eventsThemesGetAll(): Promise<EventsThemesEntity[]> {
-    return await this.eventsThemesService.eventsThemesGetAll();
+  async eventsThemesGetAll(
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
+  ): Promise<EventsThemesEntity[]> {
+    return await this.eventsThemesService.eventsThemesGetAll(relations);
   }
 
   @Query(() => EventsThemesEntity)
   async eventsThemesGetOne(
     @Args('id')
     id: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsThemesEntity> {
-    return await this.eventsThemesService.eventsThemesGetOne(id);
+    return await this.eventsThemesService.eventsThemesGetOne(id, relations);
   }
 
   @Query(() => [EventsThemesEntity])
   async eventsThemesGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsThemesEntity[]> {
-    return await this.eventsThemesService.eventsThemesGetMany(ids);
+    return await this.eventsThemesService.eventsThemesGetMany(ids, relations);
   }
 
   @Query(() => [EventsThemesFilter])
@@ -37,10 +44,13 @@ export class EventsThemesResolver {
     eventsThemesDto: EventsThemesDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsThemesFilter[]> {
     return await this.eventsThemesService.eventsThemesFilter(
       eventsThemesDto,
       optionsDto,
+      relations,
     );
   }
 
@@ -50,10 +60,13 @@ export class EventsThemesResolver {
     searchDto: SearchDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsThemesFilter[]> {
     return await this.eventsThemesService.eventsThemesSearch(
       searchDto,
       optionsDto,
+      relations,
     );
   }
 

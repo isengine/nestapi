@@ -10,13 +10,16 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get('get_all')
-  async eventsGetAll() {
-    return await this.eventsService.eventsGetAll();
+  async eventsGetAll(@Body('relations') relations: Array<string>) {
+    return await this.eventsService.eventsGetAll(relations);
   }
 
   @Get('get_one')
-  async eventsGetOne(@Body('id') id: number) {
-    const result = await this.eventsService.eventsGetOne(id);
+  async eventsGetOne(
+    @Body('id') id: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.eventsService.eventsGetOne(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -24,8 +27,11 @@ export class EventsController {
   }
 
   @Get('get_many')
-  async eventsGetMany(@Body('ids') ids: Array<number | string>) {
-    const result = await this.eventsService.eventsGetMany(ids);
+  async eventsGetMany(
+    @Body('ids') ids: Array<number | string>,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.eventsService.eventsGetMany(ids, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -36,8 +42,13 @@ export class EventsController {
   async eventsFilter(
     @Body('filter') eventsDto: EventsDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsService.eventsFilter(eventsDto, optionsDto);
+    const result = await this.eventsService.eventsFilter(
+      eventsDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -48,8 +59,13 @@ export class EventsController {
   async eventsSearch(
     @Body('search') searchDto: SearchDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsService.eventsSearch(searchDto, optionsDto);
+    const result = await this.eventsService.eventsSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

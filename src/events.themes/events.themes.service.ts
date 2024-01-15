@@ -14,8 +14,6 @@ import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
 
-const relations = ['events'];
-
 @Injectable()
 export class EventsThemesService {
   constructor(
@@ -23,13 +21,18 @@ export class EventsThemesService {
     private readonly eventsThemesRepository: Repository<EventsThemesEntity>,
   ) {}
 
-  async eventsThemesGetAll(): Promise<EventsThemesEntity[]> {
+  async eventsThemesGetAll(
+    relations: Array<string> = undefined,
+  ): Promise<EventsThemesEntity[]> {
     return await this.eventsThemesRepository.find({
       relations,
     });
   }
 
-  async eventsThemesGetOne(id: number): Promise<EventsThemesEntity> {
+  async eventsThemesGetOne(
+    id: number,
+    relations: Array<string> = undefined,
+  ): Promise<EventsThemesEntity> {
     return await this.eventsThemesRepository.findOne({
       relations,
       where: { id },
@@ -38,6 +41,7 @@ export class EventsThemesService {
 
   async eventsThemesGetMany(
     ids: Array<number | string>,
+    relations: Array<string> = undefined,
   ): Promise<EventsThemesEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.eventsThemesRepository.find({
@@ -49,6 +53,7 @@ export class EventsThemesService {
   async eventsThemesFilter(
     eventsThemesDto: EventsThemesDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<EventsThemesFilter[]> {
     const { root } = commonEntityGetParams(EventsThemesEntity);
     const query = this.eventsThemesRepository.createQueryBuilder(root);
@@ -61,6 +66,7 @@ export class EventsThemesService {
   async eventsThemesSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<EventsThemesFilter[]> {
     const { root, core } = commonEntityGetParams(EventsThemesEntity);
     const query = this.eventsThemesRepository.createQueryBuilder(root);
@@ -85,8 +91,7 @@ export class EventsThemesService {
     if (id === undefined) {
       return;
     }
-    await this.eventsThemesCreate(eventsThemesDto);
-    return await this.eventsThemesGetOne(eventsThemesDto.id);
+    return await this.eventsThemesCreate(eventsThemesDto);
   }
 
   async eventsThemesRemove(id: number): Promise<boolean> {

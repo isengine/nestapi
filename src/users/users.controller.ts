@@ -13,14 +13,17 @@ export class UsersController {
 
   @Get('get_all')
   @Auth('admin')
-  async usersGetAll() {
-    return await this.usersService.usersGetAll();
+  async usersGetAll(@Body('relations') relations: Array<string>) {
+    return await this.usersService.usersGetAll(relations);
   }
 
   @Get('get_one')
   @Auth()
-  async usersGetOne(@Body('id') id: number) {
-    const result = await this.usersService.usersGetOne(id);
+  async usersGetOne(
+    @Body('id') id: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.usersService.usersGetOne(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -29,8 +32,11 @@ export class UsersController {
 
   @Get('get_many')
   @Auth()
-  async usersGetMany(@Body('ids') ids: Array<number | string>) {
-    const result = await this.usersService.usersGetMany(ids);
+  async usersGetMany(
+    @Body('ids') ids: Array<number | string>,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.usersService.usersGetMany(ids, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -39,9 +45,11 @@ export class UsersController {
 
   @Get('get_by_auth_id')
   @Auth()
-  async usersGetByAuthId(@Body() usersDto: UsersDto) {
-    const { authId } = usersDto;
-    const result = await this.usersService.usersGetByAuthId(authId);
+  async usersGetByAuthId(
+    @Body('authId') authId: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.usersService.usersGetByAuthId(authId, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -50,8 +58,11 @@ export class UsersController {
 
   @Get('get_self')
   @Auth()
-  async usersGetSelf(@Self() id: number) {
-    const result = await this.usersService.usersGetByAuthId(id);
+  async usersGetSelf(
+    @Self() id: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.usersService.usersGetByAuthId(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -62,8 +73,13 @@ export class UsersController {
   async usersFilter(
     @Body('filter') usersDto: UsersDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.usersService.usersFilter(usersDto, optionsDto);
+    const result = await this.usersService.usersFilter(
+      usersDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -74,8 +90,13 @@ export class UsersController {
   async usersSearch(
     @Body('search') searchDto: SearchDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.usersService.usersSearch(searchDto, optionsDto);
+    const result = await this.usersService.usersSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

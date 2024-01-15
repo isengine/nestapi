@@ -16,8 +16,6 @@ import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
 
-const relations = ['category', 'tags'];
-
 @Injectable()
 export class PostsService {
   constructor(
@@ -27,20 +25,28 @@ export class PostsService {
     private readonly tagsService: TagsService,
   ) {}
 
-  async postsGetAll(): Promise<PostsEntity[]> {
+  async postsGetAll(
+    relations: Array<string> = undefined,
+  ): Promise<PostsEntity[]> {
     return await this.postsRepository.find({
       relations,
     });
   }
 
-  async postsGetOne(id: number): Promise<PostsEntity> {
+  async postsGetOne(
+    id: number,
+    relations: Array<string> = undefined,
+  ): Promise<PostsEntity> {
     return await this.postsRepository.findOne({
       relations,
       where: { id },
     });
   }
 
-  async postsGetMany(ids: Array<number | string>): Promise<PostsEntity[]> {
+  async postsGetMany(
+    ids: Array<number | string>,
+    relations: Array<string> = undefined,
+  ): Promise<PostsEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.postsRepository.find({
       relations,
@@ -51,6 +57,7 @@ export class PostsService {
   async postsFilter(
     postsDto: PostsDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<PostsFilter[]> {
     const { root } = commonEntityGetParams(PostsEntity);
     const query = this.postsRepository.createQueryBuilder(root);
@@ -63,6 +70,7 @@ export class PostsService {
   async postsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<PostsFilter[]> {
     const { root, core } = commonEntityGetParams(PostsEntity);
     const query = this.postsRepository.createQueryBuilder(root);
@@ -97,8 +105,7 @@ export class PostsService {
     if (id === undefined) {
       return;
     }
-    await this.postsCreate(postsDto);
-    return await this.postsGetOne(postsDto.id);
+    return await this.postsCreate(postsDto);
   }
 
   async postsRemove(id: number): Promise<boolean> {

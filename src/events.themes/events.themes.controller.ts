@@ -10,13 +10,19 @@ export class EventsThemesController {
   constructor(private readonly eventsThemesService: EventsThemesService) {}
 
   @Get('get_all')
-  async eventsThemesGetAll() {
-    return await this.eventsThemesService.eventsThemesGetAll();
+  async eventsThemesGetAll(@Body('relations') relations: Array<string>) {
+    return await this.eventsThemesService.eventsThemesGetAll(relations);
   }
 
   @Get('get_one')
-  async eventsThemesGetOne(@Body('id') id: number) {
-    const result = await this.eventsThemesService.eventsThemesGetOne(id);
+  async eventsThemesGetOne(
+    @Body('id') id: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.eventsThemesService.eventsThemesGetOne(
+      id,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -24,8 +30,14 @@ export class EventsThemesController {
   }
 
   @Get('get_many')
-  async eventsThemesGetMany(@Body('ids') ids: Array<number | string>) {
-    const result = await this.eventsThemesService.eventsThemesGetMany(ids);
+  async eventsThemesGetMany(
+    @Body('ids') ids: Array<number | string>,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.eventsThemesService.eventsThemesGetMany(
+      ids,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -36,10 +48,12 @@ export class EventsThemesController {
   async eventsThemesFilter(
     @Body('filter') eventsThemesDto: EventsThemesDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
     const result = await this.eventsThemesService.eventsThemesFilter(
       eventsThemesDto,
       optionsDto,
+      relations,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
@@ -51,10 +65,12 @@ export class EventsThemesController {
   async eventsThemesSearch(
     @Body('search') searchDto: SearchDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
     const result = await this.eventsThemesService.eventsThemesSearch(
       searchDto,
       optionsDto,
+      relations,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');

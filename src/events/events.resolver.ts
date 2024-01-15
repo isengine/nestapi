@@ -11,24 +11,31 @@ export class EventsResolver {
   constructor(private readonly eventsService: EventsService) {}
 
   @Query(() => [EventsEntity])
-  async eventsGetAll(): Promise<EventsEntity[]> {
-    return await this.eventsService.eventsGetAll();
+  async eventsGetAll(
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
+  ): Promise<EventsEntity[]> {
+    return await this.eventsService.eventsGetAll(relations);
   }
 
   @Query(() => EventsEntity)
   async eventsGetOne(
     @Args('id')
     id: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsEntity> {
-    return await this.eventsService.eventsGetOne(id);
+    return await this.eventsService.eventsGetOne(id, relations);
   }
 
   @Query(() => [EventsEntity])
   async eventsGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsEntity[]> {
-    return await this.eventsService.eventsGetMany(ids);
+    return await this.eventsService.eventsGetMany(ids, relations);
   }
 
   @Query(() => [EventsFilter])
@@ -37,8 +44,14 @@ export class EventsResolver {
     eventsDto: EventsDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsFilter[]> {
-    return await this.eventsService.eventsFilter(eventsDto, optionsDto);
+    return await this.eventsService.eventsFilter(
+      eventsDto,
+      optionsDto,
+      relations,
+    );
   }
 
   @Query(() => [EventsFilter])
@@ -47,8 +60,14 @@ export class EventsResolver {
     searchDto: SearchDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<EventsFilter[]> {
-    return await this.eventsService.eventsSearch(searchDto, optionsDto);
+    return await this.eventsService.eventsSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
   }
 
   @Mutation(() => EventsEntity)

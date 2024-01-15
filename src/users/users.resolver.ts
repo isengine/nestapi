@@ -11,32 +11,41 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => [UsersEntity])
-  async usersGetAll(): Promise<UsersEntity[]> {
-    return await this.usersService.usersGetAll();
+  async usersGetAll(
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
+  ): Promise<UsersEntity[]> {
+    return await this.usersService.usersGetAll(relations);
   }
 
   @Query(() => UsersEntity)
   async usersGetOne(
     @Args('id')
     id: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<UsersEntity> {
-    return await this.usersService.usersGetOne(id);
+    return await this.usersService.usersGetOne(id, relations);
   }
 
   @Query(() => [UsersEntity])
   async usersGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<UsersEntity[]> {
-    return await this.usersService.usersGetMany(ids);
+    return await this.usersService.usersGetMany(ids, relations);
   }
 
   @Query(() => UsersEntity)
   async usersGetByAuthId(
     @Args('authId')
     authId: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<UsersEntity> {
-    return await this.usersService.usersGetByAuthId(authId);
+    return await this.usersService.usersGetByAuthId(authId, relations);
   }
 
   @Query(() => [UsersFilter])
@@ -45,8 +54,10 @@ export class UsersResolver {
     usersDto: UsersDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<UsersFilter[]> {
-    return await this.usersService.usersFilter(usersDto, optionsDto);
+    return await this.usersService.usersFilter(usersDto, optionsDto, relations);
   }
 
   @Query(() => [UsersFilter])
@@ -55,8 +66,14 @@ export class UsersResolver {
     searchDto: SearchDto,
     @Args('options')
     optionsDto: OptionsDto,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
   ): Promise<UsersFilter[]> {
-    return await this.usersService.usersSearch(searchDto, optionsDto);
+    return await this.usersService.usersSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
   }
 
   @Mutation(() => UsersEntity)

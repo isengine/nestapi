@@ -1,13 +1,33 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@src/app.module';
-import * as session from 'express-session';
+import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: '*',
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      allowedHeaders: [
+        'Content-Type',
+        'Vary',
+        'Accept',
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Origin',
+        'Authorization',
+        'X-Requested-With',
+      ],
+      exposedHeaders: [
+        'Content-Type',
+        'Vary',
+        'Accept',
+        'Access-Control-Allow-Headers',
+        'Access-Control-Allow-Origin',
+        'Authorization',
+        'X-Requested-With',
+      ],
+      origin: true,
+      credentials: true,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
       preflightContinue: false,
       optionsSuccessStatus: 204,
     },
@@ -18,13 +38,14 @@ async function bootstrap() {
     app.setGlobalPrefix(process.env.PREFIX);
   }
 
+  app.use(cookieParser());
   app.use(
     session({
       secret: process.env.SESSION_SECRET,
       saveUninitialized: false,
       resave: false,
       cookie: {
-        maxAge: 86400,
+        maxAge: Number(process.env.SESSION_EXPIRES) || -3600,
       },
     }),
   );

@@ -10,13 +10,16 @@ export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Get('get_all')
-  async tagsGetAll() {
-    return await this.tagsService.tagsGetAll();
+  async tagsGetAll(@Body('relations') relations: Array<string>) {
+    return await this.tagsService.tagsGetAll(relations);
   }
 
   @Get('get_one')
-  async tagsGetOne(@Body('id') id: number) {
-    const result = await this.tagsService.tagsGetOne(id);
+  async tagsGetOne(
+    @Body('id') id: number,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.tagsService.tagsGetOne(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -24,8 +27,11 @@ export class TagsController {
   }
 
   @Get('get_many')
-  async tagsGetMany(@Body('ids') ids: Array<number | string>) {
-    const result = await this.tagsService.tagsGetMany(ids);
+  async tagsGetMany(
+    @Body('ids') ids: Array<number | string>,
+    @Body('relations') relations: Array<string>,
+  ) {
+    const result = await this.tagsService.tagsGetMany(ids, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -36,8 +42,13 @@ export class TagsController {
   async tagsFilter(
     @Body('filter') tagsDto: TagsDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.tagsService.tagsFilter(tagsDto, optionsDto);
+    const result = await this.tagsService.tagsFilter(
+      tagsDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -48,8 +59,13 @@ export class TagsController {
   async tagsSearch(
     @Body('search') searchDto: SearchDto,
     @Body('options') optionsDto: OptionsDto,
+    @Body('relations') relations: Array<string>,
   ) {
-    const result = await this.tagsService.tagsSearch(searchDto, optionsDto);
+    const result = await this.tagsService.tagsSearch(
+      searchDto,
+      optionsDto,
+      relations,
+    );
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

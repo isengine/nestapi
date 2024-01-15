@@ -14,8 +14,6 @@ import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
 
-const relations = ['posts'];
-
 @Injectable()
 export class CategoriesService {
   constructor(
@@ -23,13 +21,18 @@ export class CategoriesService {
     private readonly categoriesRepository: Repository<CategoriesEntity>,
   ) {}
 
-  async categoriesGetAll(): Promise<CategoriesEntity[]> {
+  async categoriesGetAll(
+    relations: Array<string> = undefined,
+  ): Promise<CategoriesEntity[]> {
     return await this.categoriesRepository.find({
       relations,
     });
   }
 
-  async categoriesGetOne(id: number): Promise<CategoriesEntity> {
+  async categoriesGetOne(
+    id: number,
+    relations: Array<string> = undefined,
+  ): Promise<CategoriesEntity> {
     return await this.categoriesRepository.findOne({
       relations,
       where: { id },
@@ -38,6 +41,7 @@ export class CategoriesService {
 
   async categoriesGetMany(
     ids: Array<number | string>,
+    relations: Array<string> = undefined,
   ): Promise<CategoriesEntity[]> {
     const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.categoriesRepository.find({
@@ -49,6 +53,7 @@ export class CategoriesService {
   async categoriesFilter(
     categoriesDto: CategoriesDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<CategoriesFilter[]> {
     const { root } = commonEntityGetParams(CategoriesEntity);
     const query = this.categoriesRepository.createQueryBuilder(root);
@@ -61,6 +66,7 @@ export class CategoriesService {
   async categoriesSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
+    relations: Array<string> = undefined,
   ): Promise<CategoriesFilter[]> {
     const { root, core } = commonEntityGetParams(CategoriesEntity);
     const query = this.categoriesRepository.createQueryBuilder(root);
@@ -85,8 +91,7 @@ export class CategoriesService {
     if (id === undefined) {
       return;
     }
-    await this.categoriesCreate(categoriesDto);
-    return await this.categoriesGetOne(categoriesDto.id);
+    return await this.categoriesCreate(categoriesDto);
   }
 
   async categoriesRemove(id: number): Promise<boolean> {
