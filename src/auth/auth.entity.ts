@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { SessionEntity } from '@src/session/session.entity';
 
 @ObjectType()
 @Entity({ name: 'auth' })
@@ -11,7 +12,7 @@ export class AuthEntity extends CommonEntity {
     length: 200,
     unique: true,
   })
-  login: string;
+  username: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -25,18 +26,6 @@ export class AuthEntity extends CommonEntity {
   @Column({ nullable: true, name: 'passport_id' })
   passportId: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 2,
-    nullable: true,
-  })
-  locale: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  rights: string;
-
   @Field({ defaultValue: false })
   @Column({ default: false, name: 'is_activated' })
   isActivated: boolean;
@@ -46,4 +35,10 @@ export class AuthEntity extends CommonEntity {
 
   @Field({ nullable: true })
   refreshToken: string;
+
+  @OneToMany(() => SessionEntity, (session) => session.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  session: SessionEntity[];
 }

@@ -4,20 +4,21 @@ import { EventsService } from '@src/events/events.service';
 import { EventsDto } from '@src/events/events.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Data } from '@src/app.decorator';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get('get_all')
-  async eventsGetAll(@Body('relations') relations: Array<string>) {
+  async eventsGetAll(@Data('relations') relations: Array<string>) {
     return await this.eventsService.eventsGetAll(relations);
   }
 
   @Get('get_one')
   async eventsGetOne(
-    @Body('id') id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('id') id: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsService.eventsGetOne(id, relations);
     if (!result) {
@@ -28,8 +29,8 @@ export class EventsController {
 
   @Get('get_many')
   async eventsGetMany(
-    @Body('ids') ids: Array<number | string>,
-    @Body('relations') relations: Array<string>,
+    @Data('ids') ids: Array<number | string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsService.eventsGetMany(ids, relations);
     if (!result) {
@@ -40,9 +41,9 @@ export class EventsController {
 
   @Get('filter')
   async eventsFilter(
-    @Body('filter') eventsDto: EventsDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('filter') eventsDto: EventsDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsService.eventsFilter(
       eventsDto,
@@ -57,9 +58,9 @@ export class EventsController {
 
   @Get('search')
   async eventsSearch(
-    @Body('search') searchDto: SearchDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('search') searchDto: SearchDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsService.eventsSearch(
       searchDto,

@@ -4,20 +4,21 @@ import { CategoriesService } from '@src/categories/categories.service';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Data } from '@src/app.decorator';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('get_all')
-  async categoriesGetAll(@Body('relations') relations: Array<string>) {
+  async categoriesGetAll(@Data('relations') relations: Array<string>) {
     return await this.categoriesService.categoriesGetAll(relations);
   }
 
   @Get('get_one')
   async categoriesGetOne(
-    @Body('id') id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('id') id: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.categoriesService.categoriesGetOne(id, relations);
     if (!result) {
@@ -28,8 +29,8 @@ export class CategoriesController {
 
   @Get('get_many')
   async categoriesGetMany(
-    @Body('ids') ids: Array<number | string>,
-    @Body('relations') relations: Array<string>,
+    @Data('ids') ids: Array<number | string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.categoriesService.categoriesGetMany(
       ids,
@@ -43,9 +44,9 @@ export class CategoriesController {
 
   @Get('filter')
   async categoriesFilter(
-    @Body('filter') categoriesDto: CategoriesDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('filter') categoriesDto: CategoriesDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.categoriesService.categoriesFilter(
       categoriesDto,
@@ -60,9 +61,9 @@ export class CategoriesController {
 
   @Get('search')
   async categoriesSearch(
-    @Body('search') searchDto: SearchDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('search') searchDto: SearchDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.categoriesService.categoriesSearch(
       searchDto,

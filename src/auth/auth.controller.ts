@@ -13,7 +13,7 @@ import {
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/dto/auth.dto';
 import { TokensDto } from '@src/auth/dto/tokens.dto';
-import { Auth } from '@src/auth/decorator/auth.decorator';
+import { Auth } from '@src/auth/auth.decorator';
 import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
 
 @Controller('auth')
@@ -21,7 +21,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('get_all')
-  @Auth('admin')
+  @Auth()
   async authGetAll() {
     return await this.authService.authGetAll();
   }
@@ -29,35 +29,46 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('login')
-  async login(@Body() authDto: AuthDto) {
-    return this.authService.login(authDto);
+  async login(@Body() authDto: AuthDto, @Req() req: any) {
+    return this.authService.login(authDto, req);
   }
 
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('register')
-  async register(@Body() authDto: AuthDto) {
-    return this.authService.register(authDto);
+  async register(@Body() authDto: AuthDto, @Req() req: any) {
+    return this.authService.register(authDto, req);
   }
 
-  @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('refresh_tokens')
-  async refreshTokens(@Body() tokensDto: TokensDto) {
-    return this.authService.refreshTokens(tokensDto);
+  async refreshTokens(@Body() tokensDto: TokensDto, @Req() req: any) {
+    return this.authService.refreshTokens(tokensDto, req);
+  }
+
+  @Auth()
+  @HttpCode(200)
+  @Post('logout')
+  async logout(@Req() req: any) {
+    return this.authService.logout(req);
   }
 
   @Get('google/login')
   @UseGuards(GoogleAuthGuard)
   async googleLogin() {
-    return { msg: 'login' };
+    return;
   }
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async googleRedirect() {
-    // may be this need run validate status before
-    return { msg: 'redirect' };
+  async googleRedirect(@Req() req: any) {
+    const { user: auth } = req;
+    const tokens = await this.authService.createTokensPair(auth);
+    await this.authService.createSession(auth, tokens, req);
+    return {
+      ...auth,
+      ...tokens,
+    };
   }
 
   @Get('status')

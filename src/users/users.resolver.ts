@@ -5,6 +5,7 @@ import { UsersFilter } from '@src/users/users.filter';
 import { UsersService } from '@src/users/users.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Auth, Self } from '@src/auth/auth.decorator';
 
 @Resolver('Users')
 export class UsersResolver {
@@ -40,12 +41,23 @@ export class UsersResolver {
 
   @Query(() => UsersEntity)
   async usersGetByAuthId(
-    @Args('authId')
-    authId: number,
+    @Args('id')
+    id: number,
     @Args('relations', { type: () => [String], defaultValue: null })
     relations: Array<string>,
   ): Promise<UsersEntity> {
-    return await this.usersService.usersGetByAuthId(authId, relations);
+    return await this.usersService.usersGetByAuthId(id, relations);
+  }
+
+  @Query(() => UsersEntity)
+  @Auth('gql')
+  async usersGetSelf(
+    @Self('gql')
+    id: number,
+    @Args('relations', { type: () => [String], defaultValue: null })
+    relations: Array<string>,
+  ): Promise<UsersEntity> {
+    return await this.usersService.usersGetByAuthId(id, relations);
   }
 
   @Query(() => [UsersFilter])

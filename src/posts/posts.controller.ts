@@ -4,20 +4,21 @@ import { PostsService } from '@src/posts/posts.service';
 import { PostsDto } from '@src/posts/posts.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Data } from '@src/app.decorator';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get('get_all')
-  async postsGetAll(@Body('relations') relations: Array<string>) {
+  async postsGetAll(@Data('relations') relations: Array<string>) {
     return await this.postsService.postsGetAll(relations);
   }
 
   @Get('get_one')
   async postsGetOne(
-    @Body('id') id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('id') id: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.postsService.postsGetOne(id, relations);
     if (!result) {
@@ -28,8 +29,8 @@ export class PostsController {
 
   @Get('get_many')
   async postsGetMany(
-    @Body('ids') ids: Array<number | string>,
-    @Body('relations') relations: Array<string>,
+    @Data('ids') ids: Array<number | string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.postsService.postsGetMany(ids, relations);
     if (!result) {
@@ -40,9 +41,9 @@ export class PostsController {
 
   @Get('filter')
   async postsFilter(
-    @Body('filter') postsDto: PostsDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('filter') postsDto: PostsDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.postsService.postsFilter(
       postsDto,
@@ -57,9 +58,9 @@ export class PostsController {
 
   @Get('search')
   async postsSearch(
-    @Body('search') searchDto: SearchDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('search') searchDto: SearchDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.postsService.postsSearch(
       searchDto,

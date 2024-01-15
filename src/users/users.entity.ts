@@ -5,6 +5,7 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { PostsEntity } from '@src/posts/posts.entity';
 import { GenderUsers } from '@src/users/users.enum';
 import { EventsEntity } from '@src/events/events.entity';
+import { RolesEntity } from '@src/roles/roles.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -47,11 +48,15 @@ export class UsersEntity extends CommonEntity {
   })
   birthday?: Date;
 
-  @Field(() => GenderUsers, { defaultValue: GenderUsers.DEFAULT })
+  @Field(() => GenderUsers, {
+    nullable: true,
+    defaultValue: GenderUsers.DEFAULT,
+  })
   @Column({
     type: 'enum',
     enum: GenderUsers,
     default: GenderUsers.DEFAULT,
+    nullable: true,
   })
   gender?: GenderUsers;
 
@@ -59,6 +64,12 @@ export class UsersEntity extends CommonEntity {
   @OneToOne(() => AuthEntity)
   @JoinColumn({ name: 'auth_id', referencedColumnName: 'id' })
   auth: AuthEntity;
+
+  @OneToMany(() => RolesEntity, (role) => role.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  roles: RolesEntity[];
 
   @OneToMany(() => PostsEntity, (post) => post.user, {
     cascade: true,

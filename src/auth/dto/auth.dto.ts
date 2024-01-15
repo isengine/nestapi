@@ -6,7 +6,7 @@ import { IsEmail, IsString, MinLength } from 'class-validator';
 export class AuthDto extends CommonDto {
   @Field()
   @IsEmail()
-  login: string;
+  username: string;
 
   @Field({ nullable: true })
   @MinLength(6, {
@@ -21,12 +21,6 @@ export class AuthDto extends CommonDto {
   @Field({ nullable: true })
   passportId?: string;
 
-  @Field({ nullable: true })
-  locale?: string;
-
-  @Field({ nullable: true })
-  rights?: string;
-
-  @Field({ defaultValue: false })
+  @Field({ nullable: true, defaultValue: false })
   isActivated?: boolean;
 }

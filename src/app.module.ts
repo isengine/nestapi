@@ -18,7 +18,8 @@ import { EventsThemesModule } from './events.themes/events.themes.module';
 import { FilesModule } from '@src/files/files.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
-// import { SessionModule } from '@src/session/session.module';
+import { RolesModule } from '@src/roles/roles.module';
+import { SessionModule } from '@src/session/session.module';
 import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
 
@@ -49,6 +50,8 @@ import { NogqlModule } from '@src/typeorm/module/nogql.module';
     FilesModule,
     MailModule,
     PostsModule,
+    RolesModule,
+    SessionModule,
     TagsModule,
     UsersModule,
   ],

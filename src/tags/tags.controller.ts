@@ -4,20 +4,21 @@ import { TagsService } from '@src/tags/tags.service';
 import { TagsDto } from '@src/tags/tags.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Data } from '@src/app.decorator';
 
 @Controller('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Get('get_all')
-  async tagsGetAll(@Body('relations') relations: Array<string>) {
+  async tagsGetAll(@Data('relations') relations: Array<string>) {
     return await this.tagsService.tagsGetAll(relations);
   }
 
   @Get('get_one')
   async tagsGetOne(
-    @Body('id') id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('id') id: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.tagsService.tagsGetOne(id, relations);
     if (!result) {
@@ -28,8 +29,8 @@ export class TagsController {
 
   @Get('get_many')
   async tagsGetMany(
-    @Body('ids') ids: Array<number | string>,
-    @Body('relations') relations: Array<string>,
+    @Data('ids') ids: Array<number | string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.tagsService.tagsGetMany(ids, relations);
     if (!result) {
@@ -40,9 +41,9 @@ export class TagsController {
 
   @Get('filter')
   async tagsFilter(
-    @Body('filter') tagsDto: TagsDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('filter') tagsDto: TagsDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.tagsService.tagsFilter(
       tagsDto,
@@ -57,9 +58,9 @@ export class TagsController {
 
   @Get('search')
   async tagsSearch(
-    @Body('search') searchDto: SearchDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('search') searchDto: SearchDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.tagsService.tagsSearch(
       searchDto,

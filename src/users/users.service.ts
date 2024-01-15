@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
-import { PostsService } from '@src/posts/posts.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
@@ -20,7 +19,6 @@ export class UsersService {
   constructor(
     @InjectRepository(UsersEntity)
     private readonly usersRepository: Repository<UsersEntity>,
-    private readonly postsService: PostsService,
   ) {}
 
   async usersGetAll(
@@ -53,14 +51,14 @@ export class UsersService {
   }
 
   async usersGetByAuthId(
-    authId: number,
+    id: number,
     relations: Array<string> = undefined,
   ): Promise<UsersEntity> {
     const user = await this.usersRepository.find({
       relations,
       where: {
         auth: {
-          id: authId,
+          id,
         },
       },
       take: 1,
@@ -69,7 +67,7 @@ export class UsersService {
       return;
     }
     const result = user[0];
-    result.auth = undefined;
+    // result.auth = undefined;
     return result;
   }
 
@@ -100,12 +98,6 @@ export class UsersService {
   }
 
   async usersCreate(usersDto: UsersDto): Promise<UsersEntity> {
-    const { postsList } = usersDto;
-    if (postsList && postsList.length) {
-      const posts = await this.postsService.postsGetMany(postsList);
-      usersDto.posts = (usersDto.posts || []).concat(posts);
-    }
-    delete usersDto.postsList;
     delete usersDto.createdAt;
     delete usersDto.updatedAt;
     return await this.usersRepository.save({ ...usersDto });
@@ -128,7 +120,7 @@ export class UsersService {
         ...usersDto,
         auth: {
           id: authId,
-          login: usersDto.email,
+          username: usersDto.email,
         },
       });
     }

@@ -4,20 +4,21 @@ import { EventsThemesService } from '@src/events.themes/events.themes.service';
 import { EventsThemesDto } from '@src/events.themes/events.themes.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Data } from '@src/app.decorator';
 
 @Controller('events_themes')
 export class EventsThemesController {
   constructor(private readonly eventsThemesService: EventsThemesService) {}
 
   @Get('get_all')
-  async eventsThemesGetAll(@Body('relations') relations: Array<string>) {
+  async eventsThemesGetAll(@Data('relations') relations: Array<string>) {
     return await this.eventsThemesService.eventsThemesGetAll(relations);
   }
 
   @Get('get_one')
   async eventsThemesGetOne(
-    @Body('id') id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('id') id: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsThemesService.eventsThemesGetOne(
       id,
@@ -31,8 +32,8 @@ export class EventsThemesController {
 
   @Get('get_many')
   async eventsThemesGetMany(
-    @Body('ids') ids: Array<number | string>,
-    @Body('relations') relations: Array<string>,
+    @Data('ids') ids: Array<number | string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsThemesService.eventsThemesGetMany(
       ids,
@@ -46,9 +47,9 @@ export class EventsThemesController {
 
   @Get('filter')
   async eventsThemesFilter(
-    @Body('filter') eventsThemesDto: EventsThemesDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('filter') eventsThemesDto: EventsThemesDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsThemesService.eventsThemesFilter(
       eventsThemesDto,
@@ -63,9 +64,9 @@ export class EventsThemesController {
 
   @Get('search')
   async eventsThemesSearch(
-    @Body('search') searchDto: SearchDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('search') searchDto: SearchDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.eventsThemesService.eventsThemesSearch(
       searchDto,

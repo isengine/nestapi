@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AuthService } from '@src/auth/auth.service';
 import { AuthEntity } from '@src/auth/auth.entity';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,13 +14,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true,
+      ignoreExpiration: !configService.get('JWT_EXPIRES'),
       secretOrKey: configService.get('JWT_ACCESS_SECRET'),
     });
   }
 
   async validate({ id }: Pick<AuthEntity, 'id'>) {
     const auth = await this.authService.authGetOne(id);
-    return auth.id;
+    if (!auth.id) {
+      throw new ForbiddenException('You have no rights!');
+    }
+    return auth;
   }
 }

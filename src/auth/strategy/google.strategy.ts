@@ -24,15 +24,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const account = profile._json;
-    const auth = await this.authService.authGetByLogin(account.email);
+    const auth = await this.authService.authGetByUsername(account.email);
 
     const authDto: AuthDto = {
-      login: account.email,
+      username: account.email,
       passportStrategy: profile.provider,
       passportId: profile.id,
-      locale: account.locale,
-      isActivated: true,
-      // isActivated: !!account.email_verified,
+      isActivated: !!account.email_verified,
     };
 
     if (!auth) {
@@ -54,10 +52,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       name: account.name,
       avatar: account.picture,
     });
-    const tokens = await this.authService.createTokensPair(auth);
-    return {
-      ...auth,
-      ...tokens,
-    };
+    return auth;
   }
 }

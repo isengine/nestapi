@@ -12,12 +12,14 @@ import { AuthResolver } from '@src/auth/auth.resolver';
 import { GoogleStrategy } from '@src/auth/strategy/google.strategy';
 import { SessionSerializer } from '@src/auth/session/serialize.session';
 import { UsersModule } from '@src/users/users.module';
+import { SessionModule } from '@src/session/session.module';
 
 @Module({
   controllers: [AuthController],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => UsersModule),
+    forwardRef(() => SessionModule),
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

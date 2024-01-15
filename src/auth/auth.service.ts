@@ -14,6 +14,7 @@ import { AuthDto } from '@src/auth/dto/auth.dto';
 import { MixinDto } from '@src/auth/dto/mixin.dto';
 import { TokensDto } from '@src/auth/dto/tokens.dto';
 import { UsersService } from '@src/users/users.service';
+import { SessionService } from '@src/session/session.service';
 
 @Injectable()
 export class AuthService {
@@ -21,12 +22,13 @@ export class AuthService {
     @InjectRepository(AuthEntity)
     private readonly authRepository: Repository<AuthEntity>,
     private readonly userService: UsersService,
+    private readonly sessionService: SessionService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
-  async login(authDto: AuthDto): Promise<MixinDto> {
-    const auth = await this.authGetByLogin(authDto.login);
+  async login(authDto: AuthDto, request: any = null): Promise<MixinDto> {
+    const auth = await this.authGetByUsername(authDto.username);
     if (!auth) {
       throw new UnauthorizedException('User not found');
     }
@@ -35,44 +37,67 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
     const tokens = await this.createTokensPair(auth);
+    if (request) {
+      await this.createSession(auth, tokens, request);
+    }
     return {
       ...auth,
       ...tokens,
     };
   }
 
-  async register(authDto: AuthDto): Promise<MixinDto> {
-    const authExists = await this.authGetByLogin(authDto.login);
+  async logout(request: any = null): Promise<boolean> {
+    if (!request || !request?.user) {
+      return false;
+    }
+    try {
+      await this.destroySession(request?.user, request);
+    } catch {
+      throw new UnauthorizedException('Session does not exist!');
+    }
+    return true;
+  }
+
+  async register(authDto: AuthDto, request: any = null): Promise<MixinDto> {
+    const authExists = await this.authGetByUsername(authDto.username);
     if (authExists) {
       throw new BadRequestException(
-        'User with this login is already in the system',
+        'User with this username is already in the system',
       );
     }
     const salt = await genSalt(10);
     authDto.password = await hash(authDto.password, salt);
     const auth = await this.authCreate(authDto);
     const tokens = await this.createTokensPair(auth);
+    if (request) {
+      await this.createSession(auth, tokens, request);
+    }
     return {
       ...auth,
       ...tokens,
     };
   }
 
-  async refreshTokens(tokensDto: TokensDto) {
+  async refreshTokens(tokensDto: TokensDto, request: any): Promise<TokensDto> {
     const { refreshToken } = tokensDto;
-    if (!refreshToken) {
+    const sessionToken = request.session.token;
+    if (!refreshToken || !sessionToken || refreshToken !== sessionToken) {
       throw new UnauthorizedException('Please sign in!');
     }
-    const result = await this.jwtService.verifyAsync(refreshToken);
-    if (!result) {
+    let result;
+    try {
+      result = await this.jwtService.verifyAsync(refreshToken);
+      if (!result) {
+        throw new UnauthorizedException('Invalid token or expired!');
+      }
+    } catch {
       throw new UnauthorizedException('Invalid token or expired!');
     }
     const auth = await this.authGetOne(result.id);
     const tokens = await this.createTokensPair(auth);
-    return {
-      ...auth,
-      ...tokens,
-    };
+    request.session.token = tokens.refreshToken;
+    await this.refreshSession(auth, request);
+    return tokens;
   }
 
   async createTokensPair(auth) {
@@ -86,6 +111,53 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  async logSession(auth, request, description = '') {
+    const { ip, method, originalUrl, headers } = request;
+    const data = {
+      ip,
+      userAgent: headers['user-agent'],
+      referrer: originalUrl,
+      method,
+      locale:
+        headers['accept-language']?.split(',')?.[0]?.split(';')?.[0] || null,
+      timezone: headers['timezone'],
+      auth,
+      description,
+    };
+    await this.sessionService.sessionCreate(data);
+  }
+
+  async createSession(auth, tokens, request) {
+    const { refreshToken } = tokens;
+    const { session } = request;
+    if (!session) {
+      return;
+    }
+    session.token = refreshToken;
+    session.save(async (e) => {
+      await this.logSession(auth, request, e ? 'create error' : 'create');
+    });
+  }
+
+  async refreshSession(auth, request) {
+    const { session } = request;
+    if (!session) {
+      return;
+    }
+    session.regenerate(async (e) => {
+      await this.logSession(auth, request, e ? 'refresh error' : 'refresh');
+    });
+  }
+
+  async destroySession(auth, request) {
+    const { session } = request;
+    if (session) {
+      await session.destroy(async (e) => {
+        await this.logSession(auth, request, e ? 'destroy error' : 'destroy');
+      });
+    }
+  }
+
   async authGetAll(): Promise<AuthEntity[]> {
     return await this.authRepository.find();
   }
@@ -94,8 +166,8 @@ export class AuthService {
     return await this.authRepository.findOneBy({ id });
   }
 
-  async authGetByLogin(login: string): Promise<AuthEntity> {
-    return await this.authRepository.findOneBy({ login });
+  async authGetByUsername(username: string): Promise<AuthEntity> {
+    return await this.authRepository.findOneBy({ username });
   }
 
   async authCreate(authDto: AuthDto): Promise<AuthEntity> {
@@ -103,10 +175,10 @@ export class AuthService {
       .save({ ...authDto })
       .then(async (result) => {
         await this.userService.usersCreate({
-          email: result.login,
+          email: result.username,
           auth: {
             id: result.id,
-            login: result.login,
+            username: result.username,
             isActivated: result.isActivated,
           },
         });
@@ -121,7 +193,17 @@ export class AuthService {
     }
     delete authDto.createdAt;
     delete authDto.updatedAt;
-    await this.authCreate(authDto);
+    await this.authRepository.save({ ...authDto }).then(async (result) => {
+      await this.userService.usersUpdate({
+        email: result.username,
+        auth: {
+          id: result.id,
+          username: result.username,
+          isActivated: result.isActivated,
+        },
+      });
+      return result;
+    });
     return await this.authGetOne(authDto.id);
   }
 

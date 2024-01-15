@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { AuthDto } from '@src/auth/dto/auth.dto';
-import { IsEnum, NotEquals } from 'class-validator';
+// import { IsEnum, NotEquals } from 'class-validator';
 import { CommonDto } from '@src/typeorm/dto/common.dto';
 import { PostsDto } from '@src/posts/posts.dto';
 import { GenderUsers } from '@src/users/users.enum';
@@ -22,9 +22,12 @@ export class UsersDto extends CommonDto {
   @Field({ nullable: true })
   birthday?: Date;
 
-  @Field(() => GenderUsers, { defaultValue: GenderUsers.DEFAULT })
-  @IsEnum(GenderUsers)
-  @NotEquals(GenderUsers[GenderUsers.DEFAULT])
+  @Field(() => GenderUsers, {
+    nullable: true,
+    defaultValue: GenderUsers.DEFAULT,
+  })
+  // @IsEnum(GenderUsers)
+  // @NotEquals(GenderUsers[GenderUsers.DEFAULT])
   gender?: GenderUsers;
 
   @Field(() => AuthDto, { nullable: true })

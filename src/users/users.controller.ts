@@ -1,27 +1,27 @@
 // import { Body, Controller, Get, Post, Put, Delete, NotFoundException } from '@nestjs/common';
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
-import { Self } from '@src/users/users.decorator';
-import { Auth } from '@src/auth/decorator/auth.decorator';
+import { Auth, Self } from '@src/auth/auth.decorator';
 import { UsersService } from '@src/users/users.service';
 import { UsersDto } from '@src/users/users.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { Data } from '@src/app.decorator';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('get_all')
-  @Auth('admin')
-  async usersGetAll(@Body('relations') relations: Array<string>) {
+  @Auth()
+  async usersGetAll(@Data('relations') relations: Array<string>) {
     return await this.usersService.usersGetAll(relations);
   }
 
   @Get('get_one')
   @Auth()
   async usersGetOne(
-    @Body('id') id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('id') id: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.usersService.usersGetOne(id, relations);
     if (!result) {
@@ -33,8 +33,8 @@ export class UsersController {
   @Get('get_many')
   @Auth()
   async usersGetMany(
-    @Body('ids') ids: Array<number | string>,
-    @Body('relations') relations: Array<string>,
+    @Data('ids') ids: Array<number | string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.usersService.usersGetMany(ids, relations);
     if (!result) {
@@ -46,8 +46,8 @@ export class UsersController {
   @Get('get_by_auth_id')
   @Auth()
   async usersGetByAuthId(
-    @Body('authId') authId: number,
-    @Body('relations') relations: Array<string>,
+    @Data('authId') authId: number,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.usersService.usersGetByAuthId(authId, relations);
     if (!result) {
@@ -60,7 +60,7 @@ export class UsersController {
   @Auth()
   async usersGetSelf(
     @Self() id: number,
-    @Body('relations') relations: Array<string>,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.usersService.usersGetByAuthId(id, relations);
     if (!result) {
@@ -71,9 +71,9 @@ export class UsersController {
 
   @Get('filter')
   async usersFilter(
-    @Body('filter') usersDto: UsersDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('filter') usersDto: UsersDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.usersService.usersFilter(
       usersDto,
@@ -88,9 +88,9 @@ export class UsersController {
 
   @Get('search')
   async usersSearch(
-    @Body('search') searchDto: SearchDto,
-    @Body('options') optionsDto: OptionsDto,
-    @Body('relations') relations: Array<string>,
+    @Data('search') searchDto: SearchDto,
+    @Data('options') optionsDto: OptionsDto,
+    @Data('relations') relations: Array<string>,
   ) {
     const result = await this.usersService.usersSearch(
       searchDto,
@@ -104,21 +104,21 @@ export class UsersController {
   }
 
   @Post('create')
-  @Auth('admin')
+  @Auth()
   async usersCreate(@Body() usersDto: UsersDto) {
     return await this.usersService.usersCreate(usersDto);
   }
 
   // @Put('update')
   @Post('update')
-  @Auth('admin')
+  @Auth()
   async usersUpdate(@Body() usersDto: UsersDto) {
     return await this.usersService.usersUpdate(usersDto);
   }
 
   // @Put('update_by_auth_id')
   @Post('update_by_auth_id')
-  @Auth('admin')
+  @Auth()
   async usersUpdateByAuthId(@Body() usersDto: UsersDto) {
     return await this.usersService.usersUpdateByAuthId(usersDto);
   }
@@ -136,14 +136,14 @@ export class UsersController {
 
   // @Delete('remove')
   @Post('remove')
-  @Auth('admin')
+  @Auth()
   async usersRemove(@Body() id: number) {
     return await this.usersService.usersRemove(id);
   }
 
   // @Delete('remove_by_auth_id')
   @Post('remove_by_auth_id')
-  @Auth('admin')
+  @Auth()
   async usersRemoveByAuthId(@Body() authId: number) {
     return await this.usersService.usersRemoveByAuthId(authId);
   }
