@@ -9,29 +9,29 @@ import {
 } from '@nestjs/websockets';
 import { Req } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { EventsDto } from '@src/events/events.dto';
-import { EventsEntity } from '@src/events/events.entity';
-import { EventsService } from '@src/events/events.service';
+import { SocketsDto } from '@src/sockets/sockets.dto';
+import { SocketsEntity } from '@src/sockets/sockets.entity';
+import { SocketsService } from '@src/sockets/sockets.service';
 
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
-export class EventsGateway
+export class SocketsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(private readonly socketsService: SocketsService) {}
 
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('events')
+  @SubscribeMessage('sockets')
   async handleEvent(
-    @MessageBody() eventsDto: EventsDto,
+    @MessageBody() socketsDto: SocketsDto,
     @Req() client: Socket,
-  ): Promise<EventsEntity> {
-    const result = await this.eventsService.eventsCreate(eventsDto);
+  ): Promise<SocketsEntity> {
+    const result = await this.socketsService.socketsCreate(socketsDto);
     this.server.emit('event', result);
     console.log('client', client.id);
     return result;

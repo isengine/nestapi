@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { EventsThemesDto } from '@src/events.themes/events.themes.dto';
+import { RoomsDto } from '@src/rooms/rooms.dto';
 import { CommonDto } from '@src/typeorm/dto/common.dto';
 import { UsersDto } from '@src/users/users.dto';
 
 @InputType()
-export class EventsDto extends CommonDto {
+export class SocketsDto extends CommonDto {
   @Field({ nullable: true })
   name?: string;
 
@@ -14,11 +14,11 @@ export class EventsDto extends CommonDto {
   @Field({ nullable: true })
   message?: string;
 
-  @Field(() => EventsThemesDto, { nullable: true })
-  theme?: EventsThemesDto;
+  @Field(() => RoomsDto, { nullable: true })
+  room?: RoomsDto;
 
   @Field(() => [String || Number], { nullable: true })
-  themeId?: number;
+  roomId?: number;
 
   @Field(() => UsersDto, { nullable: true })
   user?: UsersDto;

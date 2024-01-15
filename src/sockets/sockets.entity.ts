@@ -2,11 +2,11 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { CommonEntity } from '@src/typeorm/entity/common.entity';
 import { UsersEntity } from '@src/users/users.entity';
-import { EventsThemesEntity } from '@src/events.themes/events.themes.entity';
+import { RoomsEntity } from '@src/rooms/rooms.entity';
 
 @ObjectType()
-@Entity({ name: 'events' })
-export class EventsEntity extends CommonEntity {
+@Entity({ name: 'sockets' })
+export class SocketsEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -29,17 +29,17 @@ export class EventsEntity extends CommonEntity {
   })
   message?: string;
 
-  @ManyToOne(() => UsersEntity, (user) => user.events, {
+  @ManyToOne(() => UsersEntity, (user) => user.sockets, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UsersEntity;
 
-  @ManyToOne(() => EventsThemesEntity, (theme) => theme.events, {
+  @ManyToOne(() => RoomsEntity, (room) => room.sockets, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'theme_id', referencedColumnName: 'id' })
-  theme: UsersEntity;
+  @JoinColumn({ name: 'room_id', referencedColumnName: 'id' })
+  room: UsersEntity;
 }

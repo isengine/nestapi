@@ -1,26 +1,26 @@
 // import { Body, Controller, Get, Post, Put, Delete, NotFoundException } from '@nestjs/common';
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
-import { EventsService } from '@src/events/events.service';
-import { EventsDto } from '@src/events/events.dto';
+import { RoomsService } from '@src/rooms/rooms.service';
+import { RoomsDto } from '@src/rooms/rooms.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 
-@Controller('events')
-export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+@Controller('rooms')
+export class RoomsController {
+  constructor(private readonly roomsService: RoomsService) {}
 
   @Get('get_all')
-  async eventsGetAll(@Data('relations') relations: Array<string>) {
-    return await this.eventsService.eventsGetAll(relations);
+  async roomsGetAll(@Data('relations') relations: Array<string>) {
+    return await this.roomsService.roomsGetAll(relations);
   }
 
   @Get('get_one')
-  async eventsGetOne(
+  async roomsGetOne(
     @Data('id') id: number,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsService.eventsGetOne(id, relations);
+    const result = await this.roomsService.roomsGetOne(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -28,11 +28,11 @@ export class EventsController {
   }
 
   @Get('get_many')
-  async eventsGetMany(
+  async roomsGetMany(
     @Data('ids') ids: Array<number | string>,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsService.eventsGetMany(ids, relations);
+    const result = await this.roomsService.roomsGetMany(ids, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -40,13 +40,13 @@ export class EventsController {
   }
 
   @Get('filter')
-  async eventsFilter(
-    @Data('filter') eventsDto: EventsDto,
+  async roomsFilter(
+    @Data('filter') roomsDto: RoomsDto,
     @Data('options') optionsDto: OptionsDto,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsService.eventsFilter(
-      eventsDto,
+    const result = await this.roomsService.roomsFilter(
+      roomsDto,
       optionsDto,
       relations,
     );
@@ -57,12 +57,12 @@ export class EventsController {
   }
 
   @Get('search')
-  async eventsSearch(
+  async roomsSearch(
     @Data('search') searchDto: SearchDto,
     @Data('options') optionsDto: OptionsDto,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsService.eventsSearch(
+    const result = await this.roomsService.roomsSearch(
       searchDto,
       optionsDto,
       relations,
@@ -74,19 +74,19 @@ export class EventsController {
   }
 
   @Post('create')
-  async eventsCreate(@Body('create') eventsDto: EventsDto) {
-    return await this.eventsService.eventsCreate(eventsDto);
+  async roomsCreate(@Body('create') roomsDto: RoomsDto) {
+    return await this.roomsService.roomsCreate(roomsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async eventsUpdate(@Body('update') eventsDto: EventsDto) {
-    return await this.eventsService.eventsUpdate(eventsDto);
+  async roomsUpdate(@Body('update') roomsDto: RoomsDto) {
+    return await this.roomsService.roomsUpdate(roomsDto);
   }
 
   // @Delete('remove')
   @Post('remove')
-  async eventsRemove(@Body('id') id: number) {
-    return await this.eventsService.eventsRemove(id);
+  async roomsRemove(@Body('id') id: number) {
+    return await this.roomsService.roomsRemove(id);
   }
 }

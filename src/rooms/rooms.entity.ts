@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, OneToMany } from 'typeorm';
 import { CommonEntity } from '@src/typeorm/entity/common.entity';
-import { EventsEntity } from '@src/events/events.entity';
+import { SocketsEntity } from '@src/sockets/sockets.entity';
 
 @ObjectType()
-@Entity({ name: 'events_themes' })
-export class EventsThemesEntity extends CommonEntity {
+@Entity({ name: 'rooms' })
+export class RoomsEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -14,10 +14,10 @@ export class EventsThemesEntity extends CommonEntity {
   })
   title?: string;
 
-  @OneToMany(() => EventsEntity, (event) => event.theme, {
+  @OneToMany(() => SocketsEntity, (socket) => socket.room, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  events: EventsEntity[];
+  sockets: SocketsEntity[];
 }

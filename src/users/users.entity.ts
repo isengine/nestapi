@@ -4,8 +4,8 @@ import { CommonEntity } from '@src/typeorm/entity/common.entity';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { PostsEntity } from '@src/posts/posts.entity';
 import { GenderUsers } from '@src/users/users.enum';
-import { EventsEntity } from '@src/events/events.entity';
 import { RolesEntity } from '@src/roles/roles.entity';
+import { SocketsEntity } from '@src/sockets/sockets.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -78,10 +78,10 @@ export class UsersEntity extends CommonEntity {
   })
   posts: PostsEntity[];
 
-  @OneToMany(() => EventsEntity, (event) => event.user, {
+  @OneToMany(() => SocketsEntity, (socket) => socket.user, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  events: EventsEntity[];
+  sockets: SocketsEntity[];
 }

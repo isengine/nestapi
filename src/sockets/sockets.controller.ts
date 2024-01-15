@@ -1,29 +1,26 @@
 // import { Body, Controller, Get, Post, Put, Delete, NotFoundException } from '@nestjs/common';
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
-import { EventsThemesService } from '@src/events.themes/events.themes.service';
-import { EventsThemesDto } from '@src/events.themes/events.themes.dto';
+import { SocketsService } from '@src/sockets/sockets.service';
+import { SocketsDto } from '@src/sockets/sockets.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 
-@Controller('events_themes')
-export class EventsThemesController {
-  constructor(private readonly eventsThemesService: EventsThemesService) {}
+@Controller('sockets')
+export class SocketsController {
+  constructor(private readonly socketsService: SocketsService) {}
 
   @Get('get_all')
-  async eventsThemesGetAll(@Data('relations') relations: Array<string>) {
-    return await this.eventsThemesService.eventsThemesGetAll(relations);
+  async socketsGetAll(@Data('relations') relations: Array<string>) {
+    return await this.socketsService.socketsGetAll(relations);
   }
 
   @Get('get_one')
-  async eventsThemesGetOne(
+  async socketsGetOne(
     @Data('id') id: number,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsThemesService.eventsThemesGetOne(
-      id,
-      relations,
-    );
+    const result = await this.socketsService.socketsGetOne(id, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -31,14 +28,11 @@ export class EventsThemesController {
   }
 
   @Get('get_many')
-  async eventsThemesGetMany(
+  async socketsGetMany(
     @Data('ids') ids: Array<number | string>,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsThemesService.eventsThemesGetMany(
-      ids,
-      relations,
-    );
+    const result = await this.socketsService.socketsGetMany(ids, relations);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -46,13 +40,13 @@ export class EventsThemesController {
   }
 
   @Get('filter')
-  async eventsThemesFilter(
-    @Data('filter') eventsThemesDto: EventsThemesDto,
+  async socketsFilter(
+    @Data('filter') socketsDto: SocketsDto,
     @Data('options') optionsDto: OptionsDto,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsThemesService.eventsThemesFilter(
-      eventsThemesDto,
+    const result = await this.socketsService.socketsFilter(
+      socketsDto,
       optionsDto,
       relations,
     );
@@ -63,12 +57,12 @@ export class EventsThemesController {
   }
 
   @Get('search')
-  async eventsThemesSearch(
+  async socketsSearch(
     @Data('search') searchDto: SearchDto,
     @Data('options') optionsDto: OptionsDto,
     @Data('relations') relations: Array<string>,
   ) {
-    const result = await this.eventsThemesService.eventsThemesSearch(
+    const result = await this.socketsService.socketsSearch(
       searchDto,
       optionsDto,
       relations,
@@ -80,19 +74,19 @@ export class EventsThemesController {
   }
 
   @Post('create')
-  async eventsThemesCreate(@Body('create') eventsThemesDto: EventsThemesDto) {
-    return await this.eventsThemesService.eventsThemesCreate(eventsThemesDto);
+  async socketsCreate(@Body('create') socketsDto: SocketsDto) {
+    return await this.socketsService.socketsCreate(socketsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async eventsThemesUpdate(@Body('update') eventsThemesDto: EventsThemesDto) {
-    return await this.eventsThemesService.eventsThemesUpdate(eventsThemesDto);
+  async socketsUpdate(@Body('update') socketsDto: SocketsDto) {
+    return await this.socketsService.socketsUpdate(socketsDto);
   }
 
   // @Delete('remove')
   @Post('remove')
-  async eventsThemesRemove(@Body('id') id: number) {
-    return await this.eventsThemesService.eventsThemesRemove(id);
+  async socketsRemove(@Body('id') id: number) {
+    return await this.socketsService.socketsRemove(id);
   }
 }
