@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { SessionDto } from '@src/session/session.dto';
 import { SessionService } from '@src/session/session.service';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { Data } from '@src/app.decorator';
 
 @Controller('session')
@@ -8,16 +9,16 @@ export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
   @Get('get_all')
-  async sessionGetAll(@Data('relations') relations: Array<string>) {
-    return await this.sessionService.sessionGetAll(relations);
+  async sessionGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
+    return await this.sessionService.sessionGetAll(relationsDto);
   }
 
   @Get('get_one')
   async sessionGetOne(
     @Data('id') id: number,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.sessionService.sessionGetOne(id, relations);
+    const result = await this.sessionService.sessionGetOne(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
@@ -27,9 +28,9 @@ export class SessionController {
   @Get('get_by_auth_id')
   async sessionGetByAuthId(
     @Data('id') id: number,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.sessionService.sessionGetByAuthId(id, relations);
+    const result = await this.sessionService.sessionGetByAuthId(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }

@@ -2,10 +2,10 @@ import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class OptionsDto {
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: 'id' })
   order?: string;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: false })
   desc?: boolean;
 
   @Field({ nullable: true })

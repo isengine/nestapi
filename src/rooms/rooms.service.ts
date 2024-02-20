@@ -5,6 +5,7 @@ import { RoomsDto } from '@src/rooms/rooms.dto';
 import { RoomsEntity } from '@src/rooms/rooms.entity';
 import { RoomsFilter } from '@src/rooms/rooms.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -22,58 +23,57 @@ export class RoomsService {
   ) {}
 
   async roomsGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsEntity[]> {
     return await this.roomsRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async roomsGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsEntity> {
     return await this.roomsRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async roomsGetMany(
     ids: Array<number | string>,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsEntity[]> {
-    const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.roomsRepository.find({
-      relations,
-      where: { id: In(idsList) },
+      relations: relationsDto?.map(i => i.name),
+      where: { id: In(ids?.map(i => Number(i) || 0)) },
     });
   }
 
   async roomsFilter(
     roomsDto: RoomsDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsFilter[]> {
     const { root } = commonEntityGetParams(RoomsEntity);
     const query = this.roomsRepository.createQueryBuilder(root);
     const where = filterService(roomsDto, root);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async roomsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsFilter[]> {
     const { root, core } = commonEntityGetParams(RoomsEntity);
     const query = this.roomsRepository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async roomsCreate(roomsDto: RoomsDto): Promise<RoomsEntity> {

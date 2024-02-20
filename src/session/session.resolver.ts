@@ -2,6 +2,7 @@ import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { SessionDto } from '@src/session/session.dto';
 import { SessionEntity } from '@src/session/session.entity';
 import { SessionService } from '@src/session/session.service';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 
 @Resolver('session')
 export class SessionResolver {
@@ -9,30 +10,30 @@ export class SessionResolver {
 
   @Query(() => [SessionEntity])
   async sessionGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SessionEntity[]> {
-    return await this.sessionService.sessionGetAll(relations);
+    return await this.sessionService.sessionGetAll(relationsDto);
   }
 
   @Query(() => SessionEntity)
   async sessionGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SessionEntity> {
-    return await this.sessionService.sessionGetOne(id, relations);
+    return await this.sessionService.sessionGetOne(id, relationsDto);
   }
 
   @Query(() => [SessionEntity])
   async sessionGetByAuthId(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SessionEntity[]> {
-    return await this.sessionService.sessionGetByAuthId(id, relations);
+    return await this.sessionService.sessionGetByAuthId(id, relationsDto);
   }
 
   @Mutation(() => SessionEntity)

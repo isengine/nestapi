@@ -4,6 +4,7 @@ import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 import { UsersService } from '@src/users/users.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 
@@ -13,40 +14,40 @@ export class UsersResolver {
 
   @Query(() => [UsersEntity])
   async usersGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersEntity[]> {
-    return await this.usersService.usersGetAll(relations);
+    return await this.usersService.usersGetAll(relationsDto);
   }
 
   @Query(() => UsersEntity)
   async usersGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersEntity> {
-    return await this.usersService.usersGetOne(id, relations);
+    return await this.usersService.usersGetOne(id, relationsDto);
   }
 
   @Query(() => [UsersEntity])
   async usersGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersEntity[]> {
-    return await this.usersService.usersGetMany(ids, relations);
+    return await this.usersService.usersGetMany(ids, relationsDto);
   }
 
   @Query(() => UsersEntity)
   async usersGetByAuthId(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersEntity> {
-    return await this.usersService.usersGetByAuthId(id, relations);
+    return await this.usersService.usersGetByAuthId(id, relationsDto);
   }
 
   @Query(() => UsersEntity)
@@ -54,37 +55,37 @@ export class UsersResolver {
   async usersGetSelf(
     @Self('gql')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersEntity> {
-    return await this.usersService.usersGetByAuthId(id, relations);
+    return await this.usersService.usersGetByAuthId(id, relationsDto);
   }
 
   @Query(() => [UsersFilter])
   async usersFilter(
     @Args('filter')
     usersDto: UsersDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersFilter[]> {
-    return await this.usersService.usersFilter(usersDto, optionsDto, relations);
+    return await this.usersService.usersFilter(usersDto, optionsDto, relationsDto);
   }
 
   @Query(() => [UsersFilter])
   async usersSearch(
     @Args('search')
     searchDto: SearchDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<UsersFilter[]> {
     return await this.usersService.usersSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 

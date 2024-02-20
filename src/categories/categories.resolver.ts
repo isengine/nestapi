@@ -4,6 +4,7 @@ import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesFilter } from '@src/categories/categories.filter';
 import { CategoriesService } from '@src/categories/categories.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Categories')
@@ -12,45 +13,45 @@ export class CategoriesResolver {
 
   @Query(() => [CategoriesEntity])
   async categoriesGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesGetAll(relations);
+    return await this.categoriesService.categoriesGetAll(relationsDto);
   }
 
   @Query(() => CategoriesEntity)
   async categoriesGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<CategoriesEntity> {
-    return await this.categoriesService.categoriesGetOne(id, relations);
+    return await this.categoriesService.categoriesGetOne(id, relationsDto);
   }
 
   @Query(() => [CategoriesEntity])
   async categoriesGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<CategoriesEntity[]> {
-    return await this.categoriesService.categoriesGetMany(ids, relations);
+    return await this.categoriesService.categoriesGetMany(ids, relationsDto);
   }
 
   @Query(() => [CategoriesFilter])
   async categoriesFilter(
     @Args('filter')
     categoriesDto: CategoriesDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<CategoriesFilter[]> {
     return await this.categoriesService.categoriesFilter(
       categoriesDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 
@@ -58,15 +59,15 @@ export class CategoriesResolver {
   async categoriesSearch(
     @Args('search')
     searchDto: SearchDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<CategoriesFilter[]> {
     return await this.categoriesService.categoriesSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 

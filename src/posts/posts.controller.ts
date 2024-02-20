@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { PostsService } from '@src/posts/posts.service';
 import { PostsDto } from '@src/posts/posts.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 
@@ -11,16 +12,16 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get('get_all')
-  async postsGetAll(@Data('relations') relations: Array<string>) {
-    return await this.postsService.postsGetAll(relations);
+  async postsGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
+    return await this.postsService.postsGetAll(relationsDto);
   }
 
   @Get('get_one')
   async postsGetOne(
     @Data('id') id: number,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.postsService.postsGetOne(id, relations);
+    const result = await this.postsService.postsGetOne(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -30,9 +31,9 @@ export class PostsController {
   @Get('get_many')
   async postsGetMany(
     @Data('ids') ids: Array<number | string>,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.postsService.postsGetMany(ids, relations);
+    const result = await this.postsService.postsGetMany(ids, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -43,12 +44,12 @@ export class PostsController {
   async postsFilter(
     @Data('filter') postsDto: PostsDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.postsService.postsFilter(
       postsDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
@@ -60,12 +61,12 @@ export class PostsController {
   async postsSearch(
     @Data('search') searchDto: SearchDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.postsService.postsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');

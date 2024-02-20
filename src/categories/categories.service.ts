@@ -5,6 +5,7 @@ import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesFilter } from '@src/categories/categories.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -22,58 +23,57 @@ export class CategoriesService {
   ) {}
 
   async categoriesGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesEntity[]> {
     return await this.categoriesRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async categoriesGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesEntity> {
     return await this.categoriesRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async categoriesGetMany(
     ids: Array<number | string>,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesEntity[]> {
-    const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.categoriesRepository.find({
-      relations,
-      where: { id: In(idsList) },
+      relations: relationsDto?.map(i => i.name),
+      where: { id: In(ids?.map(i => Number(i) || 0)) },
     });
   }
 
   async categoriesFilter(
     categoriesDto: CategoriesDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesFilter[]> {
     const { root } = commonEntityGetParams(CategoriesEntity);
     const query = this.categoriesRepository.createQueryBuilder(root);
     const where = filterService(categoriesDto, root);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async categoriesSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesFilter[]> {
     const { root, core } = commonEntityGetParams(CategoriesEntity);
     const query = this.categoriesRepository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async categoriesCreate(

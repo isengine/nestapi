@@ -2,6 +2,7 @@ import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesEntity } from '@src/roles/roles.entity';
 import { RolesService } from '@src/roles/roles.service';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 
 @Resolver('roles')
 export class RolesResolver {
@@ -9,30 +10,30 @@ export class RolesResolver {
 
   @Query(() => [RolesEntity])
   async rolesGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RolesEntity[]> {
-    return await this.rolesService.rolesGetAll(relations);
+    return await this.rolesService.rolesGetAll(relationsDto);
   }
 
   @Query(() => RolesEntity)
   async rolesGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RolesEntity> {
-    return await this.rolesService.rolesGetOne(id, relations);
+    return await this.rolesService.rolesGetOne(id, relationsDto);
   }
 
   @Query(() => [RolesEntity])
   async rolesGetByUserId(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RolesEntity[]> {
-    return await this.rolesService.rolesGetByUserId(id, relations);
+    return await this.rolesService.rolesGetByUserId(id, relationsDto);
   }
 
   @Mutation(() => RolesEntity)

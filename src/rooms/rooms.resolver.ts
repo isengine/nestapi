@@ -4,6 +4,7 @@ import { RoomsEntity } from '@src/rooms/rooms.entity';
 import { RoomsFilter } from '@src/rooms/rooms.filter';
 import { RoomsService } from '@src/rooms/rooms.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('rooms')
@@ -12,57 +13,57 @@ export class RoomsResolver {
 
   @Query(() => [RoomsEntity])
   async roomsGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RoomsEntity[]> {
-    return await this.roomsService.roomsGetAll(relations);
+    return await this.roomsService.roomsGetAll(relationsDto);
   }
 
   @Query(() => RoomsEntity)
   async roomsGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RoomsEntity> {
-    return await this.roomsService.roomsGetOne(id, relations);
+    return await this.roomsService.roomsGetOne(id, relationsDto);
   }
 
   @Query(() => [RoomsEntity])
   async roomsGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RoomsEntity[]> {
-    return await this.roomsService.roomsGetMany(ids, relations);
+    return await this.roomsService.roomsGetMany(ids, relationsDto);
   }
 
   @Query(() => [RoomsFilter])
   async roomsFilter(
     @Args('filter')
     roomsDto: RoomsDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RoomsFilter[]> {
-    return await this.roomsService.roomsFilter(roomsDto, optionsDto, relations);
+    return await this.roomsService.roomsFilter(roomsDto, optionsDto, relationsDto);
   }
 
   @Query(() => [RoomsFilter])
   async roomsSearch(
     @Args('search')
     searchDto: SearchDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<RoomsFilter[]> {
     return await this.roomsService.roomsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 

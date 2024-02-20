@@ -7,6 +7,7 @@ import { PostsFilter } from '@src/posts/posts.filter';
 import { CategoriesService } from '@src/categories/categories.service';
 import { TagsService } from '@src/tags/tags.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -26,58 +27,57 @@ export class PostsService {
   ) {}
 
   async postsGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsEntity[]> {
     return await this.postsRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async postsGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsEntity> {
     return await this.postsRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async postsGetMany(
     ids: Array<number | string>,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsEntity[]> {
-    const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.postsRepository.find({
-      relations,
-      where: { id: In(idsList) },
+      relations: relationsDto?.map(i => i.name),
+      where: { id: In(ids?.map(i => Number(i) || 0)) },
     });
   }
 
   async postsFilter(
     postsDto: PostsDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsFilter[]> {
     const { root } = commonEntityGetParams(PostsEntity);
     const query = this.postsRepository.createQueryBuilder(root);
     const where = filterService(postsDto, root);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async postsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsFilter[]> {
     const { root, core } = commonEntityGetParams(PostsEntity);
     const query = this.postsRepository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async postsCreate(postsDto: PostsDto): Promise<PostsEntity> {

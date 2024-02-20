@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { GraphQLJSONObject } from 'graphql-type-json';
 
 @InputType()
 export class SearchDto {
@@ -10,4 +11,7 @@ export class SearchDto {
 
   @Field(() => [String])
   fields: Array<string>;
+
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  where?: object;
 }

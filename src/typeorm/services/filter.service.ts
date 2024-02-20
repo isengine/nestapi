@@ -1,15 +1,29 @@
-export const filterService = (dto, root = '') => {
+import { isArray, isBoolean } from 'class-validator';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+const quotes = process.env.DB_QUOTES || '"';
+
+export const filterService = (dto, root = '', fields = {}) => {
   let where = '';
   Object.entries(dto).map(([key, value], index) => {
     if (index) {
       where += ' AND ';
     }
-    if (typeof value === 'object') {
-      const result = filterService(value, key);
+    if (isArray(value)) {
+      const [ firstValue ] = value;
+      const result = filterService(firstValue, key, fields);
       where += result;
       return;
     }
-    key = `${root}.${key}`;
+    if (typeof value === 'object') {
+      const result = filterService(value, key, fields);
+      where += result;
+      return;
+    }
+    const rootKey = `${root ? `${root}.` : ''}${key}`;
+    const fieldsKey = `${fields[rootKey] ? fields[rootKey] : key}`;
+    key = `${quotes}${root}${quotes}.${quotes}${fieldsKey}${quotes}`;
     const matchValue = ` ${value} `.match(
       / select | update | delete | join | union /giu,
     )?.length;
@@ -19,7 +33,7 @@ export const filterService = (dto, root = '') => {
     if (matchValue) {
       value = 'IS NOT NULL';
     } else if (!matchEx) {
-      value = `= '${value}'`;
+      value = `= ${isBoolean(value) ? `${value}` : `'${value}'`}`;
     }
     value = String(value)?.replace(/\{alias\}/giu, key);
     where += `${key} ${value}`;

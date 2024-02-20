@@ -1,5 +1,6 @@
 import * as moment from 'moment';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 
 export const optionsCount = (data, count, optionsDto: OptionsDto) => {
   const { limit } = optionsDto;
@@ -21,7 +22,7 @@ export const optionsGroup = (data, optionsDto: OptionsDto) => {
   const values = [];
   const result = [];
 
-  data.forEach((i) => {
+  data?.forEach((i) => {
     const split = group.split('.');
     const len = split.length;
     let name = i;
@@ -65,7 +66,8 @@ export const optionsGroup = (data, optionsDto: OptionsDto) => {
 
 export const optionsOrder = (optionsDto: OptionsDto, root = '') => {
   const { order, group, desc } = optionsDto;
-  const type = !desc || String(desc)?.toLowerCase() !== 'desc' ? 'ASC' : 'DESC';
+  const type = !desc ? 'ASC' : 'DESC';
+  // const type = !!desc || (typeof desc === 'string' && String(desc)?.toLowerCase() !== 'desc') ? 'ASC' : 'DESC';
   const field = order || group;
   return { field: field.indexOf('.') < 0 ? `${root}.${field}` : field, type };
 };
@@ -82,11 +84,15 @@ export const optionsSkip = (optionsDto: OptionsDto) => {
 export const optionsService = async (
   query,
   optionsDto: OptionsDto,
+  relationsDto: Array<RelationsDto>,
   root = '',
 ) => {
   if (optionsDto.order || optionsDto.group) {
     const order = optionsOrder(optionsDto, root);
     query.orderBy(order.field, order.type);
+    relationsDto?.forEach((relation: RelationsDto) => {
+      query.addOrderBy(`${relation.name}.${relation.order}`, !relation.desc ? 'ASC' : 'DESC');
+    });
   }
 
   if (optionsDto.skip || optionsDto.limit) {

@@ -4,6 +4,7 @@ import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsFilter } from '@src/sockets/sockets.filter';
 import { SocketsService } from '@src/sockets/sockets.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Sockets')
@@ -12,45 +13,45 @@ export class SocketsResolver {
 
   @Query(() => [SocketsEntity])
   async socketsGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SocketsEntity[]> {
-    return await this.socketsService.socketsGetAll(relations);
+    return await this.socketsService.socketsGetAll(relationsDto);
   }
 
   @Query(() => SocketsEntity)
   async socketsGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SocketsEntity> {
-    return await this.socketsService.socketsGetOne(id, relations);
+    return await this.socketsService.socketsGetOne(id, relationsDto);
   }
 
   @Query(() => [SocketsEntity])
   async socketsGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SocketsEntity[]> {
-    return await this.socketsService.socketsGetMany(ids, relations);
+    return await this.socketsService.socketsGetMany(ids, relationsDto);
   }
 
   @Query(() => [SocketsFilter])
   async socketsFilter(
     @Args('filter')
     socketsDto: SocketsDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SocketsFilter[]> {
     return await this.socketsService.socketsFilter(
       socketsDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 
@@ -58,15 +59,15 @@ export class SocketsResolver {
   async socketsSearch(
     @Args('search')
     searchDto: SearchDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<SocketsFilter[]> {
     return await this.socketsService.socketsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 

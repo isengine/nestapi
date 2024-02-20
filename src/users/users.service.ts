@@ -5,6 +5,7 @@ import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -22,40 +23,39 @@ export class UsersService {
   ) {}
 
   async usersGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersEntity[]> {
     return await this.usersRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async usersGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersEntity> {
     return await this.usersRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async usersGetMany(
     ids: Array<number | string>,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersEntity[]> {
-    const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.usersRepository.find({
-      relations,
-      where: { id: In(idsList) },
+      relations: relationsDto?.map(i => i.name),
+      where: { id: In(ids?.map(i => Number(i) || 0)) },
     });
   }
 
   async usersGetByAuthId(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersEntity> {
     const user = await this.usersRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: {
         auth: {
           id,
@@ -74,27 +74,27 @@ export class UsersService {
   async usersFilter(
     usersDto: UsersDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersFilter[]> {
     const { root } = commonEntityGetParams(UsersEntity);
     const query = this.usersRepository.createQueryBuilder(root);
     const where = filterService(usersDto, root);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async usersSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersFilter[]> {
     const { root, core } = commonEntityGetParams(UsersEntity);
     const query = this.usersRepository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async usersCreate(usersDto: UsersDto): Promise<UsersEntity> {

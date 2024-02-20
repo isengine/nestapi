@@ -5,6 +5,7 @@ import { SocketsDto } from '@src/sockets/sockets.dto';
 import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsFilter } from '@src/sockets/sockets.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -24,58 +25,57 @@ export class SocketsService {
   ) {}
 
   async socketsGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsEntity[]> {
     return await this.socketsRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async socketsGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsEntity> {
     return await this.socketsRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async socketsGetMany(
     ids: Array<number | string>,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsEntity[]> {
-    const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.socketsRepository.find({
-      relations,
-      where: { id: In(idsList) },
+      relations: relationsDto?.map(i => i.name),
+      where: { id: In(ids?.map(i => Number(i) || 0)) },
     });
   }
 
   async socketsFilter(
     socketsDto: SocketsDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsFilter[]> {
     const { root } = commonEntityGetParams(SocketsEntity);
     const query = this.socketsRepository.createQueryBuilder(root);
     const where = filterService(socketsDto, root);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async socketsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsFilter[]> {
     const { root, core } = commonEntityGetParams(SocketsEntity);
     const query = this.socketsRepository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async socketsCreate(socketsDto: SocketsDto): Promise<SocketsEntity> {

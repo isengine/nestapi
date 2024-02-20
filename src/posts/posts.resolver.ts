@@ -4,6 +4,7 @@ import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsFilter } from '@src/posts/posts.filter';
 import { PostsService } from '@src/posts/posts.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 
 @Resolver('Posts')
@@ -12,57 +13,57 @@ export class PostsResolver {
 
   @Query(() => [PostsEntity])
   async postsGetAll(
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<PostsEntity[]> {
-    return await this.postsService.postsGetAll(relations);
+    return await this.postsService.postsGetAll(relationsDto);
   }
 
   @Query(() => PostsEntity)
   async postsGetOne(
     @Args('id')
     id: number,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<PostsEntity> {
-    return await this.postsService.postsGetOne(id, relations);
+    return await this.postsService.postsGetOne(id, relationsDto);
   }
 
   @Query(() => [PostsEntity])
   async postsGetMany(
     @Args('ids', { type: () => [Number || String] })
     ids: Array<number | string>,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<PostsEntity[]> {
-    return await this.postsService.postsGetMany(ids, relations);
+    return await this.postsService.postsGetMany(ids, relationsDto);
   }
 
   @Query(() => [PostsFilter])
   async postsFilter(
     @Args('filter')
     postsDto: PostsDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<PostsFilter[]> {
-    return await this.postsService.postsFilter(postsDto, optionsDto, relations);
+    return await this.postsService.postsFilter(postsDto, optionsDto, relationsDto);
   }
 
   @Query(() => [PostsFilter])
   async postsSearch(
     @Args('search')
     searchDto: SearchDto,
-    @Args('options')
+    @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
     optionsDto: OptionsDto,
-    @Args('relations', { type: () => [String], defaultValue: null })
-    relations: Array<string>,
+    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+    relationsDto: Array<RelationsDto>,
   ): Promise<PostsFilter[]> {
     return await this.postsService.postsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
   }
 

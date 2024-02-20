@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { SocketsService } from '@src/sockets/sockets.service';
 import { SocketsDto } from '@src/sockets/sockets.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 
@@ -11,16 +12,16 @@ export class SocketsController {
   constructor(private readonly socketsService: SocketsService) {}
 
   @Get('get_all')
-  async socketsGetAll(@Data('relations') relations: Array<string>) {
-    return await this.socketsService.socketsGetAll(relations);
+  async socketsGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
+    return await this.socketsService.socketsGetAll(relationsDto);
   }
 
   @Get('get_one')
   async socketsGetOne(
     @Data('id') id: number,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.socketsService.socketsGetOne(id, relations);
+    const result = await this.socketsService.socketsGetOne(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -30,9 +31,9 @@ export class SocketsController {
   @Get('get_many')
   async socketsGetMany(
     @Data('ids') ids: Array<number | string>,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.socketsService.socketsGetMany(ids, relations);
+    const result = await this.socketsService.socketsGetMany(ids, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -43,12 +44,12 @@ export class SocketsController {
   async socketsFilter(
     @Data('filter') socketsDto: SocketsDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.socketsService.socketsFilter(
       socketsDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
@@ -60,12 +61,12 @@ export class SocketsController {
   async socketsSearch(
     @Data('search') searchDto: SearchDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.socketsService.socketsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');

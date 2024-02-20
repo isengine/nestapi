@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { TagsService } from '@src/tags/tags.service';
 import { TagsDto } from '@src/tags/tags.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 
@@ -11,16 +12,16 @@ export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Get('get_all')
-  async tagsGetAll(@Data('relations') relations: Array<string>) {
-    return await this.tagsService.tagsGetAll(relations);
+  async tagsGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
+    return await this.tagsService.tagsGetAll(relationsDto);
   }
 
   @Get('get_one')
   async tagsGetOne(
     @Data('id') id: number,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.tagsService.tagsGetOne(id, relations);
+    const result = await this.tagsService.tagsGetOne(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -30,9 +31,9 @@ export class TagsController {
   @Get('get_many')
   async tagsGetMany(
     @Data('ids') ids: Array<number | string>,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.tagsService.tagsGetMany(ids, relations);
+    const result = await this.tagsService.tagsGetMany(ids, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -43,12 +44,12 @@ export class TagsController {
   async tagsFilter(
     @Data('filter') tagsDto: TagsDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.tagsService.tagsFilter(
       tagsDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
@@ -60,12 +61,12 @@ export class TagsController {
   async tagsSearch(
     @Data('search') searchDto: SearchDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.tagsService.tagsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');

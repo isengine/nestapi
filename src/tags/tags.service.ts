@@ -5,6 +5,7 @@ import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsFilter } from '@src/tags/tags.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
@@ -22,58 +23,57 @@ export class TagsService {
   ) {}
 
   async tagsGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsEntity[]> {
     return await this.tagsRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async tagsGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsEntity> {
     return await this.tagsRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async tagsGetMany(
     ids: Array<number | string>,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsEntity[]> {
-    const idsList = JSON.parse(JSON.stringify(ids).replace(/"/gu, ''));
     return await this.tagsRepository.find({
-      relations,
-      where: { id: In(idsList) },
+      relations: relationsDto?.map(i => i.name),
+      where: { id: In(ids?.map(i => Number(i) || 0)) },
     });
   }
 
   async tagsFilter(
     tagsDto: TagsDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsFilter[]> {
     const { root } = commonEntityGetParams(TagsEntity);
     const query = this.tagsRepository.createQueryBuilder(root);
     const where = filterService(tagsDto, root);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async tagsSearch(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsFilter[]> {
     const { root, core } = commonEntityGetParams(TagsEntity);
     const query = this.tagsRepository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core);
     query.where(where);
-    commonRelationsCreate(query, relations, root);
-    return await optionsService(query, optionsDto, root);
+    commonRelationsCreate(query, relationsDto, root);
+    return await optionsService(query, optionsDto, relationsDto, root);
   }
 
   async tagsCreate(tagsDto: TagsDto): Promise<TagsEntity> {

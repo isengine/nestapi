@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SessionDto } from '@src/session/session.dto';
 import { SessionEntity } from '@src/session/session.entity';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 
 @Injectable()
 export class SessionService {
@@ -12,29 +13,29 @@ export class SessionService {
   ) {}
 
   async sessionGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SessionEntity[]> {
     return await this.sessionRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async sessionGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SessionEntity> {
     return await this.sessionRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async sessionGetByAuthId(
     authId: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SessionEntity[]> {
     const session = await this.sessionRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: {
         auth: {
           id: authId,

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesEntity } from '@src/roles/roles.entity';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 
 @Injectable()
 export class RolesService {
@@ -12,29 +13,29 @@ export class RolesService {
   ) {}
 
   async rolesGetAll(
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RolesEntity[]> {
     return await this.rolesRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
     });
   }
 
   async rolesGetOne(
     id: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RolesEntity> {
     return await this.rolesRepository.findOne({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: { id },
     });
   }
 
   async rolesGetByUserId(
     userId: number,
-    relations: Array<string> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RolesEntity[]> {
     const roles = await this.rolesRepository.find({
-      relations,
+      relations: relationsDto?.map(i => i.name),
       where: {
         user: {
           id: userId,

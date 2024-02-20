@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
 import { RoomsService } from '@src/rooms/rooms.service';
 import { RoomsDto } from '@src/rooms/rooms.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
+import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 
@@ -11,16 +12,16 @@ export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
   @Get('get_all')
-  async roomsGetAll(@Data('relations') relations: Array<string>) {
-    return await this.roomsService.roomsGetAll(relations);
+  async roomsGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
+    return await this.roomsService.roomsGetAll(relationsDto);
   }
 
   @Get('get_one')
   async roomsGetOne(
     @Data('id') id: number,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.roomsService.roomsGetOne(id, relations);
+    const result = await this.roomsService.roomsGetOne(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -30,9 +31,9 @@ export class RoomsController {
   @Get('get_many')
   async roomsGetMany(
     @Data('ids') ids: Array<number | string>,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.roomsService.roomsGetMany(ids, relations);
+    const result = await this.roomsService.roomsGetMany(ids, relationsDto);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -43,12 +44,12 @@ export class RoomsController {
   async roomsFilter(
     @Data('filter') roomsDto: RoomsDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.roomsService.roomsFilter(
       roomsDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
@@ -60,12 +61,12 @@ export class RoomsController {
   async roomsSearch(
     @Data('search') searchDto: SearchDto,
     @Data('options') optionsDto: OptionsDto,
-    @Data('relations') relations: Array<string>,
+    @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
     const result = await this.roomsService.roomsSearch(
       searchDto,
       optionsDto,
-      relations,
+      relationsDto,
     );
     if (!result) {
       throw new NotFoundException('Any results not found');
