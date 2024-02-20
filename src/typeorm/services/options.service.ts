@@ -16,8 +16,6 @@ export const optionsCount = (data, count, optionsDto: OptionsDto) => {
 };
 
 export const optionsGroup = (data, optionsDto: OptionsDto) => {
-  // return groupBy(data, (item) => item[group]);
-
   const { group, type } = optionsDto;
   const values = [];
   const result = [];
@@ -67,7 +65,6 @@ export const optionsGroup = (data, optionsDto: OptionsDto) => {
 export const optionsOrder = (optionsDto: OptionsDto, root = '') => {
   const { order, group, desc } = optionsDto;
   const type = !desc ? 'ASC' : 'DESC';
-  // const type = !!desc || (typeof desc === 'string' && String(desc)?.toLowerCase() !== 'desc') ? 'ASC' : 'DESC';
   const field = order || group;
   return { field: field.indexOf('.') < 0 ? `${root}.${field}` : field, type };
 };
