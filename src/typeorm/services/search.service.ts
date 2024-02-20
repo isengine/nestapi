@@ -3,7 +3,6 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 const quotes = process.env.DB_QUOTES || '"';
-console.log('---', quotes)
 
 export const searchService = (searchDto: SearchDto, root, core = undefined) => {
   const { string, array, fields, where } = searchDto;
