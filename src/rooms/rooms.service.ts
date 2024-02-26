@@ -55,9 +55,9 @@ export class RoomsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsFilter[]> {
-    const { root } = commonEntityGetParams(RoomsEntity);
+    const { root, fields } = commonEntityGetParams(RoomsEntity);
     const query = this.roomsRepository.createQueryBuilder(root);
-    const where = filterService(roomsDto, root);
+    const where = filterService(roomsDto, root, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -68,9 +68,9 @@ export class RoomsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RoomsFilter[]> {
-    const { root, core } = commonEntityGetParams(RoomsEntity);
+    const { root, core, fields } = commonEntityGetParams(RoomsEntity);
     const query = this.roomsRepository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core);
+    const where = searchService(searchDto, root, core, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);

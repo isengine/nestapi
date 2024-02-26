@@ -59,9 +59,9 @@ export class PostsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsFilter[]> {
-    const { root } = commonEntityGetParams(PostsEntity);
+    const { root, fields } = commonEntityGetParams(PostsEntity);
     const query = this.postsRepository.createQueryBuilder(root);
-    const where = filterService(postsDto, root);
+    const where = filterService(postsDto, root, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -72,9 +72,9 @@ export class PostsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<PostsFilter[]> {
-    const { root, core } = commonEntityGetParams(PostsEntity);
+    const { root, core, fields } = commonEntityGetParams(PostsEntity);
     const query = this.postsRepository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core);
+    const where = searchService(searchDto, root, core, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);

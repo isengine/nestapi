@@ -57,9 +57,9 @@ export class SocketsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsFilter[]> {
-    const { root } = commonEntityGetParams(SocketsEntity);
+    const { root, fields } = commonEntityGetParams(SocketsEntity);
     const query = this.socketsRepository.createQueryBuilder(root);
-    const where = filterService(socketsDto, root);
+    const where = filterService(socketsDto, root, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -70,9 +70,9 @@ export class SocketsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsFilter[]> {
-    const { root, core } = commonEntityGetParams(SocketsEntity);
+    const { root, core, fields } = commonEntityGetParams(SocketsEntity);
     const query = this.socketsRepository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core);
+    const where = searchService(searchDto, root, core, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);

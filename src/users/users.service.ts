@@ -76,9 +76,9 @@ export class UsersService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersFilter[]> {
-    const { root } = commonEntityGetParams(UsersEntity);
+    const { root, fields } = commonEntityGetParams(UsersEntity);
     const query = this.usersRepository.createQueryBuilder(root);
-    const where = filterService(usersDto, root);
+    const where = filterService(usersDto, root, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -89,9 +89,9 @@ export class UsersService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersFilter[]> {
-    const { root, core } = commonEntityGetParams(UsersEntity);
+    const { root, core, fields } = commonEntityGetParams(UsersEntity);
     const query = this.usersRepository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core);
+    const where = searchService(searchDto, root, core, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);

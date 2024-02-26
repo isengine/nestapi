@@ -10,19 +10,19 @@ import {
 @ObjectType()
 @Entity()
 export class CommonEntity extends BaseEntity {
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   @PrimaryGeneratedColumn({
     type: 'bigint',
   })
   id: number;
 
-  @Field()
+  @Field({ nullable: true })
   @CreateDateColumn({
     name: 'created_at',
   })
   createdAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @UpdateDateColumn({
     name: 'updated_at',
   })

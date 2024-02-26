@@ -55,9 +55,9 @@ export class TagsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsFilter[]> {
-    const { root } = commonEntityGetParams(TagsEntity);
+    const { root, fields } = commonEntityGetParams(TagsEntity);
     const query = this.tagsRepository.createQueryBuilder(root);
-    const where = filterService(tagsDto, root);
+    const where = filterService(tagsDto, root, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -68,9 +68,9 @@ export class TagsService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<TagsFilter[]> {
-    const { root, core } = commonEntityGetParams(TagsEntity);
+    const { root, core, fields } = commonEntityGetParams(TagsEntity);
     const query = this.tagsRepository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core);
+    const where = searchService(searchDto, root, core, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);

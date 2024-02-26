@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const quotes = process.env.DB_QUOTES || '"';
 
-export const filterService = (dto, root = '', fields = {}) => {
+export const filterService = (dto, root = '', fieldsMap = {}) => {
   let where = '';
   Object.entries(dto).map(([key, value], index) => {
     if (index) {
@@ -12,17 +12,17 @@ export const filterService = (dto, root = '', fields = {}) => {
     }
     if (isArray(value)) {
       const [ firstValue ] = value;
-      const result = filterService(firstValue, key, fields);
+      const result = filterService(firstValue, key, fieldsMap);
       where += result;
       return;
     }
     if (typeof value === 'object') {
-      const result = filterService(value, key, fields);
+      const result = filterService(value, key, fieldsMap);
       where += result;
       return;
     }
     const rootKey = `${root ? `${root}.` : ''}${key}`;
-    const fieldsKey = `${fields[rootKey] ? fields[rootKey] : key}`;
+    const fieldsKey = `${fieldsMap[rootKey] ? fieldsMap[rootKey] : key}`;
     key = `${quotes}${root}${quotes}.${quotes}${fieldsKey}${quotes}`;
     const matchValue = ` ${value} `.match(
       / select | update | delete | join | union /giu,

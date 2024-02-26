@@ -55,9 +55,9 @@ export class CategoriesService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesFilter[]> {
-    const { root } = commonEntityGetParams(CategoriesEntity);
+    const { root, fields } = commonEntityGetParams(CategoriesEntity);
     const query = this.categoriesRepository.createQueryBuilder(root);
-    const where = filterService(categoriesDto, root);
+    const where = filterService(categoriesDto, root, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -68,9 +68,9 @@ export class CategoriesService {
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<CategoriesFilter[]> {
-    const { root, core } = commonEntityGetParams(CategoriesEntity);
+    const { root, core, fields } = commonEntityGetParams(CategoriesEntity);
     const query = this.categoriesRepository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core);
+    const where = searchService(searchDto, root, core, fields);
     query.where(where);
     commonRelationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
