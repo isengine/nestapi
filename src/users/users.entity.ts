@@ -13,6 +13,21 @@ export class UsersEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  email?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'bigint',
+    nullable: true,
+  })
+  phone?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
     length: 300,
     nullable: true,
   })
@@ -21,17 +36,29 @@ export class UsersEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    length: 200,
+    length: 300,
     nullable: true,
+    name: 'first_name',
   })
-  email?: string;
+  firstName?: string;
 
   @Field({ nullable: true })
   @Column({
-    type: 'int',
+    type: 'varchar',
+    length: 300,
     nullable: true,
+    name: 'last_name',
   })
-  phone?: string;
+  lastName?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 300,
+    nullable: true,
+    name: 'father_name',
+  })
+  fatherName?: string;
 
   @Field({ nullable: true })
   @Column({
@@ -47,6 +74,109 @@ export class UsersEntity extends CommonEntity {
     nullable: true,
   })
   birthday?: Date;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 8,
+    nullable: true,
+  })
+  locale?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  country?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  region?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  city?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  street?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  house?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  building?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  wing?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  apartment?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  place?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'int',
+    nullable: true,
+    name: 'post_code',
+  })
+  postCode?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 8,
+    nullable: true,
+  })
+  timezone?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  tz?: string;
 
   @Field(() => GenderUsers, {
     nullable: true,

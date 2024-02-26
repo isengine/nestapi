@@ -12,13 +12,21 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/dto/auth.dto';
-import { TokensDto } from '@src/auth/dto/tokens.dto';
 import { Auth } from '@src/auth/auth.decorator';
 import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
+import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
+import { LeaderProvider } from '@src/auth/provider/leader.provider';
+import { SessionsService } from '@src/sessions/sessions.service';
+import { TokensService } from '@src/tokens/tokens.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly sessionsService: SessionsService,
+    private readonly tokensService: TokensService,
+    private readonly leaderProvider: LeaderProvider,
+  ) {}
 
   @Get('get_all')
   @Auth()
@@ -40,12 +48,6 @@ export class AuthController {
     return this.authService.register(authDto, req);
   }
 
-  @HttpCode(200)
-  @Post('refresh_tokens')
-  async refreshTokens(@Body() tokensDto: TokensDto, @Req() req: any) {
-    return this.authService.refreshTokens(tokensDto, req);
-  }
-
   @Auth()
   @HttpCode(200)
   @Post('logout')
@@ -63,8 +65,30 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleRedirect(@Req() req: any) {
     const { user: auth } = req;
-    const tokens = await this.authService.createTokensPair(auth);
-    await this.authService.createSession(auth, tokens, req);
+    const tokens = await this.tokensService.tokensCreatePair(auth);
+    await this.sessionsService.createSession(auth, tokens, req);
+    return {
+      ...auth,
+      ...tokens,
+    };
+  }
+
+  @Get('leader/login')
+  @UseGuards(LeaderAuthGuard)
+  async leaderLogin() {
+    return;
+  }
+
+  @Get('leader/redirect')
+  // @UseGuards(LeaderAuthGuard)
+  async leaderRedirect(@Req() req: any) {
+    const account = await this.leaderProvider.activate(req);
+    if (!account) {
+      return account;
+    }
+    const auth = await this.leaderProvider.validate(account);
+    const tokens = await this.tokensService.tokensCreatePair(auth);
+    await this.sessionsService.createSession(auth, tokens, req);
     return {
       ...auth,
       ...tokens,

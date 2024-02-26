@@ -3,6 +3,9 @@ import { AppModule } from '@src/app.module';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 import * as session from 'express-session';
+import * as FileStore from 'session-file-store';
+
+const FileStoreSession = FileStore(session);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -47,6 +50,7 @@ async function bootstrap() {
       cookie: {
         maxAge: Number(process.env.SESSION_EXPIRES) || -3600,
       },
+      store: new FileStoreSession({}),
     }),
   );
   app.use(passport.initialize());

@@ -12,6 +12,7 @@ import { AppService } from '@src/app.service';
 
 import { AuthModule } from '@src/auth/auth.module';
 import { CategoriesModule } from '@src/categories/categories.module';
+import { ClientsModule } from '@src/clients/clients.module';
 // import { ConfirmModule } from '@src/confirm/confirm.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
 import { RoomsModule } from '@src/rooms/rooms.module';
@@ -19,11 +20,12 @@ import { FilesModule } from '@src/files/files.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { RolesModule } from '@src/roles/roles.module';
-import { SessionModule } from '@src/session/session.module';
+import { SessionsModule } from '@src/sessions/sessions.module';
 import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
 
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   controllers: [AppController],
@@ -45,14 +47,16 @@ import { NogqlModule } from '@src/typeorm/module/nogql.module';
     PassportModule.register({ session: true }),
     AuthModule,
     CategoriesModule,
+    ClientsModule,
     FilesModule,
     MailModule,
     PostsModule,
     RolesModule,
     RoomsModule,
-    SessionModule,
+    SessionsModule,
     SocketsModule,
     TagsModule,
+    TokensModule,
     UsersModule,
   ],
   providers: [AppService],

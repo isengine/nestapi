@@ -3,7 +3,7 @@ import { AuthDto } from '@src/auth/dto/auth.dto';
 import { CommonDto } from '@src/typeorm/dto/common.dto';
 
 @InputType()
-export class SessionDto extends CommonDto {
+export class SessionsDto extends CommonDto {
   @Field({ nullable: true })
   description?: string;
 
@@ -20,7 +20,7 @@ export class SessionDto extends CommonDto {
   method?: string;
 
   // @Field({ nullable: true })
-  // session?: string;
+  // sessions?: string;
 
   // @Field({ nullable: true })
   // cookies?: string;

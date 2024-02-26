@@ -3,7 +3,6 @@ import { AuthDto } from '@src/auth/dto/auth.dto';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
 import { MixinDto } from '@src/auth/dto/mixin.dto';
-import { TokensDto } from './dto/tokens.dto';
 
 @Resolver('Auth')
 export class AuthResolver {
@@ -30,15 +29,6 @@ export class AuthResolver {
     @Context() context,
   ): Promise<MixinDto> {
     return await this.authService.register(authDto, context.req);
-  }
-
-  @Query(() => AuthEntity)
-  async refreshTokens(
-    @Args('tokens')
-    tokensDto: TokensDto,
-    @Context() context,
-  ): Promise<TokensDto> {
-    return await this.authService.refreshTokens(tokensDto, context.req);
   }
 
   // @Mutation(() => AuthEntity)

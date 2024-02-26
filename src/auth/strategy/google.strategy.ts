@@ -50,7 +50,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       authId: auth.id,
       email: account.email,
       name: account.name,
+      firstName: account.given_name,
+      lastName: account.family_name,
       avatar: account.picture,
+      locale: account.locale,
     });
     return auth;
   }

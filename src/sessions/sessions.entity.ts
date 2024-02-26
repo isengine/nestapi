@@ -4,8 +4,8 @@ import { CommonEntity } from '@src/typeorm/entity/common.entity';
 import { AuthEntity } from '@src/auth/auth.entity';
 
 @ObjectType()
-@Entity({ name: 'session' })
-export class SessionEntity extends CommonEntity {
+@Entity({ name: 'sessions' })
+export class SessionsEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -53,7 +53,7 @@ export class SessionEntity extends CommonEntity {
   //   length: 2048,
   //   nullable: true,
   // })
-  // session?: string;
+  // sessions?: string;
 
   // @Field({ nullable: true })
   // @Column({
@@ -79,7 +79,7 @@ export class SessionEntity extends CommonEntity {
   })
   timezone?: string;
 
-  @ManyToOne(() => AuthEntity, (auth) => auth.session, {
+  @ManyToOne(() => AuthEntity, (auth) => auth.sessions, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

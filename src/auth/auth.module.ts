@@ -1,9 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
-
-import { getJwtConfig } from '@src/config/jwt.config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from '@src/auth/strategy/jwt.strategy';
 import { AuthController } from '@src/auth/auth.controller';
 import { AuthEntity } from '@src/auth/auth.entity';
@@ -12,26 +9,27 @@ import { AuthResolver } from '@src/auth/auth.resolver';
 import { GoogleStrategy } from '@src/auth/strategy/google.strategy';
 import { SessionSerializer } from '@src/auth/session/serialize.session';
 import { UsersModule } from '@src/users/users.module';
-import { SessionModule } from '@src/session/session.module';
+import { SessionsModule } from '@src/sessions/sessions.module';
+import { LeaderStrategy } from '@src/auth/strategy/leader.strategy';
+import { LeaderProvider } from '@src/auth/provider/leader.provider';
+import { TokensModule } from '@src/tokens/tokens.module';
 
 @Module({
   controllers: [AuthController],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
+    forwardRef(() => SessionsModule),
+    forwardRef(() => TokensModule),
     forwardRef(() => UsersModule),
-    forwardRef(() => SessionModule),
     ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getJwtConfig,
-    }),
   ],
   providers: [
     AuthService,
     AuthResolver,
+    LeaderProvider,
     JwtStrategy,
     GoogleStrategy,
+    LeaderStrategy,
     SessionSerializer,
   ],
   exports: [AuthService],
