@@ -75,13 +75,13 @@ export class PostsController {
   }
 
   @Post('create')
-  async postsCreate(@Body('create') postsDto: PostsDto) {
+  async postsCreate(@Body() postsDto: PostsDto) {
     return await this.postsService.postsCreate(postsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async postsUpdate(@Body('update') postsDto: PostsDto) {
+  async postsUpdate(@Body() postsDto: PostsDto) {
     return await this.postsService.postsUpdate(postsDto);
   }
 

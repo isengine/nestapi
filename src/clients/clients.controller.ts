@@ -1,21 +1,49 @@
 // import { Body, Controller, Get, Post, Put, Delete, NotFoundException } from '@nestjs/common';
-import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
+import { Body, Controller, Get, Post, NotFoundException, Req } from '@nestjs/common';
 import { ClientsService } from '@src/clients/clients.service';
 import { ClientsDto } from '@src/clients/clients.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
+import { Client, SelfClient } from '@src/clients/clients.decorator';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
+  @Post('register')
+  async clientsRegister(@Body() clientsDto: ClientsDto) {
+    return await this.clientsService.clientsRegister(clientsDto);
+  }
+
+  @Client()
+  @Get('self')
+  async clientsSelfGet(@SelfClient() id: number) {
+    const result = await this.clientsService.clientsGetOne(id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Client()
+  @Post('self')
+  async clientsSelfPost(@SelfClient() id: number) {
+    const result = await this.clientsService.clientsGetOne(id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Client()
   @Get('get_all')
   async clientsGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
     return await this.clientsService.clientsGetAll(relationsDto);
   }
 
+  @Client()
   @Get('get_one')
   async clientsGetOne(
     @Data('id') id: number,
@@ -75,13 +103,13 @@ export class ClientsController {
   }
 
   @Post('create')
-  async clientsCreate(@Body('create') clientsDto: ClientsDto) {
+  async clientsCreate(@Body() clientsDto: ClientsDto) {
     return await this.clientsService.clientsCreate(clientsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async clientsUpdate(@Body('update') clientsDto: ClientsDto) {
+  async clientsUpdate(@Body() clientsDto: ClientsDto) {
     return await this.clientsService.clientsUpdate(clientsDto);
   }
 

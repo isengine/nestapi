@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  NotFoundException,
   Post,
   Req,
   Session,
@@ -12,12 +13,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/dto/auth.dto';
-import { Auth } from '@src/auth/auth.decorator';
+import { Auth, Self } from '@src/auth/auth.decorator';
 import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
 import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
 import { LeaderProvider } from '@src/auth/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokensService } from '@src/tokens/tokens.service';
+import { Client } from '@src/clients/clients.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +29,37 @@ export class AuthController {
     private readonly tokensService: TokensService,
     private readonly leaderProvider: LeaderProvider,
   ) {}
+
+  @Get('self')
+  @Auth()
+  async authSelfGet(@Self() id: number) {
+    const result = await this.authService.authGetOne(id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Post('self')
+  @Auth()
+  async authSelfPost(@Self() id: number) {
+    const result = await this.authService.authGetOne(id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
+
+  @Auth()
+  @Client()
+  @Post('secure')
+  async authSecure(@Self() id: number) {
+    const result = await this.authService.authGetOne(id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
+  }
 
   @Get('get_all')
   @Auth()

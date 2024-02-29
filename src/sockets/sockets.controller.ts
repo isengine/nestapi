@@ -75,13 +75,13 @@ export class SocketsController {
   }
 
   @Post('create')
-  async socketsCreate(@Body('create') socketsDto: SocketsDto) {
+  async socketsCreate(@Body() socketsDto: SocketsDto) {
     return await this.socketsService.socketsCreate(socketsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async socketsUpdate(@Body('update') socketsDto: SocketsDto) {
+  async socketsUpdate(@Body() socketsDto: SocketsDto) {
     return await this.socketsService.socketsUpdate(socketsDto);
   }
 

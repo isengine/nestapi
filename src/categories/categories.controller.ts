@@ -78,13 +78,13 @@ export class CategoriesController {
   }
 
   @Post('create')
-  async categoriesCreate(@Body('create') categoriesDto: CategoriesDto) {
+  async categoriesCreate(@Body() categoriesDto: CategoriesDto) {
     return await this.categoriesService.categoriesCreate(categoriesDto);
   }
 
   // @Put('update')
   @Post('update')
-  async categoriesUpdate(@Body('update') categoriesDto: CategoriesDto) {
+  async categoriesUpdate(@Body() categoriesDto: CategoriesDto) {
     return await this.categoriesService.categoriesUpdate(categoriesDto);
   }
 

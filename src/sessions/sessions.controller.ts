@@ -38,13 +38,13 @@ export class SessionsController {
   }
 
   @Post('create')
-  async sessionsCreate(@Body('create') sessionsDto: SessionsDto) {
+  async sessionsCreate(@Body() sessionsDto: SessionsDto) {
     return await this.sessionsService.sessionsCreate(sessionsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async sessionsUpdate(@Body('update') sessionsDto: SessionsDto) {
+  async sessionsUpdate(@Body() sessionsDto: SessionsDto) {
     return await this.sessionsService.sessionsUpdate(sessionsDto);
   }
 

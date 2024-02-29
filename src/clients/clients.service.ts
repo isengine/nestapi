@@ -1,5 +1,5 @@
 import { In, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientsDto } from '@src/clients/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
@@ -14,13 +14,50 @@ import {
 import { filterService } from '@src/typeorm/services/filter.service';
 import { optionsService } from '@src/typeorm/services/options.service';
 import { searchService } from '@src/typeorm/services/search.service';
+import { TokensService } from '@src/tokens/tokens.service';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(ClientsEntity)
     private readonly clientsRepository: Repository<ClientsEntity>,
+    private readonly tokensService: TokensService,
   ) {}
+
+  async clientsRegister(clientsDto: ClientsDto): Promise<ClientsEntity> {
+    const client = await this.clientsCreate(clientsDto);
+    if (!client) {
+      throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
+    }
+    client.client_secret = await this.tokensService.tokensGenerateOne({
+      client_id: client.client_id,
+    }, 'JWT_CLIENTS_EXPIRES');
+    const updated = await this.clientsUpdate({...client});
+    return updated ? client : null;
+  }
+
+  async clientsVerify(client_id: string, client_secret: string): Promise<any> {
+    let client;
+    try {
+      client = await this.clientsRepository.findOne({
+        where: {
+          client_id,
+          client_secret,
+        }
+      });
+    } catch (e) {
+      // grant_type=password
+      console.error('Clients verify error', e);
+      throw new BadRequestException(e.message, { cause: new Error(), description: 'invalid_request' });
+    }
+    if (!client) {
+      throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
+    }
+    if (!client.client_id || !client.client_secret) {
+      throw new BadRequestException('Client is not authorized or has the rights to this request', { cause: new Error(), description: 'unauthorized_client' });
+    }
+    return client?.id;
+  }
 
   async clientsGetAll(
     relationsDto: Array<RelationsDto> = undefined,
@@ -79,6 +116,7 @@ export class ClientsService {
   async clientsCreate(clientsDto: ClientsDto): Promise<ClientsEntity> {
     delete clientsDto.createdAt;
     delete clientsDto.updatedAt;
+    delete clientsDto.client_id;
     return await this.clientsRepository.save({ ...clientsDto });
   }
 

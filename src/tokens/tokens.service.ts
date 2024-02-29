@@ -50,14 +50,27 @@ export class TokensService {
     return !!find?.length;
   }
 
+  async tokensGenerateOne(data, configKey) {
+    const expires = this.configService.get(configKey) || '';
+    const token = await this.jwtService.signAsync(
+      data,
+      expires
+        ? { expiresIn: expires }
+        : {},
+    );
+    return token;
+  }
+
   async tokensCreatePair(auth, token = undefined) {
     const data = { id: auth.id };
-    const accessToken = await this.jwtService.signAsync(data, {
-      expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
-    });
-    const refreshToken = await this.jwtService.signAsync(data, {
-      expiresIn: this.configService.get('JWT_REFRESH_EXPIRES'),
-    });
+    const accessToken = await this.tokensGenerateOne(data, 'JWT_ACCESS_EXPIRES');
+    const refreshToken = await this.tokensGenerateOne(data, 'JWT_REFRESH_EXPIRES');
+    // const accessToken = await this.jwtService.signAsync(data, {
+    //   expiresIn: this.configService.get('JWT_ACCESS_EXPIRES'),
+    // });
+    // const refreshToken = await this.jwtService.signAsync(data, {
+    //   expiresIn: this.configService.get('JWT_REFRESH_EXPIRES'),
+    // });
     const result = await this.tokensCreateEntry({
       auth,
       accessToken,

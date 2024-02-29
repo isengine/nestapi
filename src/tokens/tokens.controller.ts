@@ -81,13 +81,13 @@ export class TokensController {
   }
 
   @Post('create')
-  async tokensCreate(@Body('create') tokensDto: TokensDto) {
+  async tokensCreate(@Body() tokensDto: TokensDto) {
     return await this.tokensService.tokensCreate(tokensDto);
   }
 
   // @Put('update')
   @Post('update')
-  async tokensUpdate(@Body('update') tokensDto: TokensDto) {
+  async tokensUpdate(@Body() tokensDto: TokensDto) {
     return await this.tokensService.tokensUpdate(tokensDto);
   }
 

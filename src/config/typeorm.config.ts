@@ -18,8 +18,8 @@ AppDataSource.initialize()
   .then(() => {
     console.log('Data Source has been initialized!');
   })
-  .catch((err) => {
-    console.error('Error during Data Source initialization', err);
+  .catch((e) => {
+    console.error('Error during Data Source initialization', e);
   });
 
 export default AppDataSource;

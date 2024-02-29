@@ -6,24 +6,24 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ApiType } from '@src/typeorm/types/api.type';
-import { JwtAuthGuard } from '@src/auth/guard/jwt.guard';
-import { GqlAuthGuard } from '@src/auth/guard/gql.guard';
+import { JwtClientsGuard } from '@src/clients/guard/jwt.guard';
+import { GqlClientsGuard } from '@src/clients/guard/gql.guard';
 
-export const Auth = (apiType: ApiType = undefined) => {
+export const Client = (apiType: ApiType = undefined) => {
   if (apiType === 'gql') {
-    return applyDecorators(UseGuards(GqlAuthGuard));
+    return applyDecorators(UseGuards(GqlClientsGuard));
   }
-  return applyDecorators(UseGuards(JwtAuthGuard));
+  return applyDecorators(UseGuards(JwtClientsGuard));
 };
 
-export const Self = createParamDecorator(
+export const SelfClient = createParamDecorator(
   async (apiType: ApiType = undefined, context: ExecutionContext) => {
     if (apiType === 'gql') {
       const ctx = GqlExecutionContext.create(context);
       const req = ctx.getContext().req;
-      return req.user?.id;
+      return req.user;
     }
     const request = context.switchToHttp().getRequest();
-    return request.user?.id;
+    return request.user;
   },
 );

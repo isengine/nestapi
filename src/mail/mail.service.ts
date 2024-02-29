@@ -35,7 +35,7 @@ export class MailService {
         html: options.html,
       })
       .catch((e) => {
-        console.log('sendMail error:', e);
+        console.error('sendMail error', e);
       });
     return result;
   }

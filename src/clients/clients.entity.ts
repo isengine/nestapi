@@ -15,25 +15,15 @@ export class ClientsEntity extends CommonEntity {
     nullable: true,
   })
   @Generated('uuid')
-  uuid: string;
+  client_id: string;
 
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
     length: 1024,
     nullable: true,
-    name: 'public_key',
   })
-  publicKey: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 1024,
-    nullable: true,
-    name: 'secret_key',
-  })
-  secretKey: string;
+  client_secret: string;
 
   @Field({ nullable: true })
   @Column({
@@ -68,18 +58,20 @@ export class ClientsEntity extends CommonEntity {
   })
   redirectUri: string;
 
-  @Field({ nullable: true })
+  @Field({ defaultValue: () => 'CURRENT_TIMESTAMP', nullable: true })
   @Column({
-    type: 'date',
+    type: 'timestamp',
     nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'published_at',
   })
   publishedAt: Date;
 
-  @Field({ nullable: true })
+  @Field({ defaultValue: true, nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
+    default: true,
     name: 'is_published',
   })
   isPublished: boolean;

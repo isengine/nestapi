@@ -30,18 +30,20 @@ export class PostsEntity extends CommonEntity {
   })
   content: string;
 
-  @Field({ nullable: true })
+  @Field({ defaultValue: () => 'CURRENT_TIMESTAMP', nullable: true })
   @Column({
-    type: 'date',
+    type: 'timestamp',
     nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'published_at',
   })
   publishedAt: Date;
 
-  @Field({ nullable: true })
+  @Field({ defaultValue: true, nullable: true })
   @Column({
     type: 'boolean',
     nullable: true,
+    default: true,
     name: 'is_published',
   })
   isPublished: boolean;

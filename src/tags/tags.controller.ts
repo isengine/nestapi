@@ -75,13 +75,13 @@ export class TagsController {
   }
 
   @Post('create')
-  async tagsCreate(@Body('create') tagsDto: TagsDto) {
+  async tagsCreate(@Body() tagsDto: TagsDto) {
     return await this.tagsService.tagsCreate(tagsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async tagsUpdate(@Body('update') tagsDto: TagsDto) {
+  async tagsUpdate(@Body() tagsDto: TagsDto) {
     return await this.tagsService.tagsUpdate(tagsDto);
   }
 

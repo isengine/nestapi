@@ -75,13 +75,13 @@ export class RoomsController {
   }
 
   @Post('create')
-  async roomsCreate(@Body('create') roomsDto: RoomsDto) {
+  async roomsCreate(@Body() roomsDto: RoomsDto) {
     return await this.roomsService.roomsCreate(roomsDto);
   }
 
   // @Put('update')
   @Post('update')
-  async roomsUpdate(@Body('update') roomsDto: RoomsDto) {
+  async roomsUpdate(@Body() roomsDto: RoomsDto) {
     return await this.roomsService.roomsUpdate(roomsDto);
   }
 

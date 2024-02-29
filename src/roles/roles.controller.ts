@@ -38,13 +38,13 @@ export class RolesController {
   }
 
   @Post('create')
-  async rolesCreate(@Body('create') rolesDto: RolesDto) {
+  async rolesCreate(@Body() rolesDto: RolesDto) {
     return await this.rolesService.rolesCreate(rolesDto);
   }
 
   // @Put('update')
   @Post('update')
-  async rolesUpdate(@Body('update') rolesDto: RolesDto) {
+  async rolesUpdate(@Body() rolesDto: RolesDto) {
     return await this.rolesService.rolesUpdate(rolesDto);
   }
 
