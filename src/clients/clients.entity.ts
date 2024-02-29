@@ -2,19 +2,20 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Entity,
   Column,
-  Generated,
+  // Generated,
 } from 'typeorm';
 import { CommonEntity } from '@src/typeorm/entity/common.entity';
 
 @ObjectType()
 @Entity({ name: 'clients' })
 export class ClientsEntity extends CommonEntity {
-  @Field({ nullable: true })
+  @Field({ defaultValue: null, nullable: true })
   @Column({
     type: 'uuid',
     nullable: true,
+    default: null,
   })
-  @Generated('uuid')
+  // @Generated('uuid')
   client_id: string;
 
   @Field({ nullable: true })

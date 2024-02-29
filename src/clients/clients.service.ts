@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import { In, Repository } from 'typeorm';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -116,7 +117,7 @@ export class ClientsService {
   async clientsCreate(clientsDto: ClientsDto): Promise<ClientsEntity> {
     delete clientsDto.createdAt;
     delete clientsDto.updatedAt;
-    delete clientsDto.client_id;
+    clientsDto.client_id = v4();
     return await this.clientsRepository.save({ ...clientsDto });
   }
 
@@ -125,7 +126,10 @@ export class ClientsService {
     if (id === undefined) {
       return;
     }
-    return await this.clientsCreate(clientsDto);
+    delete clientsDto.createdAt;
+    delete clientsDto.updatedAt;
+    delete clientsDto.client_id;
+    return await this.clientsRepository.save({ ...clientsDto });
   }
 
   async clientsRemove(id: number): Promise<boolean> {
