@@ -19,6 +19,7 @@ import { RoomsModule } from '@src/rooms/rooms.module';
 import { FilesModule } from '@src/files/files.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
+import { RandomModule } from '@src/random/random.module';
 import { RolesModule } from '@src/roles/roles.module';
 import { SessionsModule } from '@src/sessions/sessions.module';
 import { TagsModule } from '@src/tags/tags.module';
@@ -51,6 +52,7 @@ import { TokensModule } from './tokens/tokens.module';
     FilesModule,
     MailModule,
     PostsModule,
+    RandomModule,
     RolesModule,
     RoomsModule,
     SessionsModule,

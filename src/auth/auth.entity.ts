@@ -2,7 +2,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, OneToMany } from 'typeorm';
 import { CommonEntity } from '@src/typeorm/entity/common.entity';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
-import { TokensEntity } from '@src/tokens/tokens.entity';
 
 @ObjectType()
 @Entity({ name: 'auth' })
@@ -42,10 +41,4 @@ export class AuthEntity extends CommonEntity {
     onDelete: 'CASCADE',
   })
   sessions: SessionsEntity[];
-
-  @OneToMany(() => TokensEntity, (token) => token.auth, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  tokens: TokensEntity[];
 }
