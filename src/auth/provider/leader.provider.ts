@@ -1,9 +1,9 @@
-import { request } from 'https';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
+import { responseServer } from '@src/typeorm/service/response.service';
 
 @Injectable()
 export class LeaderProvider {
@@ -26,61 +26,27 @@ export class LeaderProvider {
   }
   
   async getToken(token: string): Promise<any> {
-    return this.responseServer(
-      '/api/v1/oauth/token',
-      'POST',
-      JSON.stringify({
+    return responseServer({
+      url: 'https://apps.leader-id.ru/api/v1/oauth/token',
+      method: 'post',
+      data: {
         client_id: this.configService.get('LEADER_CLIENT_ID'),
         client_secret: this.configService.get('LEADER_CLIENT_SECRET'),
         grant_type: 'authorization_code',
         code: token,
-      }),
-    );
-  }
-
-  async getUser(userId: string, access_token: string): Promise<any> {
-    return this.responseServer(
-      `/api/v1/users/${userId}`,
-      'GET',
-      '',
-      { Authorization: `Bearer ${access_token}` },
-    );
-  }
-
-  async responseServer(
-    path: string,
-    method: string,
-    data: string = '',
-    headers: any = {}
-  ): Promise<any> {
-    const options = {
-      hostname: 'apps.leader-id.ru',
-      path,
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': data.length,
-        ...headers,
       },
-    };
+      headers: null,
+    });
+  }
 
-    return new Promise((resolve, reject) => {
-      const req = request(options, (res) => {
-        let resData = '';
-        res.on('data', (d) => {
-          resData += d;
-        });
-        res.on('end', () => {
-          resolve(JSON.parse(resData));
-        });
-      });
-  
-      req.on('error', (e) => {
-        reject(new Error(`Failed to send data to server: ${e.message}`));
-      });
-
-      req.write(data);
-      req.end();
+  async getUser(userId: string, accessToken: string): Promise<any> {
+    return responseServer({
+      url: `https://apps.leader-id.ru/api/v1/users/${userId}`,
+      method: 'get',
+      data: null,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   }
 

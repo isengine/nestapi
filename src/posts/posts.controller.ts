@@ -6,6 +6,7 @@ import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
+import { FromClient } from '@src/auth/auth.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -13,6 +14,12 @@ export class PostsController {
 
   @Get('get_all')
   async postsGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
+    return await this.postsService.postsGetAll(relationsDto);
+  }
+
+  @FromClient()
+  @Get('get_all_secure')
+  async postsGetAllSecure(@Data('relations') relationsDto: Array<RelationsDto>) {
     return await this.postsService.postsGetAll(relationsDto);
   }
 

@@ -13,6 +13,7 @@ import { SessionsModule } from '@src/sessions/sessions.module';
 import { LeaderStrategy } from '@src/auth/strategy/leader.strategy';
 import { LeaderProvider } from '@src/auth/provider/leader.provider';
 import { TokensModule } from '@src/tokens/tokens.module';
+import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -26,10 +27,11 @@ import { TokensModule } from '@src/tokens/tokens.module';
   providers: [
     AuthService,
     AuthResolver,
-    LeaderProvider,
+    FromClientStrategy,
     JwtStrategy,
-    GoogleStrategy,
     LeaderStrategy,
+    GoogleStrategy,
+    LeaderProvider,
     SessionSerializer,
   ],
   exports: [AuthService],
