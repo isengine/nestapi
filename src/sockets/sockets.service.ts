@@ -10,10 +10,10 @@ import { SearchDto } from '@src/typeorm/dto/search.dto';
 import {
   commonEntityGetParams,
   commonRelationsCreate,
-} from '@src/typeorm/services/common.service';
-import { filterService } from '@src/typeorm/services/filter.service';
-import { optionsService } from '@src/typeorm/services/options.service';
-import { searchService } from '@src/typeorm/services/search.service';
+} from '@src/typeorm/service/common.service';
+import { filterService } from '@src/typeorm/service/filter.service';
+import { optionsService } from '@src/typeorm/service/options.service';
+import { searchService } from '@src/typeorm/service/search.service';
 import { RoomsService } from '@src/rooms/rooms.service';
 
 @Injectable()

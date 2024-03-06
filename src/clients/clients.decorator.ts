@@ -5,7 +5,7 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { ApiType } from '@src/typeorm/types/api.type';
+import { ApiType } from '@src/typeorm/type/api.type';
 import { JwtClientsGuard } from '@src/clients/guard/jwt.clients.guard';
 import { GqlClientsGuard } from '@src/clients/guard/gql.clients.guard';
 
