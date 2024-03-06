@@ -2,9 +2,8 @@ import { request } from 'https';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
-import { AuthDto } from '@src/auth/dto/auth.dto';
+import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
-import { MixinDto } from '@src/auth/dto/mixin.dto';
 
 @Injectable()
 export class LeaderProvider {
@@ -39,12 +38,12 @@ export class LeaderProvider {
     );
   }
 
-  async getUser(userId: string, accessToken: string): Promise<any> {
+  async getUser(userId: string, access_token: string): Promise<any> {
     return this.responseServer(
       `/api/v1/users/${userId}`,
       'GET',
       '',
-      { Authorization: `Bearer ${accessToken}` },
+      { Authorization: `Bearer ${access_token}` },
     );
   }
 
@@ -107,7 +106,7 @@ export class LeaderProvider {
       .then(async (result) => await this.prepareResult(result, account));
   }
 
-  async prepareResult(auth, account): Promise<MixinDto> {
+  async prepareResult(auth, account): Promise<AuthDto> {
     const genders = {
       male: 'm',
       female: 'w',
@@ -122,18 +121,18 @@ export class LeaderProvider {
       fatherName: account.fatherName,
       avatar: account.photo,
       birthday: account.birthday,
-      country: account.country,
-      region: account.region,
-      city: account.city,
-      street: account.street,
-      house: account.house,
-      building: account.building,
-      wing: account.wing,
-      apartment: account.apartment,
-      place: account.place,
-      postCode: account.postCode,
-      timezone: account.timezone,
-      tz: `${(Number(account?.tz?.minutes) || 0) * 60}`,
+      country: account.address?.country,
+      region: account.address?.region,
+      city: account.address?.city,
+      street: account.address?.street,
+      house: account.address?.house,
+      building: account.address?.building,
+      wing: account.address?.wing,
+      apartment: account.address?.apartment,
+      place: account.address?.place,
+      postCode: account.address?.postCode,
+      timezone: account.address?.timezone,
+      tz: `${(Number(account?.address?.tz?.minutes) || 0) * 60}`,
       gender: genders[account.gender] || '',
     });
     return auth;

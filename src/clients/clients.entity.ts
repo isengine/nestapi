@@ -2,9 +2,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Entity,
   Column,
+  ManyToOne,
+  JoinColumn,
   // Generated,
 } from 'typeorm';
 import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { AuthEntity } from '@src/auth/auth.entity';
+import { TypeClients } from '@src/clients/clients.enum';
 
 @ObjectType()
 @Entity({ name: 'clients' })
@@ -29,6 +33,26 @@ export class ClientsEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
+    length: 1024,
+    nullable: true,
+  })
+  client_password: string;
+
+  @Field(() => TypeClients, {
+    nullable: true,
+    defaultValue: TypeClients.DEFAULT,
+  })
+  @Column({
+    type: 'enum',
+    enum: TypeClients,
+    default: TypeClients.DEFAULT,
+    nullable: true,
+  })
+  client_type?: TypeClients;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
     length: 200,
     nullable: true,
   })
@@ -46,18 +70,24 @@ export class ClientsEntity extends CommonEntity {
     type: 'varchar',
     length: 2048,
     nullable: true,
-    name: 'client_uri',
   })
-  clientUri: string;
+  client_uri: string;
 
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
     length: 2048,
     nullable: true,
-    name: 'redirect_uri',
   })
-  redirectUri: string;
+  redirect_uri: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 2048,
+    nullable: true,
+  })
+  code: string;
 
   @Field({ defaultValue: () => 'CURRENT_TIMESTAMP', nullable: true })
   @Column({
@@ -76,4 +106,9 @@ export class ClientsEntity extends CommonEntity {
     name: 'is_published',
   })
   isPublished: boolean;
+
+  @Field()
+  @ManyToOne(() => AuthEntity)
+  @JoinColumn({ name: 'auth_id', referencedColumnName: 'id' })
+  auth: AuthEntity;
 }

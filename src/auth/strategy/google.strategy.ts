@@ -3,9 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { AuthService } from '@src/auth/auth.service';
-import { AuthDto } from '@src/auth/dto/auth.dto';
+import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
-import { MixinDto } from '@src/auth/dto/mixin.dto';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
@@ -22,7 +21,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile) {
+  async validate(access_token: string, refresh_token: string, profile: Profile) {
     const account = profile._json;
     const auth = await this.authService.authGetByUsername(account.email);
 
@@ -45,7 +44,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       .then(async (result) => await this.prepareResult(result, account));
   }
 
-  async prepareResult(auth, account): Promise<MixinDto> {
+  async prepareResult(auth, account): Promise<AuthDto> {
     await this.userService.usersUpdateByAuthId({
       authId: auth.id,
       email: account.email,

@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
-import { AuthDto } from '@src/auth/dto/auth.dto';
+import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
 import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
@@ -30,8 +30,8 @@ export class AuthController {
     private readonly leaderProvider: LeaderProvider,
   ) {}
 
-  @Get('self')
   @Auth()
+  @Get('self')
   async authSelfGet(@Self() id: number) {
     const result = await this.authService.authGetOne(id);
     if (!result) {
@@ -40,8 +40,8 @@ export class AuthController {
     return result;
   }
 
-  @Post('self')
   @Auth()
+  @Post('self')
   async authSelfPost(@Self() id: number) {
     const result = await this.authService.authGetOne(id);
     if (!result) {
@@ -61,8 +61,8 @@ export class AuthController {
     return result;
   }
 
-  @Get('get_all')
   @Auth()
+  @Get('get_all')
   async authGetAll() {
     return await this.authService.authGetAll();
   }
@@ -100,10 +100,8 @@ export class AuthController {
     const { user: auth } = req;
     const tokens = await this.tokensService.tokensCreatePair(auth);
     await this.sessionsService.createSession(auth, tokens, req);
-    return {
-      ...auth,
-      ...tokens,
-    };
+    auth.tokens = tokens;
+    return auth;
   }
 
   @Get('leader/login')
@@ -122,10 +120,8 @@ export class AuthController {
     const auth = await this.leaderProvider.validate(account);
     const tokens = await this.tokensService.tokensCreatePair(auth);
     await this.sessionsService.createSession(auth, tokens, req);
-    return {
-      ...auth,
-      ...tokens,
-    };
+    auth.tokens = tokens;
+    return auth;
   }
 
   @Get('status')

@@ -24,20 +24,20 @@ export class SessionsService {
       timezone: headers['timezone'],
       auth,
       description,
-      accessToken: tokens?.accessToken || null,
-      refreshToken: tokens?.refreshToken || null,
+      access_token: tokens?.access_token || null,
+      refresh_token: tokens?.refresh_token || null,
     };
     return await this.sessionsCreate(data);
   }
 
   async createSession(auth, tokens, request) {
-    const { refreshToken } = tokens;
+    const { refresh_token } = tokens;
     const { session } = request;
     // console.log('-- session create', session);
     if (!session) {
       return;
     }
-    session.token = refreshToken;
+    session.token = refresh_token;
     session.save(async (e) => {
       await this.logSessions(auth, tokens, request, e ? 'create error' : 'create');
     });

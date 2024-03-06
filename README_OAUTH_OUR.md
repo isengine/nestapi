@@ -26,6 +26,67 @@
 
 Тажке стоит понимать, что авторизация возможна без идентификации и аутентификации. Например, система может разрешить любому неопознанному пользователю доступ к просмотру документов. И несмотря на то, что пользователь может быть совершенно неопознанный и даже без аккаунта в системе, система все же его авторизовала - то есть выдала право прочитать этот документ.
 
+## Последовательность действий. По спецификации
+
+Пользователь открывает клиентское приложение.
+
+Клиентское приложение не знает пользователя. Поэтому его нужно идентифицировать. Но вместо того, чтобы заниматься этим самому, клиентское приложение отправляет пользователя на сервер авторизации.
+
+Вернее это выглядит так. Клиентское приложение отправляет запрос на сервер авторизации, предоставляя ему свой токен
+
+    client_secret
+
+Сервер авторизации видит токен и проверяет его. Аутентифицирует клиентское приложение и авторизует запрос. В результате запроса возвращается
+
+    url
+
+который ведет на страницу авторизации пользователя.
+
+Либо сервер авторизации просто выводит эту страницу самостоятельно. Т.к. все эти шаги происходят в агенте пользователя (например, в браузере), то страницу можно вывести без проблем.
+
+Пользователь вводит свои данные - логин и пароль.
+
+(
+    Как происходит запрос токенов, например в google или leaderid??? когда мы не логинимся, а сервер авторизации сразу авторизует нас
+    
+    Либо сервер авторизации читает токен, который есть у пользователя. Например, пользователь заходил в систему ранее.
+)
+
+И сервер авторизации авторизует пользователя. Затем он берет из бд, из записи с настройками клиента поле
+
+    redirect_uri
+
+и запрашивает в этом же окне указанный урл, передавая в параметрах
+
+    код авторизации
+
+Чем это все хорошо? Тем, что клиентское приложение ничего не знает о логине и пароле пользователя. Все это происходит вне его работы, здесь есть только пользователь и сервер авторизации.
+
+Дальше клиент, пользуясь кодом авторизации, запрашивает у сервера авторизации токен доступа. Это также происходит в закрытом от пользователя потоке.
+
+Т.е. по сути, код авторизации это некий код, который клиент обменивает у сервера на токен доступа. И вроде бы как это должно создавать безопасность. Давайте разберемся, как.
+
+Во-первых, это происходит на бэке. Во-вторых, передача кода авторизации инициируется не клиентом, а сервером авторизации. Т.е. он отправляет запрос по указанному
+
+    redirect_uri
+
+а это значит, что код не будет выведен просто в окошке и его нельзя будет просто перехватить.
+
+В чем ответственность клиента? Он посылает ответный запрос на сервер авторизации.
+
+Таким образом, если злоумышленник инициирует запрос на эндпоин клиента и передаст некий набор символов, клиент пошлет этот набор на сервер авторизации, который отклонит запрос. И подделки тоже не будет.
+
+Правда я не вижу здесь никакой надежной защиты. Например, пользователь или злоумышленник может перехватить этот код авторизации, встав на трафик. И отправить его на эндпоинт сервера авторизации, чтобы обменять на токен доступа. В результате мы получим тот же токен доступа.
+
+Токен доступа мы не можем получить от сервера 
+
+
+Т.е. по сути, код авторизации это некий код, который клиент обменивает у сервера на токен доступа. И вроде бы как это должно защищать наш токен доступа. Но я не вижу здесь никакой надежной защиты. Например, пользователь или злоумышленник может перехватить этот код авторизации. И отправить его на эндпоинт сервера авторизации, чтобы обменять на токен доступа. В результате мы получим тот же токен доступа.
+
+Спецификация предусматривает упрощенный механизм - Неявное разрешение. Когда сервер авторизации сразу возвращает токен доступа. В результате мы сокращаем число запросов и не проигрываем в безопасности.
+
+В спецификации сказано, что при использовании Неявного разрешения, мы должны обеспечить дополнительные проверки, чтобы клиентское приложение могло убедиться, что этот токен действительно принадлежит этому пользователю.
+
 ## Последовательность действий. Вход в систему
 
 Сам процесс входа в систему описан в разделе ниже.
@@ -235,12 +296,26 @@
 
 На сервере авторизации в такие запросы потребуется добавлять идентификатор клиентского приложения и другие данные, например, название приложения, описание, логотип, ссылку и т.д.
 
+4. Четвертый кейс
+
+Мы обращаемся к серверу авторизации из клиентского приложения, чтобы авторизовать пользователя. Если пользователь авторизован, то все ок. Мы можем выдать ему внутренний токен или другим каким-то образом связать его с нашей базой пользователей.
+
+5. Пятый кейс
+
+Мы обращаемся к серверу авторизации из клиентского приложения, чтобы авторизовать пользователя по протоколу OAuth 2.0, как к любому стороннему сервису авторизации.
+
 
 
 # Схема бд
 
 - users
 - clients
+
+Все описанные здесь запросы происходят от имени клиента. соответственно, модуль клиента реализует авторизацию по протоколу OAuth 2.0.
+
+Простая авторизация работает и без этого модуля.
+
+Также клиент должен быть связан с пользователем.
 
 # Схема запросов
 
@@ -253,9 +328,15 @@ POST
 {
     title: string,
     description: string,
-    clientUri: string,
-    redirectUri: string
+    client_uri: string,
+    redirect_uri: string
 }
+
+Headers
+
+    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M
+
+Обязательно передавать этот запрос с заголовком токена авторизации пользователя. Клиент привязывается к пользователю и авторизация в этом случае обязательна.
 
 Response
 
@@ -265,8 +346,8 @@ Response
 	"updatedAt": "2024-02-27T22:33:15.647Z",
 	"title": "string",
 	"description": "string",
-	"clientUri": "string",
-	"redirectUri": "string",
+	"client_uri": "string",
+	"redirect_uri": "string",
 	"publishedAt": "2024-02-27T22:33:15.647Z",
 	"isPublished": true,
 	"client_id": "887059dd-2814-43b4-81ac-d2bc21cc564f",
@@ -287,6 +368,70 @@ Response
 
 Мы исключили способ передачи client_secret как Bearer-токена в заголовке authorization из-за возможных конфликтов. Ключ client_secret будет передаваться совместно с токеном пользователя. А тот, в свою очередь, будет использовать Bearer как основной способ передачи. 
 
+## Авторизация клиентского приложения через код авторизации
+
+/clients/authorize
+
+POST
+
+{
+	response_type: "code",
+    client_id: string
+    redirect_uri: string
+}
+
+Headers
+
+    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M
+
+Обязательно передавать этот запрос с заголовком токена авторизации пользователя. Клиент привязывается к пользователю. В данном запросе подразумевается, что клиент отдает код авторизации, который будет меняться на токен доступа клиентского приложения. При этом пользователь должен быть авторизован.
+
+{
+	"id": "27",
+	"createdAt": "2024-02-27T22:33:15.647Z",
+	"updatedAt": "2024-02-27T22:33:15.647Z",
+	"title": "string",
+	"description": "string",
+	"client_uri": "string",
+	"redirect_uri": "string",
+	"publishedAt": "2024-02-27T22:33:15.647Z",
+	"isPublished": true,
+	"client_id": "887059dd-2814-43b4-81ac-d2bc21cc564f",
+	"client_secret": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiI4ODcwNTlkZC0yODE0LTQzYjQtODFhYy1kMmJjMjFjYzU2NGYiLCJpYXQiOjE3MDkwNzMxOTV9.YDdtSVpviT9xIzd5wlBqj-kaSkwvDD3RnfBpwPBnPFM"
+}
+
+## Авторизация клиентского приложения через код авторизации
+
+/clients/authorize
+
+POST
+
+{
+	response_type: "code",
+    client_id: string
+    redirect_uri: string
+}
+
+Headers
+
+    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M
+
+Обязательно передавать этот запрос с заголовком токена авторизации пользователя. Клиент привязывается к пользователю. В данном запросе подразумевается, что клиент отдает код авторизации, который будет меняться на токен доступа клиентского приложения. При этом пользователь должен быть авторизован.
+
+{
+	"id": "27",
+	"createdAt": "2024-02-27T22:33:15.647Z",
+	"updatedAt": "2024-02-27T22:33:15.647Z",
+	"title": "string",
+	"description": "string",
+	"client_uri": "string",
+	"redirect_uri": "string",
+	"publishedAt": "2024-02-27T22:33:15.647Z",
+	"isPublished": true,
+	"client_id": "887059dd-2814-43b4-81ac-d2bc21cc564f",
+	"client_secret": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiI4ODcwNTlkZC0yODE0LTQzYjQtODFhYy1kMmJjMjFjYzU2NGYiLCJpYXQiOjE3MDkwNzMxOTV9.YDdtSVpviT9xIzd5wlBqj-kaSkwvDD3RnfBpwPBnPFM"
+}
+
 ## Проверка клиентского приложения
 
 /clients/self
@@ -301,8 +446,8 @@ Response
 	"updatedAt": "2024-02-27T22:33:15.647Z",
 	"title": "string",
 	"description": "string",
-	"clientUri": "string",
-	"redirectUri": "string",
+	"client_uri": "string",
+	"redirect_uri": "string",
 	"publishedAt": "2024-02-27T22:33:15.647Z",
 	"isPublished": true,
 	"client_id": "887059dd-2814-43b4-81ac-d2bc21cc564f",
@@ -331,15 +476,15 @@ Response
 	"passportStrategy": null,
 	"passportId": null,
 	"isActivated": false,
-	"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M",
-	"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcxMTY2NjYxOX0.qLAR4f-yD3smdfXp0XhJSl5hmEULdVh8kOQxUHFGFTQ"
+	"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M",
+	"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcxMTY2NjYxOX0.qLAR4f-yD3smdfXp0XhJSl5hmEULdVh8kOQxUHFGFTQ"
 }
 
 Был задан пароль:
 
     123456
 
-Для валидности всех остальных запросов, ключ accessToken должен передаваться в как Bearer-токен в заголовке authorization:
+Для валидности всех остальных запросов, ключ access_token должен передаваться в как Bearer-токен в заголовке authorization:
 
     Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M
 
@@ -365,8 +510,8 @@ Response
 	"passportStrategy": null,
 	"passportId": null,
 	"isActivated": false,
-	"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M",
-	"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcxMTY2NjYxOX0.qLAR4f-yD3smdfXp0XhJSl5hmEULdVh8kOQxUHFGFTQ"
+	"access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcwOTA3NTUxOX0.dGs9FrIqNyxJizid4bHmefm-8mP3oQHF8SOsNh9s9-M",
+	"refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUiLCJpYXQiOjE3MDkwNzQ2MTksImV4cCI6MTcxMTY2NjYxOX0.qLAR4f-yD3smdfXp0XhJSl5hmEULdVh8kOQxUHFGFTQ"
 }
 
 ## Проверка пользователя
@@ -420,9 +565,50 @@ Response
 	"isActivated": false
 }
 
+## Серия простых запросов в другое клиентское приложение
+
+http://localhost:5000/posts/create
+
+POST
+
+{
+    "title": "new post"
+}
+
+Response
+
+{
+	"title": "new post",
+	"content": null,
+	"publishedAt": "2024-02-29T16:06:10.652Z",
+	"isPublished": true,
+	"id": "1",
+	"createdAt": "2024-02-29T16:06:10.652Z",
+	"updatedAt": "2024-02-29T16:06:10.652Z"
+}
+
+http://localhost:5000/posts/get_all
+
+GET
+
+Response
+
+[
+    {
+        "id": "1",
+        "createdAt": "2024-02-29T16:06:08.479Z",
+        "updatedAt": "2024-02-29T16:06:08.479Z",
+        "title": "new post",
+        "content": null,
+        "publishedAt": "2024-02-29T16:06:08.479Z",
+        "isPublished": true,
+        "tags": []
+    }
+]
+
 ## Проверка запроса в другое клиентское приложение
 
-http://localhost:3001/posts/get_all
+http://localhost:5000/posts/get_all
 
 POST
 

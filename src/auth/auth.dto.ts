@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { TokensDto } from '@src/tokens/tokens.dto';
 import { CommonDto } from '@src/typeorm/dto/common.dto';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
@@ -23,4 +24,7 @@ export class AuthDto extends CommonDto {
 
   @Field({ nullable: true, defaultValue: false })
   isActivated?: boolean;
+
+  @Field({ nullable: true })
+  tokens?: TokensDto;
 }

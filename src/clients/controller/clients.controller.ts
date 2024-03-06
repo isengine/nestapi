@@ -1,20 +1,32 @@
 // import { Body, Controller, Get, Post, Put, Delete, NotFoundException } from '@nestjs/common';
-import { Body, Controller, Get, Post, NotFoundException, Req } from '@nestjs/common';
-import { ClientsService } from '@src/clients/clients.service';
-import { ClientsDto } from '@src/clients/clients.dto';
+import { Body, Controller, Get, Post, NotFoundException, Query } from '@nestjs/common';
+import { ClientsService } from '@src/clients/service/clients.service';
+import { ClientsDto } from '@src/clients/dto/clients.dto';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';
 import { Data } from '@src/app.decorator';
 import { Client, SelfClient } from '@src/clients/clients.decorator';
+import { Auth, Self } from '@src/auth/auth.decorator';
 
 @Controller('clients')
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+  ) {}
 
+  @Auth()
   @Post('register')
   async clientsRegister(@Body() clientsDto: ClientsDto) {
     return await this.clientsService.clientsRegister(clientsDto);
+  }
+
+  @Get('token')
+  async clientsTokenGet(@Query() query) {
+    return {
+      title: 'redirect verify',
+      query,
+    };
   }
 
   @Client()

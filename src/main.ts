@@ -41,6 +41,8 @@ async function bootstrap() {
     app.setGlobalPrefix(process.env.PREFIX);
   }
 
+  console.log('SESSION_EXPIRES', Number(process.env.SESSION_EXPIRES));
+  // SESSION_EXPIRES
   app.use(cookieParser());
   app.use(
     session({

@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ApiType } from '@src/typeorm/types/api.type';
-import { JwtClientsGuard } from '@src/clients/guard/jwt.guard';
-import { GqlClientsGuard } from '@src/clients/guard/gql.guard';
+import { JwtClientsGuard } from '@src/clients/guard/jwt.clients.guard';
+import { GqlClientsGuard } from '@src/clients/guard/gql.clients.guard';
 
 export const Client = (apiType: ApiType = undefined) => {
   if (apiType === 'gql') {

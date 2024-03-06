@@ -13,6 +13,6 @@ export class TokensResolver {
     tokensDto: TokensDto,
     @Context() context,
   ): Promise<TokensDto> {
-    return await this.tokensService.tokensRefresh(tokensDto, context.req);
+    return await this.tokensService.tokensRefresh(tokensDto.refresh_token, context.req);
   }
 }

@@ -1,8 +1,8 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { ClientsDto } from '@src/clients/clients.dto';
+import { ClientsDto } from '@src/clients/dto/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
-import { ClientsService } from '@src/clients/clients.service';
+import { ClientsService } from '@src/clients/service/clients.service';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
 import { RelationsDto } from '@src/typeorm/dto/relations.dto';
 import { SearchDto } from '@src/typeorm/dto/search.dto';

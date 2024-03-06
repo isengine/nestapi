@@ -1,8 +1,9 @@
 import { v4 } from 'uuid';
+import { compare, genSalt, hash } from 'bcryptjs';
 import { In, Repository } from 'typeorm';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientsDto } from '@src/clients/clients.dto';
+import { ClientsDto } from '@src/clients/dto/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { OptionsDto } from '@src/typeorm/dto/options.dto';
@@ -26,13 +27,18 @@ export class ClientsService {
   ) {}
 
   async clientsRegister(clientsDto: ClientsDto): Promise<ClientsEntity> {
+    if (clientsDto.client_password) {
+      const salt = await genSalt(10);
+      clientsDto.client_password = await hash(clientsDto.client_password, salt);
+    }
     const client = await this.clientsCreate(clientsDto);
     if (!client) {
       throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
     }
-    client.client_secret = await this.tokensService.tokensGenerateOne({
+    const clientSecretData = await this.tokensService.tokensGenerateOne({
       client_id: client.client_id,
     }, 'JWT_CLIENTS_EXPIRES');
+    client.client_secret = clientSecretData.token;
     const updated = await this.clientsUpdate({...client});
     return updated ? client : null;
   }
@@ -60,6 +66,12 @@ export class ClientsService {
     return client?.id;
   }
 
+  async clientsGenerateCode(clientsDto: ClientsDto): Promise<ClientsEntity> {
+    const code = await Buffer.from(`${clientsDto.client_id}.${Date.now()}`).toString('base64');
+    clientsDto.code = code;
+    return await this.clientsUpdate(clientsDto);
+  }
+
   async clientsGetAll(
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<ClientsEntity[]> {
@@ -85,6 +97,16 @@ export class ClientsService {
     return await this.clientsRepository.find({
       relations: relationsDto?.map(i => i.name),
       where: { id: In(ids?.map(i => Number(i) || 0)) },
+    });
+  }
+
+  async clientsGetWhere(
+    where: Object,
+    relationsDto: Array<RelationsDto> = undefined,
+  ): Promise<ClientsEntity[]> {
+    return await this.clientsRepository.find({
+      relations: relationsDto?.map(i => i.name),
+      where,
     });
   }
 
@@ -129,7 +151,9 @@ export class ClientsService {
     delete clientsDto.createdAt;
     delete clientsDto.updatedAt;
     delete clientsDto.client_id;
-    return await this.clientsRepository.save({ ...clientsDto });
+    // return await this.clientsRepository.save({ ...clientsDto });
+    await this.clientsRepository.save({ ...clientsDto });
+    return this.clientsGetOne(id);
   }
 
   async clientsRemove(id: number): Promise<boolean> {

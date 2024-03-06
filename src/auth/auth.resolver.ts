@@ -1,8 +1,7 @@
 import { Args, Mutation, Resolver, Query, Context } from '@nestjs/graphql';
-import { AuthDto } from '@src/auth/dto/auth.dto';
+import { AuthDto } from '@src/auth/auth.dto';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
-import { MixinDto } from '@src/auth/dto/mixin.dto';
 
 @Resolver('Auth')
 export class AuthResolver {
@@ -18,7 +17,7 @@ export class AuthResolver {
     @Args('login')
     authDto: AuthDto,
     @Context() context,
-  ): Promise<MixinDto> {
+  ): Promise<AuthDto> {
     return await this.authService.login(authDto, context.req);
   }
 
@@ -27,7 +26,7 @@ export class AuthResolver {
     @Args('register')
     authDto: AuthDto,
     @Context() context,
-  ): Promise<MixinDto> {
+  ): Promise<AuthDto> {
     return await this.authService.register(authDto, context.req);
   }
 

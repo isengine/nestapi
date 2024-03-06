@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import * as moment from 'moment';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { TokensDto } from '@src/tokens/tokens.dto';
@@ -21,40 +22,61 @@ export class TokensService {
         ? { expiresIn: expires }
         : {},
     );
-    return token;
+
+    const date = {};
+    expires?.match(/\d+[A-Za-z]*/igu)?.forEach(i => {
+      const match = [
+        i?.match(/\d+/igu)?.[0],
+        i?.match(/[A-Za-z]+/igu)?.[0],
+      ];
+      date[match[1] || 's'] = Number(match[0]) || 0;
+    });
+    const expiresIn = moment.duration(date).asSeconds();
+
+    return { token, expiresIn };
   }
 
   async tokensCreatePair(auth) {
     const data = { id: auth.id };
-    const accessToken = await this.tokensGenerateOne(data, 'JWT_ACCESS_EXPIRES');
-    const refreshToken = await this.tokensGenerateOne(data, 'JWT_REFRESH_EXPIRES');
-    return { accessToken, refreshToken };
+    const accessTokenData = await this.tokensGenerateOne(data, 'JWT_ACCESS_EXPIRES');
+    const refreshTokenData = await this.tokensGenerateOne(data, 'JWT_REFRESH_EXPIRES');
+    return {
+      access_token: accessTokenData.token,
+      expires_in: accessTokenData.expiresIn,
+      refresh_token: refreshTokenData.token,
+    };
   }
 
-  async tokensRefresh(tokensDto: TokensDto, request: any): Promise<TokensDto> {
-    const { refreshToken } = tokensDto;
-    const sessionToken = request.session.token;
-    // console.log('-- request.session', request.session);
-    if (!refreshToken || !sessionToken || refreshToken !== sessionToken) {
-      throw new UnauthorizedException('Please sign in!');
-    }
+  async tokensVerify(token: string): Promise<any> {
     let result;
     try {
-      result = await this.jwtService.verifyAsync(refreshToken);
+      result = await this.jwtService.verifyAsync(token);
     } catch {
       throw new UnauthorizedException('Invalid token or expired!');
     }
     if (!result) {
       throw new UnauthorizedException('Invalid token or expired!');
     }
-    // const tokens = await this.tokensCreatePair(result.id, refreshToken);
-    // раньше мы проверяли токен только в сессии
-    // потом мы решили перенести токены в бд и проверять наличие токена в бд
-    // но это плохая практика, т.к. токены не должны храниться в других местах
-    // и мы снова оставили хранение токена в сессии
-    // и теперь для оптимизации и безопасности будет работать с сессиями
+    return result;
+  }
+
+  async tokensRefresh(refresh_token: string, request: any = null): Promise<TokensDto> {
+    console.log('-- refresh_token', refresh_token);
+    console.log('-- request.session', request?.session);
+    if (!refresh_token) {
+      throw new UnauthorizedException('Please sign in!');
+    }
+    if (request) {
+      const sessionToken = request.session.token;
+      if (!sessionToken || refresh_token !== sessionToken) {
+        throw new UnauthorizedException('Please sign in!');
+      }
+    }
+    const result = await this.tokensVerify(refresh_token);
     const tokens = await this.tokensCreatePair(result.id);
-    request.session.token = tokens.refreshToken;
+    if (request) {
+      request.session.token = tokens.refresh_token;
+    }
     return tokens;
   }
 }

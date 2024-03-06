@@ -8,8 +8,7 @@ import { compare, genSalt, hash } from 'bcryptjs';
 import { Repository } from 'typeorm';
 
 import { AuthEntity } from '@src/auth/auth.entity';
-import { AuthDto } from '@src/auth/dto/auth.dto';
-import { MixinDto } from '@src/auth/dto/mixin.dto';
+import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokensService } from '@src/tokens/tokens.service';
@@ -24,7 +23,7 @@ export class AuthService {
     private readonly tokensService: TokensService,
   ) {}
 
-  async login(authDto: AuthDto, request: any = null): Promise<MixinDto> {
+  async login(authDto: AuthDto, request: any = null): Promise<AuthDto> {
     const auth = await this.authGetByUsername(authDto.username);
     if (!auth) {
       throw new UnauthorizedException('User not found');
@@ -37,10 +36,8 @@ export class AuthService {
     if (request) {
       await this.sessionsService.createSession(auth, tokens, request);
     }
-    return {
-      ...auth,
-      ...tokens,
-    };
+    auth.tokens = tokens;
+    return auth;
   }
 
   async logout(request: any = null): Promise<boolean> {
@@ -55,7 +52,7 @@ export class AuthService {
     return true;
   }
 
-  async register(authDto: AuthDto, request: any = null): Promise<MixinDto> {
+  async register(authDto: AuthDto, request: any = null): Promise<AuthDto> {
     const authExists = await this.authGetByUsername(authDto.username);
     if (authExists) {
       throw new BadRequestException(
@@ -69,10 +66,8 @@ export class AuthService {
     if (request) {
       await this.sessionsService.createSession(auth, tokens, request);
     }
-    return {
-      ...auth,
-      ...tokens,
-    };
+    auth.tokens = tokens;
+    return auth;
   }
 
   async authGetAll(): Promise<AuthEntity[]> {

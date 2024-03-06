@@ -9,6 +9,7 @@ export class TokensController {
   @HttpCode(200)
   @Post('refresh_tokens')
   async tokensRefresh(@Body() tokensDto: TokensDto, @Req() req: any) {
-    return this.tokensService.tokensRefresh(tokensDto, req);
+    return this.tokensService.tokensRefresh(tokensDto.refresh_token, req);
   }
+  
 }
