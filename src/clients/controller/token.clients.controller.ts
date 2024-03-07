@@ -37,6 +37,7 @@ export class TokenClientsController {
       // /token
       // grant_type=authorization_code
       // code=SplxlOBeZQQYbYS6WxSbIA
+      // client_id=s6BhdRkqt3
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
       const result = await this.tokenClientsService.clientsTokenAuthorizationCode(tokenClientsDto);
       const args = [];

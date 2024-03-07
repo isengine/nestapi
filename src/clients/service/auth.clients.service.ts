@@ -3,6 +3,7 @@ import { ClientsDto } from '@src/clients/dto/clients.dto';
 import { TokensService } from '@src/tokens/tokens.service';
 import { AuthClientsDto } from '@src/clients/dto/auth.clients.dto';
 import { ClientsService } from '@src/clients/service/clients.service';
+import { ClientsEntity } from '@src/clients/clients.entity';
 
 @Injectable()
 export class AuthClientsService {
@@ -10,6 +11,21 @@ export class AuthClientsService {
     private readonly clientsService: ClientsService,
     private readonly tokensService: TokensService,
   ) {}
+
+  async clientsAuthCodeGenerate(clientsDto: ClientsDto): Promise<ClientsEntity> {
+    const code = await Buffer.from(`${Date.now()}|${clientsDto.client_id}|${clientsDto.redirect_uri}`).toString('base64');
+    clientsDto.code = code;
+    return await this.clientsService.clientsUpdate(clientsDto);
+  }
+
+  async clientsAuthCodeVerify(code: string, clientsDto: ClientsDto): Promise<boolean> {
+    const decoded = await Buffer.from(code, 'base64').toString('ascii')?.split('|');
+    const [ timestamp, client_id, redirect_uri ] = decoded;
+    const clientIdMatched = clientsDto.client_id === client_id;
+    const redirectUriMatched = clientsDto.redirect_uri === redirect_uri;
+    const timestampMatched = Date.now() - 10 * 600 <= Number(timestamp);
+    return clientIdMatched && redirectUriMatched && timestampMatched;
+  }
 
   async clientsAuthPrepare(
     authClientsDto: AuthClientsDto,
@@ -20,11 +36,9 @@ export class AuthClientsService {
       throw new BadRequestException('Specified type of response_type field is not supported in this request', 'invalid_request');
     }
     const result = await this.clientsService.clientsGetWhere({
+      id,
       client_id: authClientsDto.client_id,
       redirect_uri: authClientsDto.redirect_uri,
-      auth: {
-        id,
-      },
     }, [{ name: 'auth' }]);
     if (!result?.length) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
@@ -36,7 +50,7 @@ export class AuthClientsService {
     clientsDto: ClientsDto,
     state: string,
   ): Promise<string> {
-    const updated = await this.clientsService.clientsGenerateCode(clientsDto);
+    const updated = await this.clientsAuthCodeGenerate(clientsDto);
     if (!updated) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }

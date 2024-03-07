@@ -96,6 +96,14 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
   - [Исходные данные для работы сервера авторизации](#исходные-данные-для-работы-сервера-авторизации)
   - [Процессы сервера авторизации](#процессы-сервера-авторизации)
   - [Модуль клиента](#модуль-клиента)
+  - [Методы модуля клиента](#методы-модуля-клиента)
+    - [Регистрация клиента](#регистрация-клиента)
+    - [Получение токена доступа по типу password](#получение-токена-доступа-по-типу-password)
+    - [Получение токена доступа по типу refresh token](#получение-токена-доступа-по-типу-refresh-token)
+    - [Получение токена доступа по типу сlient credentials](#получение-токена-доступа-по-типу-сlient-credentials)
+    - [Получение токена доступа по типу authorization code](#получение-токена-доступа-по-типу-authorization-code)
+    - [Авторизация пользователя по типу authorization code](#авторизация-пользователя-по-типу-authorization-code)
+    - [Авторизация пользователя по типу implicit grant](#авторизация-пользователя-по-типу-implicit-grant)
 - [Правила именований](#правила-именований)
   - [Обычное именование](#обычное-именование)
   - [Именование в базах данных](#именование-в-базах-данных)
@@ -2316,13 +2324,213 @@ GOOGLE_CLIENT_CALLBACK=...
 - client_password - пароль клиента, необязательное поле, при желании задается пользователем при регистрации клиента, как и пароль пользователя, хешируется
 - client_type - один из разрешенных в спецификации OAuth 2.0 типов клиента,
 - client_uri - хост клиента, с которого будут поступать запросы, нужен для реализации средств дополнительной безопасности,
-- redirect_uri - адрес, на который будет обращаться клиент, например, лоя передачи токена после авторизации клиента или пользователя,
+- redirect_uri - адрес, на который будет обращаться клиент, например, для передачи токена после авторизации клиента или пользователя,
 - title - заголовок клиента,
 - description - описание клиента,
+- code - код авторизации клиента, сохраняется только на время от выдачи кода и до его подтверждения,
 - publishedAt - дата, начиная с которой, клиент будет доступен для работы,
 - isPublished - флаг доступности клиента, если он доступен по дате.
 
-Также нужно понималь, что клиент должен быть связан с пользователем. Поэтому записи из таблицы **clients** будут иметь связи к записям из таблицы **auth**.
+Также нужно понималь, что клиент должен быть связан с пользователем. Поэтому записи из таблицы **clients** связаны с записями из таблицы **auth**.
+
+[^ к оглавлению](#оглавление)
+
+## Методы модуля клиента
+
+### Регистрация клиента
+
+POST
+
+  /clients/register
+
+Headers
+
+  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA0MTc2LCJleHAiOjE3MDk4MDUwNzZ9.5KFHVcKeTfDe_sQZzIIEN03HD4zSIXZQxCI34osK9ME
+
+Data
+
+{
+  "title": "Мое приложение",
+  "description": "Это мое приложение",
+  "client_uri": "myapp.com",
+  "redirect_uri": "https://myapp.com/oauth/redirected"
+}
+
+Response
+
+{
+  "id": "37",
+  "title": "Мое приложение",
+  "description": "Это мое приложение",
+  "client_uri": "https://myapp.com/",
+  "redirect_uri": "https://myapp.com/oauth/redirected",
+  "client_id": "b57937e9-31d4-4741-a59f-acb8c4f88539",
+  "client_secret": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiI1Njc2NDczMy1jZjc4LTRkN2YtODMyMi01NzkxZWI3NTIwZjgiLCJpYXQiOjE3MDk4MDQxODd9.2lMaod_pvcFq9xGB4s4KwHYqQV_KTMTJSQrflGub1PI",
+  "client_password": null,
+  "client_type": "public",
+  "code": null,
+  "publishedAt": "2024-03-07T09:36:27.025Z",
+  "isPublished": true,
+  "createdAt": "2024-03-07T09:36:27.025Z",
+  "updatedAt": "2024-03-07T09:36:27.025Z"
+}
+
+[^ к оглавлению](#оглавление)
+
+### Получение токена доступа по типу password
+
+POST
+
+  /clients/token
+
+Data
+
+{
+  "grant_type": "password",
+  "username": "user@mail.com",
+  "password": "123456"
+}
+
+Response
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MDk4MDk0ODl9.xnZ4OLFjkTZ_3fhoyYReFKyFNmNKmT8TUUCNzt6EgEM",
+  "token_type": "Bearer",
+  "expires_in": 900,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M"
+}
+
+[^ к оглавлению](#оглавление)
+
+### Получение токена доступа по типу refresh token
+
+POST
+
+  /clients/token
+
+Data
+
+{
+  "grant_type": "refresh_token",
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M"
+}
+
+Response
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MDk4MDk0ODl9.xnZ4OLFjkTZ_3fhoyYReFKyFNmNKmT8TUUCNzt6EgEM",
+  "token_type": "Bearer",
+  "expires_in": 900,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M"
+}
+
+[^ к оглавлению](#оглавление)
+
+### Получение токена доступа по типу сlient credentials
+
+POST
+
+  /clients/token
+
+Data
+
+{
+  "grant_type": "client_credentials",
+  "client_id": "b57937e9-31d4-4741-a59f-acb8c4f88539",
+  "client_secret": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJiNTc5MzdlOS0zMWQ0LTQ3NDEtYTU5Zi1hY2I4YzRmODg1MzkiLCJpYXQiOjE3MDk4MDg0NDF9.oBQw2e3_h_FjywdkF85-jxosIRTL0CQa8Clj2BP4DwQ"
+}
+
+Response
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MDk4MDk0ODl9.xnZ4OLFjkTZ_3fhoyYReFKyFNmNKmT8TUUCNzt6EgEM",
+  "token_type": "Bearer",
+  "expires_in": 900,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M"
+}
+
+[^ к оглавлению](#оглавление)
+
+### Получение токена доступа по типу authorization code
+
+POST
+
+  /clients/token
+
+Data
+
+{
+	"grant_type": "authorization_code",
+	"code": "ZDVkNWRkMjktNmU3NC00YmIyLWEwZTktMDY2ZjdmOGJjNDYzLmh0dHA6Ly9sb2NhbGhvc3Q6MzAwMC9jbGllbnRzL3Rva2VuLjE3MDk4MDY3MDQ5MDg=",
+	"client_id": "b57937e9-31d4-4741-a59f-acb8c4f88539",
+	"redirect_uri": "https://myapp.com/oauth/redirected"
+}
+
+Response
+
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MDk4MDk0ODl9.xnZ4OLFjkTZ_3fhoyYReFKyFNmNKmT8TUUCNzt6EgEM",
+  "token_type": "Bearer",
+  "expires_in": 900,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M"
+}
+
+По спецификации, передаваемый параметр client_id является обязательным для неавторизованного пользователя и рекомендуемым для авторизованного.
+
+[^ к оглавлению](#оглавление)
+
+### Авторизация пользователя по типу authorization code
+
+POST
+
+  /clients/auth
+
+Headers
+
+  Client_secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJiNTc5MzdlOS0zMWQ0LTQ3NDEtYTU5Zi1hY2I4YzRmODg1MzkiLCJpYXQiOjE3MDk4MDg0NDF9.oBQw2e3_h_FjywdkF85-jxosIRTL0CQa8Clj2BP4DwQ
+
+Data
+
+{
+	"response_type": "code",
+	"client_id": "b57937e9-31d4-4741-a59f-acb8c4f88539",
+	"redirect_uri": "https://myapp.com/oauth/redirected"
+}
+
+Redirect
+
+https://myapp.com/oauth/redirected
+	?code=ZDVkNWRkMjktNmU3NC00YmIyLWEwZTktMDY2ZjdmOGJjNDYzLmh0dHA6Ly9sb2NhbGhvc3Q6MzAwMC9jbGllbnRzL3Rva2VuLjE3MDk4MDY3MDQ5MDg=
+	&client_id=b57937e9-31d4-4741-a59f-acb8c4f88539
+
+Возврат параметра client_id не является обязательным условием и это не документировано в спецификации. Однако это позволяет автоматизировать процесс получения токена доступа.
+
+[^ к оглавлению](#оглавление)
+
+### Авторизация пользователя по типу implicit grant
+
+POST
+
+  /clients/auth
+
+Headers
+
+  Client_secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJiNTc5MzdlOS0zMWQ0LTQ3NDEtYTU5Zi1hY2I4YzRmODg1MzkiLCJpYXQiOjE3MDk4MDg0NDF9.oBQw2e3_h_FjywdkF85-jxosIRTL0CQa8Clj2BP4DwQ
+
+Data
+
+{
+	"response_type": "token",
+	"client_id": "b57937e9-31d4-4741-a59f-acb8c4f88539",
+	"redirect_uri": "https://myapp.com/oauth/redirected"
+}
+
+Redirect
+
+https://myapp.com/oauth/redirected
+  ?token_type=Bearer
+  &expires_in=900
+  #access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA1MjY4LCJleHAiOjE3MDk4MDYxNjh9.2JqBN87dkD8zGdaHFYFbn3qE0Fv6o6yGhmgX5xSqGu4
 
 [^ к оглавлению](#оглавление)
 

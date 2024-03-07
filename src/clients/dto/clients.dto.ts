@@ -6,13 +6,13 @@ import { AuthDto } from '@src/auth/auth.dto';
 @InputType()
 export class ClientsDto extends CommonDto {
   @Field({ nullable: true })
-  client_id: string;
+  client_id?: string;
 
   @Field({ nullable: true })
-  client_secret: string;
+  client_secret?: string;
 
   @Field({ nullable: true })
-  client_password: string;
+  client_password?: string;
 
   @Field(() => TypeClients, {
     nullable: true,
@@ -21,25 +21,25 @@ export class ClientsDto extends CommonDto {
   client_type?: TypeClients;
 
   @Field({ nullable: true })
-  title: string;
+  title?: string;
 
   @Field({ nullable: true })
-  description: string;
+  description?: string;
 
   @Field({ nullable: true })
-  client_uri: string;
+  client_uri?: string;
 
   @Field({ nullable: true })
-  redirect_uri: string;
+  redirect_uri?: string;
 
   @Field({ nullable: true })
-  code: string;
+  code?: string;
 
   @Field({ nullable: true })
-  publishedAt: Date;
+  publishedAt?: Date;
 
   @Field({ nullable: true })
-  isPublished: boolean;
+  isPublished?: boolean;
 
   @Field(() => AuthDto, { nullable: true })
   auth?: AuthDto;

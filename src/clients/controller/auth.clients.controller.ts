@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { AuthClientsDto } from '@src/clients/dto/auth.clients.dto';
-import { Auth, Self } from '@src/auth/auth.decorator';
 import { AuthClientsService } from '@src/clients/service/auth.clients.service';
+import { Client, SelfClient } from '@src/clients/clients.decorator';
 
 @Controller('clients')
 export class AuthClientsController {
@@ -9,11 +9,11 @@ export class AuthClientsController {
     private readonly authClientsService: AuthClientsService,
   ) {}
 
-  @Auth()
+  @Client()
   @Post('auth')
   async clientsAuthCode(
     @Body() authClientsDto: AuthClientsDto,
-    @Self() id: number, 
+    @SelfClient() id: number,
     @Res() res: any,
   ) {
     let url = '';

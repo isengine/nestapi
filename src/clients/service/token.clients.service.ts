@@ -4,11 +4,13 @@ import { TokenClientsDto } from '@src/clients/dto/token.clients.dto';
 import { AuthService } from '@src/auth/auth.service';
 import { TokensDto } from '@src/tokens/tokens.dto';
 import { ClientsService } from '@src/clients/service/clients.service';
+import { AuthClientsService } from '@src/clients/service/auth.clients.service';
 
 @Injectable()
 export class TokenClientsService {
   constructor(
     private readonly authService: AuthService,
+    private readonly authClientsService: AuthClientsService,
     private readonly clientsService: ClientsService,
     private readonly tokensService: TokensService,
   ) {}
@@ -25,13 +27,13 @@ export class TokenClientsService {
 
   async clientsTokenPassword(tokenClientsDto: TokenClientsDto): Promise<any> {
     if (tokenClientsDto.grant_type !== 'password') {
-      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'invalid_grant');
+      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }
     if (
       !tokenClientsDto.username
       || !tokenClientsDto.password
     ) {
-      throw new BadRequestException('Not specified username or password in this request', 'invalid_request');
+      throw new BadRequestException('Not specified username or password in this request', 'invalid_grant');
     }
     const { username, password } = tokenClientsDto;
     const login = await this.authService.login({ username, password });
@@ -40,40 +42,25 @@ export class TokenClientsService {
 
   async clientsTokenRefreshToken(tokenClientsDto: TokenClientsDto): Promise<any> {
     if (tokenClientsDto.grant_type !== 'refresh_token') {
-      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'invalid_grant');
+      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }
-    if (
-      !tokenClientsDto.refresh_token
-      || !tokenClientsDto.client_id
-      || !tokenClientsDto.client_secret
-    ) {
-      throw new BadRequestException('Not specified refresh token in this request', 'invalid_request');
+    if (!tokenClientsDto.refresh_token) {
+      throw new BadRequestException('Not specified refresh token in this request', 'invalid_grant');
     }
-    const { refresh_token, client_id, client_secret } = tokenClientsDto;
-    const auth = await this.tokensService.tokensVerify(refresh_token);
-    const client = await this.clientsService.clientsGetWhere({
-      client_id,
-      client_secret,
-      auth: {
-        id: auth.id,
-      },
-    });
-    if (!client.length) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
-    }
+    const { refresh_token } = tokenClientsDto;
     const tokens = await this.tokensService.tokensRefresh(refresh_token);
     return await this.clientsTokenPrepare(tokens, tokenClientsDto.state);
   }
 
   async clientsTokenClientCredentials(tokenClientsDto: TokenClientsDto): Promise<any> {
     if (tokenClientsDto.grant_type !== 'client_credentials') {
-      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'invalid_grant');
+      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }
     if (
       !tokenClientsDto.client_id
       || !tokenClientsDto.client_secret
     ) {
-      throw new BadRequestException('Not specified client id or secret in this request', 'invalid_request');
+      throw new BadRequestException('Not specified client id or secret in this request', 'invalid_grant');
     }
     const { client_id, client_secret } = tokenClientsDto;
     const client = await this.clientsService.clientsGetWhere({
@@ -92,17 +79,26 @@ export class TokenClientsService {
 
   async clientsTokenAuthorizationCode(tokenClientsDto: TokenClientsDto): Promise<any> {
     if (tokenClientsDto.grant_type !== 'authorization_code') {
-      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'invalid_grant');
+      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }
     if (
       !tokenClientsDto.code
+      || !tokenClientsDto.client_id
       || !tokenClientsDto.redirect_uri
     ) {
-      throw new BadRequestException('Not specified authorization code or redirect uri in this request', 'invalid_request');
+      throw new BadRequestException('Not specified authorization code, client_id or redirect uri in this request', 'invalid_grant');
     }
-    const { code, redirect_uri } = tokenClientsDto;
+    const { code, client_id, redirect_uri } = tokenClientsDto;
+    const codeMatched = this.authClientsService.clientsAuthCodeVerify(code, {
+      client_id,
+      redirect_uri,
+    })
+    if (!codeMatched) {
+      throw new BadRequestException('Specified authorization code is invalid', 'invalid_grant');
+    }
     const client = await this.clientsService.clientsGetWhere({
       code,
+      client_id,
       redirect_uri,
     }, [{ name: 'auth' }]);
     if (!client?.[0]?.auth) {

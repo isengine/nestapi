@@ -66,12 +66,6 @@ export class ClientsService {
     return client?.id;
   }
 
-  async clientsGenerateCode(clientsDto: ClientsDto): Promise<ClientsEntity> {
-    const code = await Buffer.from(`${clientsDto.client_id}.${Date.now()}`).toString('base64');
-    clientsDto.code = code;
-    return await this.clientsUpdate(clientsDto);
-  }
-
   async clientsGetAll(
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<ClientsEntity[]> {
