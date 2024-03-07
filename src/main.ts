@@ -1,4 +1,6 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 import { AppModule } from '@src/app.module';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
@@ -8,7 +10,7 @@ import * as FileStore from 'session-file-store';
 const FileStoreSession = FileStore(session);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
       allowedHeaders: [
         'Content-Type',
@@ -57,6 +59,10 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
 
   const port = process.env.PORT || 5000;
   const message = `Server running \n in ${process.env.NODE_ENV} mode on ${port} port \n at http://localhost:${port}`;

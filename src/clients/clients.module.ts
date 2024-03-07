@@ -1,10 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { AuthClientsController } from '@src/clients/controller/auth.clients.controller';
 import { TokenClientsController } from '@src/clients/controller/token.clients.controller';
 import { ClientsController } from '@src/clients/controller/clients.controller';
-
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsService } from '@src/clients/service/clients.service';
 import { AuthClientsService } from '@src/clients/service/auth.clients.service';

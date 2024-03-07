@@ -4,12 +4,9 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { getDbConfig } from '@config/db.config';
-
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
-
 import { AuthModule } from '@src/auth/auth.module';
 import { CategoriesModule } from '@src/categories/categories.module';
 import { ClientsModule } from '@src/clients/clients.module';
@@ -24,9 +21,8 @@ import { RolesModule } from '@src/roles/roles.module';
 import { SessionsModule } from '@src/sessions/sessions.module';
 import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
-
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
-import { TokensModule } from './tokens/tokens.module';
+import { TokensModule } from '@src/tokens/tokens.module';
 
 @Module({
   controllers: [AppController],
