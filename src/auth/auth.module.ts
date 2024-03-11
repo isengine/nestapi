@@ -14,6 +14,7 @@ import { LeaderStrategy } from '@src/auth/strategy/leader.strategy';
 import { LeaderProvider } from '@src/auth/provider/leader.provider';
 import { TokensModule } from '@src/tokens/tokens.module';
 import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
+import { FormStrategy } from '@src/auth/strategy/form.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -28,6 +29,7 @@ import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
     AuthService,
     AuthResolver,
     FromClientStrategy,
+    FormStrategy,
     JwtStrategy,
     LeaderStrategy,
     GoogleStrategy,

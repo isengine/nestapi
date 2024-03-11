@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Вход</title>
+    <title>Подтверждение регистрации</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
@@ -11,7 +11,7 @@
 <body>
     <div class="form">
         <form action="/form/auth" method="post">
-            <h3>Вход</h3>
+            <h3>Подтверждение регистрации</h3>
             <!--
             <p>
                 {{#each query}}
@@ -34,7 +34,7 @@
                 <input
                     class="form-control item"
                     id="password"
-                    minlength="6"
+                    minlength="8"
                     name="password"
                     placeholder="Пароль"
                     required
@@ -43,25 +43,14 @@
                 >
             </div>
             <div class="form-button">
-                <button class="btn" type="submit">Войти</button>
+                <button class="btn" type="submit">Подтвердить регистрацию</button>
             </div>
         </form>
         <div class="oauth">
-            <p>Войти с помощью</p>
-            <div class="link-group">
-                <a class="link" href="/auth/leader/login"><img src="/img/leader_logo.svg"></a>
-                <a class="link" href="/auth/google/login"><img src="/img/google_logo.svg"></a>
-            </div>
         </div>
         <div class="bottom">
-            <p>
-            Нет аккаунта?
-            <a class="link" href="/form/register.html?data={{ query.data }}">Зарегистрироваться</a>
-            </p>
-            <p>
-            Забыли пароль?
-            <a class="link" href="/form/restore.html?data={{ query.data }}">Восстановить</a>
-            </p>
+            Уже подтвержден?
+            <a class="link" href="/form/login.html?data={{ query.data }}">Войти</a>
         </div>
     </div>
 </body>

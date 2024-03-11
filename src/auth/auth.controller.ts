@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   NotFoundException,
   Post,
   Req,
@@ -20,7 +21,9 @@ import { LeaderProvider } from '@src/auth/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokensService } from '@src/tokens/tokens.service';
 import { Client } from '@src/clients/clients.decorator';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -32,6 +35,10 @@ export class AuthController {
 
   @Auth()
   @Get('self')
+  @ApiOperation({ summary: 'Auth self get' })
+  @ApiParam({ name: 'id', required: true, description: 'Note identifier' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: AuthDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   async authSelfGet(@Self() id: number) {
     const result = await this.authService.authGetOne(id);
     if (!result) {

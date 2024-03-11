@@ -10,8 +10,15 @@
 </head>
 <body>
     <div class="form">
-        <form action="/auth/register" method="post">
+        <form action="/form/auth" method="post">
             <h3>Регистрация</h3>
+            <!--
+            <p>
+                {{#each query}}
+                    {{@key}}: {{this}}
+                {{/each}}
+            </p>
+            -->
             <div class="form-group">
                 <input
                     class="form-control item"
@@ -43,7 +50,7 @@
         </div>
         <div class="bottom">
             Уже есть аккаунт?
-            <a class="link" href="/form/login.html">Войти</a>
+            <a class="link" href="/form/login.html?data={{ query.data }}">Войти</a>
         </div>
     </div>
 </body>

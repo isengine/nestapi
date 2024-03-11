@@ -32,11 +32,15 @@ export class AuthClientsService {
     id: number,
   ): Promise<ClientsDto> {
     const { response_type } = authClientsDto;
+    console.log(' ---- authClientsDto ', authClientsDto);
     if (['code', 'token'].indexOf(response_type) < 0) {
       throw new BadRequestException('Specified type of response_type field is not supported in this request', 'invalid_request');
     }
     const result = await this.clientsService.clientsGetWhere({
-      id,
+      // id,
+      auth: {
+        id,
+      },
       client_id: authClientsDto.client_id,
       redirect_uri: authClientsDto.redirect_uri,
     }, [{ name: 'auth' }]);

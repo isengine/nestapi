@@ -22,7 +22,7 @@ export class TokenClientsService {
       expires_in: tokens?.expires_in,
       refresh_token: tokens?.refresh_token,
       state,
-    };   
+    };
   }
 
   async clientsTokenPassword(tokenClientsDto: TokenClientsDto): Promise<any> {
