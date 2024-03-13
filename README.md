@@ -35,10 +35,10 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
   - [Связи в сервисах](#связи-в-сервисах)
   - [Объединение сервисов](#объединение-сервисов)
 - [Методы](#методы)
-  - [Метод getAll](#метод-getall)
-  - [Метод getOne](#метод-getone)
-  - [Метод getMany](#метод-getmany)
-  - [Метод getById](#метод-getbyid)
+  - [Метод find](#метод-find)
+  - [Метод findAll](#метод-findall)
+  - [Метод findOne](#метод-findone)
+  - [Метод findMany](#метод-findmany)
   - [Метод filter](#метод-filter)
   - [Метод search](#метод-search)
   - [Метод create](#метод-create)
@@ -397,7 +397,7 @@ npm run prod
 
 Резолверы принимают аргументы через переменные GraphQL запроса, а контроллеры - через тело запроса. В обоих случаях аргументы имеют формат **JSON**.
 
-Например, для условного запроса **getOne**, требуется аргумент **id**. Для контроллера и резолвера он будет передан одинаково:
+Например, для условного запроса **findOne**, требуется аргумент **id**. Для контроллера и резолвера он будет передан одинаково:
 
     {
         "id": 1
@@ -439,8 +439,8 @@ api/resource/endpoint
 import { ... Get, ... } from '@nestjs/common';
 ...
 
-  @Get('get_all')
-  async postsGetAll() {
+  @Get('findall')
+  async postsFindAll() {
     ...
 ```
 
@@ -460,7 +460,7 @@ import { ... Get, ... } from '@nestjs/common';
 
 По-умолчанию методы GET и HEAD кэшируются, остальные - нет. Поэтому при использовании метода POST можно быть уверенным, что запрос выполнится. В случае с GET Вы можете получить ответ из кэша, так что запрос напрямую до сервера может и не дойти.
 
-Однако в использовании методов есть проблема, связанная с тем, что библиотеки фронтенда могут работать не со всеми методами. Поэтому мы предлагаем реализацию в контроллерах двух методов: GET и POST, однако также обеспечиваем поддержку всех остальных.
+В использовании методов могут возникнуть проблемы, связанные с тем, что библиотеки фронтенда могут работать не со всеми методами. В этом случае мы предлагаем использовать в контроллерах только два методов: GET и POST.
 
 [^ к оглавлению](#оглавление)
 
@@ -489,18 +489,18 @@ PREFIX=/api/v3
 export class PostsController {
   ...
 
-  @Get('get_all')
-  async postsGetAll() {
+  @Get('findall')
+  async postsFindAll() {
     ...
 ```
 
 Данный метод будет вызван по адресу запроса
 
-    /posts/get_all
+    /posts/findall
 
 Если вы использовали глобальный префикс, например **api**, то адрес будет таким:
 
-    /api/posts/get_all
+    /api/posts/findall
 
 [^ к оглавлению](#оглавление)
 
@@ -518,7 +518,7 @@ export class PostsController {
 
 При проектировании системы неизбежно появляется большое число отношений. В запросах эти отношения указываются через связи. Но слишком большое число связей в запросах приводит к тому, что из базы подтягивается множество лишних полей. Такие запросы потребляют много памяти, забивают канал передачи данных и вызывают большие задержки.
 
-Чтобы этого избежать, связи необходимо указывать в каждом запросе.
+Чтобы этого избежать, связи можно указывать в **каждом** запросе, кроме **remove**.
 
 Связи передаются в аргументе **relations** и задаются массивом объектов **RelationsDto**:
 
@@ -546,8 +546,8 @@ export class PostsController {
 
 Например:
 
-    postsGetAll()
-    postsGetAll(relations)
+    postsFindAll()
+    postsFindAll(relations)
 
 Вы можете даже использовать двухуровневые связи типа **post.category**, но только если вложенные сущности не дублируют исходную сущность.
 
@@ -603,9 +603,9 @@ export class PostsController {
 
 Эти методы:
 
-- get all - получить все записи
-- get one - получить одну запись по id
-- get many - получить несколько записей по списку id
+- findall - получить все записи
+- findone - получить одну запись по id
+- findmany - получить несколько записей по списку id
 - filter - найти записи, поля которых соответствуют заданным условиям
 - search - поиск по записям, которые имеют заданные совпадения в заданных полях
 - create - создать новую запись
@@ -614,29 +614,73 @@ export class PostsController {
 
 Важно учитывать, что в сервисах и резолверах эти методы имеют впереди название сущности и пишутся в стиле camelCase. Например:
 
-    postsGetAll
+    postsFindAll
 
 В контроллерах эти методы записываются в стиле snake_case. Название сущности задается в имени контроллера. Например:
 
-    get_all
-    /posts/get_all
+    findall
+    /posts/findall
 
 Далее следует подробная реализация данных методов.
 
 [^ к оглавлению](#оглавление)
 
-## Метод getAll
+## Метод find
+
+Получить все записи по условиям
+
+RestAPI:
+
+    GET find
+
+GraphQL:
+
+    query find($where: JSONObject, $order: JSONObject) {
+        result: find(where: $where, order: $order) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "where": {
+            ...
+        },
+        "order": {
+            "id": "ASC"
+        }
+    }
+
+Ответ:
+
+    {
+        "data": {
+            "result": [
+                {
+                    ...
+                },
+                ...
+            ]
+        }
+    }
+
+В ответ попадает массив записей с запрошенными полями.
+
+[^ к оглавлению](#оглавление)
+
+## Метод findAll
 
 Получить все записи
 
 RestAPI:
 
-    GET get_all
+    GET findall
 
 GraphQL:
 
-    query getAll {
-        result: getAll {
+    query findAll {
+        result: findAll {
             ...
         }
     }
@@ -662,18 +706,18 @@ GraphQL:
 
 [^ к оглавлению](#оглавление)
 
-## Метод getOne
+## Метод findOne
 
 Получить одну запись по id
 
 RestAPI:
 
-    GET get_one
+    GET findone
 
 GraphQL:
 
-    query getOne($id: Float!) {
-        result: getOne(id: $id) {
+    query findOne($id: Float!) {
+        result: findOne(id: $id) {
             ...
         }
     }
@@ -698,18 +742,18 @@ GraphQL:
 
 [^ к оглавлению](#оглавление)
 
-## Метод getMany
+## Метод findMany
 
 Получить несколько записей по списку id
 
 RestAPI:
 
-    GET get_many
+    GET findmany
 
 GraphQL:
 
-    query getMany($ids: GetManyDto!) {
-        result: getMany(ids: $ids) {
+    query findMany($ids: FindManyDto!) {
+        result: findMany(ids: $ids) {
             ...
         }
     }
@@ -718,51 +762,6 @@ GraphQL:
 
     {
         "ids": [...]
-    }
-
-Ответ:
-
-    {
-        "data": {
-            "result": [
-                {
-                    ...
-                },
-                ...
-            ]
-        }
-    }
-
-В ответ попадает массив записей с запрошенными полями.
-
-[^ к оглавлению](#оглавление)
-
-## Метод getById
-
-Это общее название подобных методов. Чаще всего они встречаются в служебных сущностях, таких как **user**.
-
-Эти методы нужны для получения всех записей, которые привязанны к другой сущности.
-
-Например, часто используется метод **GetByUserId**, в который передается **id** текущего пользователя. Разберем работу на его примере.
-
-Получить несколько записей по user_id
-
-RestAPI:
-
-    GET get_by_user_id
-
-GraphQL:
-
-    query getByUserId($id: Float!) {
-        result: GetByUserId(id: $id) {
-            ...
-        }
-    }
-
-Параметры:
-
-    {
-        "id": ...
     }
 
 Ответ:
@@ -2355,7 +2354,15 @@ GOOGLE_CLIENT_CALLBACK=...
 
 ## Методы модуля клиента
 
+Все методы модуля сделаны согласно [спецификации RFC6749](https://datatracker.ietf.org/doc/html/rfc6749.html).
+
+[^ к оглавлению](#оглавление)
+
 ### Регистрация клиента
+
+Метод защищен, для регистрации клиента требуется авторизация пользователя. Иначе любой гость сможет создавать клиентов.
+
+По-умолчанию client_id генерируется как строка uuid. Теперь можно передать необязательный параметр "client_id", в котором указать желаемое имя клиента. Если такое имя занято, будет выброшена ошибка.
 
 POST
 
@@ -2445,6 +2452,8 @@ Response
 [^ к оглавлению](#оглавление)
 
 ### Получение токена доступа по типу сlient credentials
+
+Т.к. клиент привязан к пользователю, предоставив данные клиента, также можно получить токен доступа.
 
 POST
 
@@ -2545,10 +2554,10 @@ Data
 
 Redirect
 
-https://myapp.com/oauth/redirected
-  ?token_type=Bearer
-  &expires_in=900
-  #access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA1MjY4LCJleHAiOjE3MDk4MDYxNjh9.2JqBN87dkD8zGdaHFYFbn3qE0Fv6o6yGhmgX5xSqGu4
+    https://myapp.com/oauth/redirected
+        ?token_type=Bearer
+        &expires_in=900
+        #access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA1MjY4LCJleHAiOjE3MDk4MDYxNjh9.2JqBN87dkD8zGdaHFYFbn3qE0Fv6o6yGhmgX5xSqGu4
 
 [^ к оглавлению](#оглавление)
 

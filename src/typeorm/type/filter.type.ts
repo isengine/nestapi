@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
 
-export function FilterType<T>(ItemType: Type<T>) {
+export const FilterType = <T>(ItemType: Type<T>) => {
   @ObjectType({ isAbstract: true })
   abstract class FilterResult {
     @Field({ nullable: true })

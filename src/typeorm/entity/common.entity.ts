@@ -14,17 +14,17 @@ export class CommonEntity extends BaseEntity {
   @PrimaryGeneratedColumn({
     type: 'bigint',
   })
-  id: number;
+  id?: number;
 
   @Field({ nullable: true })
   @CreateDateColumn({
     name: 'created_at',
   })
-  createdAt: Date;
+  createdAt?: Date;
 
   @Field({ nullable: true })
   @UpdateDateColumn({
     name: 'updated_at',
   })
-  updatedAt: Date;
+  updatedAt?: Date;
 }
