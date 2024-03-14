@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
-import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { CommonEntity } from '@src/common/common.entity';
 import { RolesTypes } from '@src/roles/roles.enum';
 import { UsersEntity } from '@src/users/users.entity';
 

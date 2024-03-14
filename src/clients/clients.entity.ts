@@ -6,7 +6,7 @@ import {
   JoinColumn,
   // Generated,
 } from 'typeorm';
-import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { CommonEntity } from '@src/common/common.entity';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { TypeClients } from '@src/clients/clients.enum';
 

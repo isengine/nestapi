@@ -12,19 +12,28 @@ import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokensService } from '@src/tokens/tokens.service';
+import { CommonService } from '@src/common/service/common.service';
+import { AuthFilter } from '@src/auth/auth.filter';
+import { RelationsDto } from '@src/common/dto/relations.dto';
 
 @Injectable()
-export class AuthService {
+export class AuthService extends CommonService<
+  AuthEntity,
+  AuthDto,
+  AuthFilter
+> {
   constructor(
     @InjectRepository(AuthEntity)
-    private readonly authRepository: Repository<AuthEntity>,
-    private readonly userService: UsersService,
-    private readonly sessionsService: SessionsService,
-    private readonly tokensService: TokensService,
-  ) {}
+    protected readonly repository: Repository<AuthEntity>,
+    protected readonly userService: UsersService,
+    protected readonly sessionsService: SessionsService,
+    protected readonly tokensService: TokensService,
+  ) {
+    super();
+  }
 
   async login(authDto: AuthDto, request: any = null): Promise<AuthDto> {
-    const auth = await this.authGetByUsername(authDto.username);
+    const auth = await this.findByUsername(authDto.username);
     if (!auth) {
       throw new UnauthorizedException('User not found');
     }
@@ -53,7 +62,7 @@ export class AuthService {
   }
 
   async register(authDto: AuthDto, request: any = null): Promise<AuthDto> {
-    const authExists = await this.authGetByUsername(authDto.username);
+    const authExists = await this.findByUsername(authDto.username);
     if (authExists) {
       throw new BadRequestException(
         'User with this username is already in the system',
@@ -61,7 +70,7 @@ export class AuthService {
     }
     const salt = await genSalt(10);
     authDto.password = await hash(authDto.password, salt);
-    const auth = await this.authCreate(authDto);
+    const auth = await this.create(authDto);
     const tokens = await this.tokensService.tokensCreatePair(auth);
     if (request) {
       await this.sessionsService.createSession(auth, tokens, request);
@@ -70,57 +79,39 @@ export class AuthService {
     return auth;
   }
 
-  async authGetAll(): Promise<AuthEntity[]> {
-    return await this.authRepository.find();
+  async findByUsername(username: string): Promise<AuthEntity> {
+    return await this.repository.findOneBy({ username });
   }
 
-  async authGetOne(id: number): Promise<AuthEntity> {
-    return await this.authRepository.findOneBy({ id });
-  }
-
-  async authGetByUsername(username: string): Promise<AuthEntity> {
-    return await this.authRepository.findOneBy({ username });
-  }
-
-  async authCreate(authDto: AuthDto): Promise<AuthEntity> {
-    return await this.authRepository
-      .save({ ...authDto })
-      .then(async (result) => {
-        await this.userService.usersCreate({
-          email: result.username,
-          auth: {
-            id: result.id,
-            username: result.username,
-            isActivated: result.isActivated,
-          },
-        });
-        return result;
-      });
-  }
-
-  async authUpdate(authDto: AuthDto): Promise<AuthEntity> {
-    const { id } = authDto;
-    if (id === undefined) {
-      return;
-    }
-    delete authDto.createdAt;
-    delete authDto.updatedAt;
-    await this.authRepository.save({ ...authDto }).then(async (result) => {
-      await this.userService.usersUpdate({
-        email: result.username,
-        auth: {
-          id: result.id,
-          username: result.username,
-          isActivated: result.isActivated,
-        },
-      });
-      return result;
+  async create(
+    authDto: AuthDto,
+    relationsDto: Array<RelationsDto> = undefined,
+  ): Promise<AuthEntity> {
+    const result = await super.create(authDto, relationsDto);
+    await this.userService.create({
+      email: result.username,
+      auth: {
+        id: result.id,
+        username: result.username,
+        isActivated: result.isActivated,
+      },
     });
-    return await this.authGetOne(authDto.id);
+    return result;
   }
 
-  async authRemove(id: number): Promise<boolean> {
-    const result = await this.authRepository.delete({ id });
-    return !!result?.affected;
+  async update(
+    authDto: AuthDto,
+    relationsDto: Array<RelationsDto> = undefined,
+  ): Promise<AuthEntity> {
+    const result = await super.update(authDto, relationsDto);
+    await this.userService.update({
+      email: result.username,
+      auth: {
+        id: result.id,
+        username: result.username,
+        isActivated: result.isActivated,
+      },
+    });
+    return result;
   }
 }

@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { RoomsDto } from '@src/rooms/rooms.dto';
-import { CommonDto } from '@src/typeorm/dto/common.dto';
+import { CommonDto } from '@src/common/dto/common.dto';
 import { UsersDto } from '@src/users/users.dto';
 
 @InputType()

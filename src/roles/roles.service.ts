@@ -3,38 +3,28 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesEntity } from '@src/roles/roles.entity';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { CommonService } from '@src/common/service/common.service';
+import { RolesFilter } from '@src/roles/roles.filter';
 
 @Injectable()
-export class RolesService {
+export class RolesService extends CommonService<
+  RolesEntity,
+  RolesDto,
+  RolesFilter
+> {
   constructor(
     @InjectRepository(RolesEntity)
-    private readonly rolesRepository: Repository<RolesEntity>,
-  ) {}
-
-  async rolesGetAll(
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<RolesEntity[]> {
-    return await this.rolesRepository.find({
-      relations: relationsDto?.map(i => i.name),
-    });
-  }
-
-  async rolesGetOne(
-    id: number,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<RolesEntity> {
-    return await this.rolesRepository.findOne({
-      relations: relationsDto?.map(i => i.name),
-      where: { id },
-    });
+    protected readonly repository: Repository<RolesEntity>,
+  ) {
+    super();
   }
 
   async rolesGetByUserId(
     userId: number,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RolesEntity[]> {
-    const roles = await this.rolesRepository.find({
+    const roles = await this.repository.find({
       relations: relationsDto?.map(i => i.name),
       where: {
         user: {
@@ -46,24 +36,5 @@ export class RolesService {
       return;
     }
     return roles;
-  }
-
-  async rolesCreate(rolesDto: RolesDto): Promise<RolesEntity> {
-    return await this.rolesRepository.save({ ...rolesDto });
-  }
-
-  async rolesUpdate(rolesDto: RolesDto): Promise<RolesEntity> {
-    const { id } = rolesDto;
-    if (id === undefined) {
-      return;
-    }
-    delete rolesDto.createdAt;
-    delete rolesDto.updatedAt;
-    return await this.rolesCreate(rolesDto);
-  }
-
-  async rolesRemove(id: number): Promise<boolean> {
-    const result = await this.rolesRepository.delete({ id });
-    return !!result?.affected;
   }
 }

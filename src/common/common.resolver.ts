@@ -1,21 +1,21 @@
 import { Args, Mutation, Query } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
-import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
-import { SearchDto } from '@src/typeorm/dto/search.dto';
-import { CreateService } from '@src/typeorm/create/create.service';
-import { CommonDto } from '@src/typeorm/dto/common.dto';
-import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { OptionsDto } from '@src/common/dto/options.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { SearchDto } from '@src/common/dto/search.dto';
+import { CommonService } from '@src/common/service/common.service';
+import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonEntity } from '@src/common/common.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
 
-export const CreateResolver = <T extends Type<unknown>>(
+export const CommonResolver = <T extends Type<unknown>>(
   name: string,
   classEntity: T,
   classDto,
   classFilter,
 ) => {
   class BaseResolver<
-    Service extends CreateService<Entity, Dto, Filter>,
+    Service extends CommonService<Entity, Dto, Filter>,
     Entity extends CommonEntity,
     Dto extends CommonDto,
     Filter

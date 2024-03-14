@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-custom';
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { responseServer } from '@src/typeorm/service/response.service';
+import { responseServer } from '@src/common/service/response.service';
 
 @Injectable()
 export class FromClientStrategy extends PassportStrategy(Strategy, 'fromclient') {

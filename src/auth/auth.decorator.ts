@@ -5,7 +5,7 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { ApiType } from '@src/typeorm/type/api.type';
+import { ApiType } from '@src/common/type/api.type';
 import { JwtAuthGuard } from '@src/auth/guard/jwt.guard';
 import { GqlAuthGuard } from '@src/auth/guard/gql.guard';
 import { FormAuthGuard } from '@src/auth/guard/form.guard';

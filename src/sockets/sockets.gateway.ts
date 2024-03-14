@@ -31,7 +31,7 @@ export class SocketsGateway
     @MessageBody() socketsDto: SocketsDto,
     @Req() client: Socket,
   ): Promise<SocketsEntity> {
-    const result = await this.socketsService.socketsCreate(socketsDto);
+    const result = await this.socketsService.create(socketsDto);
     this.server.emit('event', result);
     console.log('client', client.id);
     return result;

@@ -7,7 +7,7 @@ import {
   JoinColumn,
   JoinTable,
 } from 'typeorm';
-import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { CommonEntity } from '@src/common/common.entity';
 import { UsersEntity } from '@src/users/users.entity';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { TagsEntity } from '@src/tags/tags.entity';

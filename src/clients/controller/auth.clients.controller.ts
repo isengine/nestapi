@@ -3,7 +3,7 @@ import { AuthClientsDto } from '@src/clients/dto/auth.clients.dto';
 import { AuthClientsService } from '@src/clients/service/auth.clients.service';
 import { Client, SelfClient } from '@src/clients/clients.decorator';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { Unauthorized } from '@src/auth/auth.filter'
+import { Unauthorized } from '@src/auth/auth.filtration'
 
 @Controller('clients')
 export class AuthClientsController {

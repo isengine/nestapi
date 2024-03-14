@@ -1,29 +1,27 @@
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Args, Resolver, Query } from '@nestjs/graphql';
+import { CommonResolver } from '@src/common/common.resolver';
 import { SessionsDto } from '@src/sessions/sessions.dto';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { SessionsService } from '@src/sessions/sessions.service';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { SessionsFilter } from '@src/sessions/sessions.filter';
 
-@Resolver('sessions')
-export class SessionsResolver {
-  constructor(private readonly sessionsService: SessionsService) {}
-
-  @Query(() => [SessionsEntity])
-  async sessionsGetAll(
-    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-    relationsDto: Array<RelationsDto>,
-  ): Promise<SessionsEntity[]> {
-    return await this.sessionsService.sessionsGetAll(relationsDto);
-  }
-
-  @Query(() => SessionsEntity)
-  async sessionsGetOne(
-    @Args('id')
-    id: number,
-    @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-    relationsDto: Array<RelationsDto>,
-  ): Promise<SessionsEntity> {
-    return await this.sessionsService.sessionsGetOne(id, relationsDto);
+@Resolver(SessionsEntity)
+export class SessionsResolver extends CommonResolver(
+  'sessions',
+  SessionsEntity,
+  SessionsDto,
+  SessionsFilter,
+)<
+  SessionsService,
+  SessionsEntity,
+  SessionsDto,
+  SessionsFilter
+> {
+  constructor(
+    readonly service: SessionsService,
+  ) {
+    super();
   }
 
   @Query(() => [SessionsEntity])
@@ -33,30 +31,6 @@ export class SessionsResolver {
     @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
     relationsDto: Array<RelationsDto>,
   ): Promise<SessionsEntity[]> {
-    return await this.sessionsService.sessionsGetByAuthId(id, relationsDto);
-  }
-
-  @Mutation(() => SessionsEntity)
-  async sessionsCreate(
-    @Args('create')
-    sessionsDto: SessionsDto,
-  ): Promise<SessionsEntity> {
-    return await this.sessionsService.sessionsCreate(sessionsDto);
-  }
-
-  @Mutation(() => SessionsEntity)
-  async sessionsUpdate(
-    @Args('update')
-    sessionsDto: SessionsDto,
-  ): Promise<SessionsEntity> {
-    return await this.sessionsService.sessionsUpdate(sessionsDto);
-  }
-
-  @Mutation(() => Number)
-  async sessionsRemove(
-    @Args('id')
-    id: number,
-  ): Promise<boolean> {
-    return await this.sessionsService.sessionsRemove(id);
+    return await this.service.sessionsGetByAuthId(id, relationsDto);
   }
 }

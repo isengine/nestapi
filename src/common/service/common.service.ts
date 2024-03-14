@@ -1,18 +1,16 @@
 import { DeepPartial, FindOptionsOrder, FindOptionsWhere, In, Repository } from 'typeorm';
-import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
-import { SearchDto } from '@src/typeorm/dto/search.dto';
-import {
-  commonEntityGetParams,
-  commonRelationsCreate,
-} from '@src/typeorm/service/common.service';
-import { filterService } from '@src/typeorm/service/filter.service';
-import { optionsService } from '@src/typeorm/service/options.service';
-import { searchService } from '@src/typeorm/service/search.service';
-import { CommonDto } from '@src/typeorm/dto/common.dto';
-import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { OptionsDto } from '@src/common/dto/options.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { SearchDto } from '@src/common/dto/search.dto';
+import { entityGetParams } from '@src/common/service/entity.service';
+import { relationsCreate } from '@src/common/service/relations.service';
+import { filterService } from '@src/common/service/filter.service';
+import { optionsService } from '@src/common/service/options.service';
+import { searchService } from '@src/common/service/search.service';
+import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonEntity } from '@src/common/common.entity';
 
-export class CreateService<
+export class CommonService<
   Entity extends CommonEntity,
   Dto extends CommonDto,
   Filter
@@ -71,11 +69,11 @@ export class CreateService<
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<Filter[]> {
-    const { root, fields } = commonEntityGetParams(this.entity);
+    const { root, fields } = entityGetParams(this.entity);
     const query = this.repository.createQueryBuilder(root);
     const where = filterService(dto, root, fields);
     query.where(where);
-    commonRelationsCreate(query, relationsDto, root);
+    relationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
   }
 
@@ -84,11 +82,11 @@ export class CreateService<
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<Filter[]> {
-    const { root, core, fields } = commonEntityGetParams(this.entity);
+    const { root, core, fields } = entityGetParams(this.entity);
     const query = this.repository.createQueryBuilder(root);
     const where = searchService(searchDto, root, core, fields);
     query.where(where);
-    commonRelationsCreate(query, relationsDto, root);
+    relationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
   }
 

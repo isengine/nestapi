@@ -1,6 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
-import { RoomsEntity } from '@src/rooms/rooms.entity';
+import { RolesEntity } from '@src/roles/roles.entity';
 import { FilterType } from '@src/common/type/filter.type';
 
 @ObjectType()
-export class RoomsFilter extends FilterType(RoomsEntity) {}
+export class RolesFilter extends FilterType(RolesEntity) {}

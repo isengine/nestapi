@@ -3,14 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SessionsDto } from '@src/sessions/sessions.dto';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { CommonService } from '@src/common/service/common.service';
+import { SessionsFilter } from './sessions.filter';
 
 @Injectable()
-export class SessionsService {
+export class SessionsService extends CommonService<
+  SessionsEntity,
+  SessionsDto,
+  SessionsFilter
+> {
   constructor(
     @InjectRepository(SessionsEntity)
-    private readonly sessionsRepository: Repository<SessionsEntity>,
-  ) {}
+    protected readonly repository: Repository<SessionsEntity>,
+  ) {
+    super();
+  }
 
   async logSessions(auth, tokens, request, description = '') {
     const { ip, method, originalUrl, headers } = request;
@@ -27,7 +35,7 @@ export class SessionsService {
       access_token: tokens?.access_token || null,
       refresh_token: tokens?.refresh_token || null,
     };
-    return await this.sessionsCreate(data);
+    return await this.create(data);
   }
 
   async createSession(auth, tokens, request) {
@@ -53,29 +61,11 @@ export class SessionsService {
     }
   }
 
-  async sessionsGetAll(
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<SessionsEntity[]> {
-    return await this.sessionsRepository.find({
-      relations: relationsDto?.map(i => i.name),
-    });
-  }
-
-  async sessionsGetOne(
-    id: number,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<SessionsEntity> {
-    return await this.sessionsRepository.findOne({
-      relations: relationsDto?.map(i => i.name),
-      where: { id },
-    });
-  }
-
   async sessionsGetByAuthId(
     authId: number,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SessionsEntity[]> {
-    const sessions = await this.sessionsRepository.find({
+    const sessions = await this.repository.find({
       relations: relationsDto?.map(i => i.name),
       where: {
         auth: {
@@ -87,24 +77,5 @@ export class SessionsService {
       return;
     }
     return sessions;
-  }
-
-  async sessionsCreate(sessionsDto: SessionsDto): Promise<SessionsEntity> {
-    return await this.sessionsRepository.save({ ...sessionsDto });
-  }
-
-  async sessionsUpdate(sessionsDto: SessionsDto): Promise<SessionsEntity> {
-    const { id } = sessionsDto;
-    if (id === undefined) {
-      return;
-    }
-    delete sessionsDto.createdAt;
-    delete sessionsDto.updatedAt;
-    return await this.sessionsCreate(sessionsDto);
-  }
-
-  async sessionsRemove(id: number): Promise<boolean> {
-    const result = await this.sessionsRepository.delete({ id });
-    return !!result?.affected;
   }
 }

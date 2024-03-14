@@ -1,28 +1,23 @@
-import { Body, Controller, Get, Post, NotFoundException } from '@nestjs/common';
+import { Controller, Get, NotFoundException } from '@nestjs/common';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesService } from '@src/roles/roles.service';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
 import { Data } from '@src/app.decorator';
+import { CommonController } from '@src/common/common.controller';
+import { RolesEntity } from '@src/roles/roles.entity';
+import { RolesFilter } from '@src/roles/roles.filter';
 
 @Controller('roles')
-export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
-
-  @Get('get_all')
-  async rolesGetAll(@Data('relations') relationsDto: Array<RelationsDto>) {
-    return await this.rolesService.rolesGetAll(relationsDto);
-  }
-
-  @Get('get_one')
-  async rolesGetOne(
-    @Data('id') id: number,
-    @Data('relations') relationsDto: Array<RelationsDto>,
+export class RolesController extends CommonController<
+  RolesService,
+  RolesEntity,
+  RolesDto,
+  RolesFilter
+> {
+  constructor(
+    protected readonly service: RolesService,
   ) {
-    const result = await this.rolesService.rolesGetOne(id, relationsDto);
-    if (!result) {
-      throw new NotFoundException('Any results not found');
-    }
-    return result;
+    super();
   }
 
   @Get('get_by_user_id')
@@ -30,27 +25,10 @@ export class RolesController {
     @Data('id') id: number,
     @Data('relations') relationsDto: Array<RelationsDto>,
   ) {
-    const result = await this.rolesService.rolesGetByUserId(id, relationsDto);
+    const result = await this.service.rolesGetByUserId(id, relationsDto);
     if (!result) {
       throw new NotFoundException('Any results not found');
     }
     return result;
-  }
-
-  @Post('create')
-  async rolesCreate(@Body() rolesDto: RolesDto) {
-    return await this.rolesService.rolesCreate(rolesDto);
-  }
-
-  // @Put('update')
-  @Post('update')
-  async rolesUpdate(@Body() rolesDto: RolesDto) {
-    return await this.rolesService.rolesUpdate(rolesDto);
-  }
-
-  // @Delete('remove')
-  @Post('remove')
-  async rolesRemove(@Body('id') id: number) {
-    return await this.rolesService.rolesRemove(id);
   }
 }

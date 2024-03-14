@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
-import { CommonDto } from '@src/typeorm/dto/common.dto';
+import { CommonDto } from '@src/common/dto/common.dto';
 
 @InputType()
 export class TokensDto extends CommonDto {

@@ -105,7 +105,7 @@ export class TokenClientsService {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
     client[0].code = null
-    await this.clientsService.clientsUpdate(client[0]);
+    await this.clientsService.update(client[0]);
     const tokens = await this.tokensService.tokensCreatePair(client[0].auth);
     if (!tokens) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');

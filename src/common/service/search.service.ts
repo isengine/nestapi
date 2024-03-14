@@ -1,4 +1,4 @@
-import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { SearchDto } from '@src/common/dto/search.dto';
 import * as dotenv from 'dotenv';
 
 dotenv.config();

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
-import { responseServer } from '@src/typeorm/service/response.service';
+import { responseServer } from '@src/common/service/response.service';
 
 @Injectable()
 export class LeaderProvider {
@@ -51,7 +51,7 @@ export class LeaderProvider {
   }
 
   async validate(account) {
-    const auth = await this.authService.authGetByUsername(account.email);
+    const auth = await this.authService.findByUsername(account.email);
 
     const authDto: AuthDto = {
       username: account.email,
@@ -62,13 +62,13 @@ export class LeaderProvider {
 
     if (!auth) {
       return await this.authService
-        .authCreate(authDto)
+        .create(authDto)
         .then(async (result) => await this.prepareResult(result, account));
     }
 
     authDto.id = auth.id;
     return await this.authService
-      .authUpdate(authDto)
+      .update(authDto)
       .then(async (result) => await this.prepareResult(result, account));
   }
 
@@ -77,7 +77,7 @@ export class LeaderProvider {
       male: 'm',
       female: 'w',
     };
-    await this.userService.usersUpdateByAuthId({
+    await this.userService.updateByAuthId({
       authId: auth.id,
       email: account.email,
       phone: `7${account.phone}`,

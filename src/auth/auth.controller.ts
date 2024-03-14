@@ -40,7 +40,7 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Success', type: AuthDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' })
   async authSelfGet(@Self() id: number) {
-    const result = await this.authService.authGetOne(id);
+    const result = await this.authService.findOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -50,7 +50,7 @@ export class AuthController {
   @Auth()
   @Post('self')
   async authSelfPost(@Self() id: number) {
-    const result = await this.authService.authGetOne(id);
+    const result = await this.authService.findOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -61,7 +61,7 @@ export class AuthController {
   @Client()
   @Post('secure')
   async authSecure(@Self() id: number) {
-    const result = await this.authService.authGetOne(id);
+    const result = await this.authService.findOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
@@ -71,7 +71,7 @@ export class AuthController {
   @Auth()
   @Get('get_all')
   async authGetAll() {
-    return await this.authService.authGetAll();
+    return await this.authService.findAll();
   }
 
   @UsePipes(new ValidationPipe())

@@ -15,7 +15,7 @@ export class AuthClientsService {
   async clientsAuthCodeGenerate(clientsDto: ClientsDto): Promise<ClientsEntity> {
     const code = await Buffer.from(`${Date.now()}|${clientsDto.client_id}|${clientsDto.redirect_uri}`).toString('base64');
     clientsDto.code = code;
-    return await this.clientsService.clientsUpdate(clientsDto);
+    return await this.clientsService.update(clientsDto);
   }
 
   async clientsAuthCodeVerify(code: string, clientsDto: ClientsDto): Promise<boolean> {

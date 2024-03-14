@@ -23,7 +23,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   async validate(access_token: string, refresh_token: string, profile: Profile) {
     const account = profile._json;
-    const auth = await this.authService.authGetByUsername(account.email);
+    const auth = await this.authService.findByUsername(account.email);
 
     const authDto: AuthDto = {
       username: account.email,
@@ -34,18 +34,18 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
     if (!auth) {
       return await this.authService
-        .authCreate(authDto)
+        .create(authDto)
         .then(async (result) => await this.prepareResult(result, account));
     }
 
     authDto.id = auth.id;
     return await this.authService
-      .authUpdate(authDto)
+      .update(authDto)
       .then(async (result) => await this.prepareResult(result, account));
   }
 
   async prepareResult(auth, account): Promise<AuthDto> {
-    await this.userService.usersUpdateByAuthId({
+    await this.userService.updateByAuthId({
       authId: auth.id,
       email: account.email,
       name: account.name,

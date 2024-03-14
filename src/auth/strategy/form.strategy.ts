@@ -41,7 +41,7 @@ export class FormStrategy extends PassportStrategy(Strategy, 'form') {
   // }
 
   async validate({ id }: Pick<AuthEntity, 'id'>) {
-    const auth = await this.authService.authGetOne(id);
+    const auth = await this.authService.findOne(id);
     console.log(' --- auth ', auth);
     if (!auth.id) {
       throw new ForbiddenException('You have no rights!');

@@ -1,14 +1,14 @@
 import { Body, Get, Post, Put, Delete, NotFoundException } from '@nestjs/common';
-import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
-import { SearchDto } from '@src/typeorm/dto/search.dto';
+import { OptionsDto } from '@src/common/dto/options.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { SearchDto } from '@src/common/dto/search.dto';
 import { Data } from '@src/app.decorator';
-import { CreateService } from '@src/typeorm/create/create.service';
-import { CommonDto } from '@src/typeorm/dto/common.dto';
-import { CommonEntity } from '@src/typeorm/entity/common.entity';
+import { CommonService } from '@src/common/service/common.service';
+import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonEntity } from '@src/common/common.entity';
 
-export class CreateController<
-  Service extends CreateService<Entity, Dto, Filter>,
+export class CommonController<
+  Service extends CommonService<Entity, Dto, Filter>,
   Entity extends CommonEntity,
   Dto extends CommonDto,
   Filter

@@ -6,11 +6,11 @@ import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsFilter } from '@src/posts/posts.filter';
 import { CategoriesService } from '@src/categories/categories.service';
 import { TagsService } from '@src/tags/tags.service';
-import { CreateService } from '@src/typeorm/create/create.service';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { CommonService } from '@src/common/service/common.service';
+import { RelationsDto } from '@src/common/dto/relations.dto';
 
 @Injectable()
-export class PostsService extends CreateService<
+export class PostsService extends CommonService<
   PostsEntity,
   PostsDto,
   PostsFilter
@@ -30,7 +30,7 @@ export class PostsService extends CreateService<
   ): Promise<PostsEntity> {
     const { categoryId } = postsDto;
     if (categoryId) {
-      const category = await this.categoriesService.categoriesGetOne(
+      const category = await this.categoriesService.findOne(
         categoryId,
       );
       postsDto.category = category;
@@ -38,7 +38,7 @@ export class PostsService extends CreateService<
     delete postsDto.categoryId;
     const { tagsList } = postsDto;
     if (tagsList && tagsList.length) {
-      const tags = await this.tagsService.tagsGetMany(tagsList);
+      const tags = await this.tagsService.findMany(tagsList);
       postsDto.tags = (postsDto.tags || []).concat(tags);
     }
     delete postsDto.tagsList;

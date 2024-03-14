@@ -1,6 +1,6 @@
 import * as moment from 'moment';
-import { OptionsDto } from '@src/typeorm/dto/options.dto';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { OptionsDto } from '@src/common/dto/options.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
 
 export const optionsCount = (data, count, optionsDto: OptionsDto) => {
   const { limit } = optionsDto;

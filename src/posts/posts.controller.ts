@@ -1,15 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
 import { PostsService } from '@src/posts/posts.service';
 import { PostsDto } from '@src/posts/posts.dto';
-import { RelationsDto } from '@src/typeorm/dto/relations.dto';
+import { RelationsDto } from '@src/common/dto/relations.dto';
 import { Data } from '@src/app.decorator';
 import { FromClient } from '@src/auth/auth.decorator';
-import { CreateController } from '@src/typeorm/create/create.controller';
-import { PostsEntity } from './posts.entity';
-import { PostsFilter } from './posts.filter';
+import { CommonController } from '@src/common/common.controller';
+import { PostsEntity } from '@src/posts/posts.entity';
+import { PostsFilter } from '@src/posts/posts.filter';
 
 @Controller('posts')
-export class PostsController extends CreateController<
+export class PostsController extends CommonController<
   PostsService,
   PostsEntity,
   PostsDto,

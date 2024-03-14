@@ -16,7 +16,7 @@ export class SessionSerializer extends PassportSerializer {
 
   async deserializeUser(payload: any, done) {
     console.log('deserializeUser');
-    const auth = await this.authService.authGetOne(payload.id);
+    const auth = await this.authService.findOne(payload.id);
     return done(undefined, auth ?? undefined);
   }
 }
