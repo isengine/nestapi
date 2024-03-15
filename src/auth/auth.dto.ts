@@ -8,7 +8,10 @@ import { ApiProperty } from "@nestjs/swagger";
 export class AuthDto extends CommonDto {
   @Field()
   @IsEmail()
-  @ApiProperty({ description: 'User email as login', nullable: false })
+  @ApiProperty({
+    required: true,
+    description: 'Имя пользователя, обычно здесь используется email',
+  })
   username: string;
 
   @Field({ nullable: true })
@@ -16,19 +19,38 @@ export class AuthDto extends CommonDto {
     message: 'Password cannot be less than 6 symbols!',
   })
   @IsString()
-  @ApiProperty({ description: 'User password', nullable: false })
+  @ApiProperty({
+    required: false,
+    description: 'Пароль, заданный пользователем',
+  })
   password?: string;
 
   @Field({ nullable: true })
-  @ApiProperty({ description: 'Strategy of passport.js', nullable: true })
+  @ApiProperty({
+    required: false,
+    description: 'Стратегия OAuth 2.0, реализованная через библиотеку passport.js',
+  })
   passportStrategy?: string;
 
+  @ApiProperty({
+    required: false,
+    description: 'ID пользователя на сервере OAuth 2.0',
+  })
   @Field({ nullable: true })
   passportId?: string;
 
+  @ApiProperty({
+    required: false,
+    default: false,
+    description: 'Флаг, который показывает является ли учетная запись пользователя активированной. Например, подтвержденной по email.',
+  })
   @Field({ nullable: true, defaultValue: false })
   isActivated?: boolean;
 
+  @ApiProperty({
+    required: false,
+    description: 'Данные записи tokens',
+  })
   @Field({ nullable: true })
   tokens?: TokensDto;
 }

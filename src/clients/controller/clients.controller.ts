@@ -8,14 +8,18 @@ import { ClientsEntity } from '../clients.entity';
 import { ClientsFilter } from '../clients.filter';
 
 @Controller('clients')
-export class ClientsController extends CommonController<
+export class ClientsController extends CommonController(
+  'clients',
+  ClientsEntity,
+  ClientsDto,
+)<
   ClientsService,
   ClientsEntity,
   ClientsDto,
   ClientsFilter
 > {
   constructor(
-    protected readonly service: ClientsService,
+    readonly service: ClientsService,
   ) {
     super();
   }

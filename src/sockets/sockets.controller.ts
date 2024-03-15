@@ -6,14 +6,18 @@ import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsFilter } from '@src/sockets/sockets.filter';
 
 @Controller('sockets')
-export class SocketsController extends CommonController<
+export class SocketsController extends CommonController(
+  'sockets',
+  SocketsEntity,
+  SocketsDto,
+)<
   SocketsService,
   SocketsEntity,
   SocketsDto,
   SocketsFilter
 > {
   constructor(
-    protected readonly service: SocketsService,
+    readonly service: SocketsService,
   ) {
     super();
   }

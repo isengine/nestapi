@@ -34,14 +34,6 @@ export const CommonResolver = <T extends Type<unknown>>(
       return await this.service.find(where, order, relationsDto);
     }
 
-    @Query(() => [classEntity], { name: `${name}FindAll` })
-    async findAll(
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
-    ): Promise<Entity[]> {
-      return await this.service.findAll(relationsDto);
-    }
-
     @Query(() => classEntity, { name: `${name}FindOne` })
     async findOne(
       @Args('id')

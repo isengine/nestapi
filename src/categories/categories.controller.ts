@@ -6,14 +6,18 @@ import { CategoriesEntity } from './categories.entity';
 import { CategoriesFilter } from './categories.filter';
 
 @Controller('categories')
-export class CategoriesController extends CommonController<
+export class CategoriesController extends CommonController(
+  'categories',
+  CategoriesEntity,
+  CategoriesDto,
+)<
   CategoriesService,
   CategoriesEntity,
   CategoriesDto,
   CategoriesFilter
 > {
   constructor(
-    protected readonly service: CategoriesService,
+    readonly service: CategoriesService,
   ) {
     super();
   }

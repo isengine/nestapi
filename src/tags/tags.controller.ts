@@ -6,14 +6,18 @@ import { TagsEntity } from './tags.entity';
 import { TagsFilter } from './tags.filter';
 
 @Controller('tags')
-export class TagsController extends CommonController<
+export class TagsController extends CommonController(
+  'tags',
+  TagsEntity,
+  TagsDto,
+)<
   TagsService,
   TagsEntity,
   TagsDto,
   TagsFilter
 > {
   constructor(
-    protected readonly service: TagsService,
+    readonly service: TagsService,
   ) {
     super();
   }

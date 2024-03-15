@@ -2962,6 +2962,26 @@ SWAGGER_PREFIX и SWAGGER_PREFIX_REDOC задают путь для докуме
 
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request' }) - пример декоратора, описывающего ответ сервера в случае ошибки
 
+Декоратор свойств класса dto:
+
+@ApiProperty({ nullable: true/false, description: "...", default: ... })
+
+Доступны следующие опции:
+
+- nullable: true/false,
+- description: "...",
+- default: ...,
+- type: ...,
+- enum: ...,
+- enumName: ...,
+- isArray: true/false - устанавливает мульти-селектор для выбора enum,
+- oneOf, anyOf, allOf: [{...}, ...],
+- items: {...}
+
+Все декораторы берутся из библотеки
+
+    @nestjs/swagger
+
 [^ к оглавлению](#оглавление)
 
 # Правила именований

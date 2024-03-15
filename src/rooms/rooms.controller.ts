@@ -6,14 +6,18 @@ import { RoomsEntity } from '@src/rooms/rooms.entity';
 import { RoomsFilter } from '@src/rooms/rooms.filter';
 
 @Controller('rooms')
-export class RoomsController extends CommonController<
+export class RoomsController extends CommonController(
+  'rooms',
+  RoomsEntity,
+  RoomsDto,
+)<
   RoomsService,
   RoomsEntity,
   RoomsDto,
   RoomsFilter
 > {
   constructor(
-    protected readonly service: RoomsService,
+    readonly service: RoomsService,
   ) {
     super();
   }

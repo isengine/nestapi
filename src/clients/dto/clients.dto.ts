@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { CommonDto } from '@src/common/dto/common.dto';
 import { TypeClients } from '@src/clients/clients.enum';
 import { AuthDto } from '@src/auth/auth.dto';
+import { ApiProperty } from "@nestjs/swagger";
 
 @InputType()
 export class ClientsDto extends CommonDto {
@@ -23,6 +24,7 @@ export class ClientsDto extends CommonDto {
   @Field({ nullable: true })
   title?: string;
 
+  @ApiProperty({ nullable: true, description: 'Поле с описанием или комментариями к этой записи' })
   @Field({ nullable: true })
   description?: string;
 

@@ -8,14 +8,18 @@ import { RolesEntity } from '@src/roles/roles.entity';
 import { RolesFilter } from '@src/roles/roles.filter';
 
 @Controller('roles')
-export class RolesController extends CommonController<
+export class RolesController extends CommonController(
+  'roles',
+  RolesEntity,
+  RolesDto,
+)<
   RolesService,
   RolesEntity,
   RolesDto,
   RolesFilter
 > {
   constructor(
-    protected readonly service: RolesService,
+    readonly service: RolesService,
   ) {
     super();
   }

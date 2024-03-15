@@ -23,7 +23,7 @@ import { TokensService } from '@src/tokens/tokens.service';
 import { Client } from '@src/clients/clients.decorator';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Auth')
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(

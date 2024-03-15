@@ -8,14 +8,18 @@ import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { SessionsFilter } from '@src/sessions/sessions.filter';
 
 @Controller('sessions')
-export class SessionsController extends CommonController<
+export class SessionsController extends CommonController(
+  'sessions',
+  SessionsEntity,
+  SessionsDto,
+)<
   SessionsService,
   SessionsEntity,
   SessionsDto,
   SessionsFilter
 > {
   constructor(
-    protected readonly service: SessionsService,
+    readonly service: SessionsService,
   ) {
     super();
   }

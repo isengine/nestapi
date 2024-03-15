@@ -9,14 +9,18 @@ import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 
 @Controller('users')
-export class UsersController extends CommonController<
+export class UsersController extends CommonController(
+  'users',
+  UsersEntity,
+  UsersDto,
+)<
   UsersService,
   UsersEntity,
   UsersDto,
   UsersFilter
 > {
   constructor(
-    protected readonly service: UsersService,
+    readonly service: UsersService,
   ) {
     super();
   }
