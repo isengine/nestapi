@@ -40,14 +40,6 @@ export class SessionsDto extends CommonDto {
   @Field({ nullable: true })
   method?: string;
 
-  // @ApiProperty({ required: false, description: 'Поле с описанием' })
-  // @Field({ nullable: true })
-  // sessions?: string;
-
-  // @ApiProperty({ required: false, description: 'Поле с описанием' })
-  // @Field({ nullable: true })
-  // cookies?: string;
-
   @ApiProperty({
     required: false,
     description: 'Текущая языковая локаль пользователя',
@@ -64,15 +56,8 @@ export class SessionsDto extends CommonDto {
 
   @ApiProperty({
     required: false,
-    description: 'Данные auth записи, связанной с данной сессией',
+    description: 'Данные auth записи, связанной с этой сессией',
   })
   @Field(() => AuthDto, { nullable: true })
   auth?: AuthDto;
-
-  @ApiProperty({
-    required: false,
-    description: 'ID auth записи, используется для ссылки',
-  })
-  @Field({ nullable: true })
-  authId?: number;
 }

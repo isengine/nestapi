@@ -4,11 +4,13 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
   // Generated,
 } from 'typeorm';
 import { CommonEntity } from '@src/common/common.entity';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { TypeClients } from '@src/clients/clients.enum';
+import { RedirectsEntity } from '@src/redirects/redirects.entity';
 
 @ObjectType()
 @Entity({ name: 'clients' })
@@ -111,4 +113,11 @@ export class ClientsEntity extends CommonEntity {
   @ManyToOne(() => AuthEntity)
   @JoinColumn({ name: 'auth_id', referencedColumnName: 'id' })
   auth: AuthEntity;
+
+  @OneToMany(() => RedirectsEntity, (redirect) => redirect.client, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  redirects: RedirectsEntity[];
 }

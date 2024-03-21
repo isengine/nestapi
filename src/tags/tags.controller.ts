@@ -7,7 +7,7 @@ import { TagsFilter } from './tags.filter';
 
 @Controller('tags')
 export class TagsController extends CommonController(
-  'tags',
+  'Теги постов',
   TagsEntity,
   TagsDto,
 )<

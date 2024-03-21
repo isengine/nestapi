@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 @InputType()
 export class CommonDto {
   @ApiProperty({
-    required: true,
+    required: false,
     description: 'Id номер записи, автоматическое приращение',
   })
   @Field(() => ID, { nullable: true })

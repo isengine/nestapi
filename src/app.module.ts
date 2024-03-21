@@ -17,8 +17,10 @@ import { FilesModule } from '@src/files/files.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { RandomModule } from '@src/random/random.module';
+import { RedirectsModule } from '@src/redirects/redirects.module';
 import { RolesModule } from '@src/roles/roles.module';
 import { SessionsModule } from '@src/sessions/sessions.module';
+import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
@@ -49,10 +51,12 @@ import { TokensModule } from '@src/tokens/tokens.module';
     MailModule,
     PostsModule,
     RandomModule,
+    RedirectsModule,
     RolesModule,
     RoomsModule,
     SessionsModule,
     SocketsModule,
+    StrategiesModule,
     TagsModule,
     TokensModule,
     UsersModule,

@@ -1,8 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { TokensDto } from '@src/tokens/tokens.dto';
+import { ApiProperty } from "@nestjs/swagger";
 import { CommonDto } from '@src/common/dto/common.dto';
 import { IsEmail, IsString, MinLength } from 'class-validator';
-import { ApiProperty } from "@nestjs/swagger";
+// import { TokensDto } from '@src/tokens/tokens.dto';
+// import { StrategiesDto } from '@src/strategies/strategies.dto';
 
 @InputType()
 export class AuthDto extends CommonDto {
@@ -12,7 +13,7 @@ export class AuthDto extends CommonDto {
     required: true,
     description: 'Имя пользователя, обычно здесь используется email',
   })
-  username: string;
+  username?: string;
 
   @Field({ nullable: true })
   @MinLength(6, {
@@ -25,20 +26,6 @@ export class AuthDto extends CommonDto {
   })
   password?: string;
 
-  @Field({ nullable: true })
-  @ApiProperty({
-    required: false,
-    description: 'Стратегия OAuth 2.0, реализованная через библиотеку passport.js',
-  })
-  passportStrategy?: string;
-
-  @ApiProperty({
-    required: false,
-    description: 'ID пользователя на сервере OAuth 2.0',
-  })
-  @Field({ nullable: true })
-  passportId?: string;
-
   @ApiProperty({
     required: false,
     default: false,
@@ -47,10 +34,17 @@ export class AuthDto extends CommonDto {
   @Field({ nullable: true, defaultValue: false })
   isActivated?: boolean;
 
-  @ApiProperty({
-    required: false,
-    description: 'Данные записи tokens',
-  })
-  @Field({ nullable: true })
-  tokens?: TokensDto;
+  // @ApiProperty({
+  //   required: false,
+  //   description: 'Данные записи tokens',
+  // })
+  // @Field({ nullable: true })
+  // tokens?: TokensDto;
+
+  // @ApiProperty({
+  //   required: false,
+  //   description: 'Данные записи strategies',
+  // })
+  // @Field({ nullable: true })
+  // strategies?: StrategiesDto;
 }

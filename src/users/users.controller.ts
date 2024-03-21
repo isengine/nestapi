@@ -10,7 +10,7 @@ import { UsersFilter } from '@src/users/users.filter';
 
 @Controller('users')
 export class UsersController extends CommonController(
-  'users',
+  'Пользователи',
   UsersEntity,
   UsersDto,
 )<

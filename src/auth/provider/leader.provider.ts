@@ -4,12 +4,14 @@ import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { responseServer } from '@src/common/service/response.service';
+import { StrategiesService } from '@src/strategies/strategies.service';
 
 @Injectable()
 export class LeaderProvider {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
+    private readonly strategiesService: StrategiesService,
     private readonly userService: UsersService,
   ) {}
 
@@ -55,8 +57,6 @@ export class LeaderProvider {
 
     const authDto: AuthDto = {
       username: account.email,
-      passportStrategy: 'leaderid',
-      passportId: account.id,
       isActivated: !!(account.emailConfirmed || account.phoneConfirmed),
     };
 
@@ -77,28 +77,45 @@ export class LeaderProvider {
       male: 'm',
       female: 'w',
     };
+    const { postCode, country, region, city, street, house, building, wing, apartment, place } = account.address;
+    const address = `${
+        postCode ? `${postCode}, ` : ''
+      }${
+        country ? `${country}, ` : ''
+      }${
+        region ? `${region}, ` : ''
+      }${
+        city ? `${city}, ` : ''
+      }${
+        street ? `${street}, ` : ''
+      }${
+        house ? `${house}, ` : ''
+      }${
+        building ? `${building}, ` : ''
+      }${
+        wing ? `${wing}, ` : ''
+      }${
+        apartment ? `${apartment}, ` : ''
+      }${
+        place ? `${place}, ` : ''
+      }`;
+    await this.strategiesService.updateByAuthId({
+      auth: { id: auth.id },
+      name: 'leaderid',
+      uid: account.id,
+      json: JSON.stringify(account),
+    });
     await this.userService.updateByAuthId({
-      authId: auth.id,
+      auth: { id: auth.id },
       email: account.email,
       phone: `7${account.phone}`,
-      name: `${account.firstName} ${account.lastName}`,
-      firstName: account.firstName,
+      name: account.firstName,
       lastName: account.lastName,
-      fatherName: account.fatherName,
+      parentName: account.fatherName,
       avatar: account.photo,
       birthday: account.birthday,
-      country: account.address?.country,
-      region: account.address?.region,
-      city: account.address?.city,
-      street: account.address?.street,
-      house: account.address?.house,
-      building: account.address?.building,
-      wing: account.address?.wing,
-      apartment: account.address?.apartment,
-      place: account.address?.place,
-      postCode: account.address?.postCode,
+      address,
       timezone: account.address?.timezone,
-      tz: `${(Number(account?.address?.tz?.minutes) || 0) * 60}`,
       gender: genders[account.gender] || '',
     });
     return auth;

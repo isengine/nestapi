@@ -8,7 +8,9 @@ import {
 import { FilesService } from '@src/files/files.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FilesInterface } from './files.interface';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}

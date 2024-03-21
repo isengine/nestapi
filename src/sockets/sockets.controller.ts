@@ -7,7 +7,7 @@ import { SocketsFilter } from '@src/sockets/sockets.filter';
 
 @Controller('sockets')
 export class SocketsController extends CommonController(
-  'sockets',
+  'Подключения по сокетам',
   SocketsEntity,
   SocketsDto,
 )<

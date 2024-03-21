@@ -38,7 +38,7 @@ export class RolesFactory {
       can(RolesTypes.read, 'all'); // read-only access to everything
     }
 
-    can(RolesTypes.update, PostsDto, { userId: user.id });
+    can(RolesTypes.update, PostsDto, { user });
     cannot(RolesTypes.delete, PostsDto, { isPublished: true });
 
     return build({

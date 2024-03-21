@@ -32,7 +32,7 @@ export class AuthService extends CommonService<
     super();
   }
 
-  async login(authDto: AuthDto, request: any = null): Promise<AuthDto> {
+  async login(authDto: AuthDto, request: any = null): Promise<AuthEntity> {
     const auth = await this.findByUsername(authDto.username);
     if (!auth) {
       throw new UnauthorizedException('User not found');
@@ -61,7 +61,7 @@ export class AuthService extends CommonService<
     return true;
   }
 
-  async register(authDto: AuthDto, request: any = null): Promise<AuthDto> {
+  async register(authDto: AuthDto, request: any = null): Promise<AuthEntity> {
     const authExists = await this.findByUsername(authDto.username);
     if (authExists) {
       throw new BadRequestException(

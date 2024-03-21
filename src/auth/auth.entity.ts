@@ -1,8 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, Index } from 'typeorm';
 import { CommonEntity } from '@src/common/common.entity';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { TokensEntity } from '@src/tokens/tokens.entity';
+import { StrategiesEntity } from '@src/strategies/strategies.entity';
 
 @ObjectType()
 @Entity({ name: 'auth' })
@@ -19,14 +20,6 @@ export class AuthEntity extends CommonEntity {
   @Column({ nullable: true })
   password: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'passport_strategy' })
-  passportStrategy: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'passport_id' })
-  passportId: string;
-
   @Field({ defaultValue: false })
   @Column({ default: false, name: 'is_activated' })
   isActivated: boolean;
@@ -39,4 +32,10 @@ export class AuthEntity extends CommonEntity {
     onDelete: 'CASCADE',
   })
   sessions: SessionsEntity[];
+
+  @OneToMany(() => StrategiesEntity, (strategy) => strategy.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  strategies: StrategiesEntity[];
 }

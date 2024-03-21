@@ -7,12 +7,10 @@ import { FromClient } from '@src/auth/auth.decorator';
 import { CommonController } from '@src/common/common.controller';
 import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsFilter } from '@src/posts/posts.filter';
-import { ApiExcludeController } from '@nestjs/swagger';
 
-@ApiExcludeController()
 @Controller('posts')
 export class PostsController extends CommonController(
-  'posts',
+  'Посты',
   PostsEntity,
   PostsDto,
 )<

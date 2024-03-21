@@ -1,7 +1,9 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { TokenClientsDto } from '@src/clients/dto/token.clients.dto';
 import { TokenClientsService } from '@src/clients/service/token.clients.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('clients')
 export class TokenClientsController {
   constructor(

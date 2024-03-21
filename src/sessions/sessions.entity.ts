@@ -47,22 +47,6 @@ export class SessionsEntity extends CommonEntity {
   })
   method?: string;
 
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'varchar',
-  //   length: 2048,
-  //   nullable: true,
-  // })
-  // sessions?: string;
-
-  // @Field({ nullable: true })
-  // @Column({
-  //   type: 'varchar',
-  //   length: 2048,
-  //   nullable: true,
-  // })
-  // cookies?: string;
-
   @Field({ nullable: true })
   @Column({
     type: 'varchar',

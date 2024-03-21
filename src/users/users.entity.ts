@@ -38,15 +38,6 @@ export class UsersEntity extends CommonEntity {
     type: 'varchar',
     length: 300,
     nullable: true,
-    name: 'first_name',
-  })
-  firstName?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 300,
-    nullable: true,
     name: 'last_name',
   })
   lastName?: string;
@@ -56,9 +47,9 @@ export class UsersEntity extends CommonEntity {
     type: 'varchar',
     length: 300,
     nullable: true,
-    name: 'father_name',
+    name: 'parent_name',
   })
-  fatherName?: string;
+  parentName?: string;
 
   @Field({ nullable: true })
   @Column({
@@ -86,82 +77,10 @@ export class UsersEntity extends CommonEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
-    length: 200,
+    length: 1024,
     nullable: true,
   })
-  country?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  region?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  city?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  street?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  house?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  building?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  wing?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  apartment?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
-  place?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'int',
-    nullable: true,
-    name: 'post_code',
-  })
-  postCode?: string;
+  address?: string;
 
   @Field({ nullable: true })
   @Column({
@@ -170,13 +89,6 @@ export class UsersEntity extends CommonEntity {
     nullable: true,
   })
   timezone?: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'int',
-    nullable: true,
-  })
-  tz?: string;
 
   @Field(() => GenderUsers, {
     nullable: true,

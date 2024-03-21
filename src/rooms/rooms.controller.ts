@@ -7,7 +7,7 @@ import { RoomsFilter } from '@src/rooms/rooms.filter';
 
 @Controller('rooms')
 export class RoomsController extends CommonController(
-  'rooms',
+  'Комнаты подключений по сокетам',
   RoomsEntity,
   RoomsDto,
 )<

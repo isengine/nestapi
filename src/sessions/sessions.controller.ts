@@ -9,7 +9,7 @@ import { SessionsFilter } from '@src/sessions/sessions.filter';
 
 @Controller('sessions')
 export class SessionsController extends CommonController(
-  'sessions',
+  'Сессии',
   SessionsEntity,
   SessionsDto,
 )<

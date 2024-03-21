@@ -21,14 +21,14 @@ export class UsersService extends CommonService<
   }
 
   async findByAuthId(
-    id: number,
+    authId: number,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersEntity> {
     const user = await this.repository.find({
       relations: relationsDto?.map(i => i.name),
       where: {
         auth: {
-          id,
+          id: authId,
         },
       },
       take: 1,
@@ -37,7 +37,6 @@ export class UsersService extends CommonService<
       return;
     }
     const result = user[0];
-    // result.auth = undefined;
     return result;
   }
 
@@ -45,8 +44,8 @@ export class UsersService extends CommonService<
     usersDto: UsersDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<UsersEntity> {
-    const { authId } = usersDto;
-    delete usersDto.authId;
+    const authId = usersDto.auth?.id;
+    delete usersDto.auth;
     const user = await this.findByAuthId(authId);
     if (!user) {
       return await this.create(

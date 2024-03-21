@@ -17,7 +17,7 @@ export class AuthResolver {
     @Args('login')
     authDto: AuthDto,
     @Context() context,
-  ): Promise<AuthDto> {
+  ): Promise<AuthEntity> {
     return await this.authService.login(authDto, context.req);
   }
 
@@ -26,7 +26,7 @@ export class AuthResolver {
     @Args('register')
     authDto: AuthDto,
     @Context() context,
-  ): Promise<AuthDto> {
+  ): Promise<AuthEntity> {
     return await this.authService.register(authDto, context.req);
   }
 

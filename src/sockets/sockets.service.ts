@@ -26,12 +26,12 @@ export class SocketsService extends CommonService<
     socketsDto: SocketsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<SocketsEntity> {
-    const { roomId } = socketsDto;
+    const roomId = socketsDto.room?.id;
     if (roomId) {
       const room = await this.roomsService.findOne(roomId);
       socketsDto.room = room;
     }
-    delete socketsDto.roomId;
+    delete socketsDto.room;
     return await super.create(socketsDto, relationsDto);
   }
 }

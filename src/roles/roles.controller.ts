@@ -9,7 +9,7 @@ import { RolesFilter } from '@src/roles/roles.filter';
 
 @Controller('roles')
 export class RolesController extends CommonController(
-  'roles',
+  'Роли и права пользователей',
   RolesEntity,
   RolesDto,
 )<

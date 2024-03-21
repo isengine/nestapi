@@ -9,7 +9,7 @@ import { ClientsFilter } from '../clients.filter';
 
 @Controller('clients')
 export class ClientsController extends CommonController(
-  'clients',
+  'Клиентские приложения',
   ClientsEntity,
   ClientsDto,
 )<

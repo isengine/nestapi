@@ -15,12 +15,14 @@ import { LeaderProvider } from '@src/auth/provider/leader.provider';
 import { TokensModule } from '@src/tokens/tokens.module';
 import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
 import { FormStrategy } from '@src/auth/strategy/form.strategy';
+import { StrategiesModule } from '@src/strategies/strategies.module';
 
 @Module({
   controllers: [AuthController],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => SessionsModule),
+    forwardRef(() => StrategiesModule),
     forwardRef(() => TokensModule),
     forwardRef(() => UsersModule),
     ConfigModule,

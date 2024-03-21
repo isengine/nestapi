@@ -8,7 +8,9 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { MailDto } from '@src/mail/mail.dto';
 import { MailService } from '@src/mail/mail.service';
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('mail')
 export class MailController {
   constructor(private readonly mailService: MailService) {}

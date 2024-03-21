@@ -4,7 +4,9 @@ import { AuthClientsService } from '@src/clients/service/auth.clients.service';
 import { Client, SelfClient } from '@src/clients/clients.decorator';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { Unauthorized } from '@src/auth/auth.filtration'
+import { ApiExcludeController } from '@nestjs/swagger';
 
+@ApiExcludeController()
 @Controller('clients')
 export class AuthClientsController {
   constructor(

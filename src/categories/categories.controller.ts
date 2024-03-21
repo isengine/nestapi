@@ -7,7 +7,7 @@ import { CategoriesFilter } from './categories.filter';
 
 @Controller('categories')
 export class CategoriesController extends CommonController(
-  'categories',
+  'Категории постов',
   CategoriesEntity,
   CategoriesDto,
 )<

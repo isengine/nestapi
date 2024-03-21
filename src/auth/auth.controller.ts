@@ -5,6 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  Param,
+  ParseArrayPipe,
+  ParseIntPipe,
   Post,
   Req,
   Session,
@@ -23,7 +26,7 @@ import { TokensService } from '@src/tokens/tokens.service';
 import { Client } from '@src/clients/clients.decorator';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('auth')
+@ApiTags('Авторизация')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -127,8 +130,8 @@ export class AuthController {
     const auth = await this.leaderProvider.validate(account);
     const tokens = await this.tokensService.tokensCreatePair(auth);
     await this.sessionsService.createSession(auth, tokens, req);
-    auth.tokens = tokens;
-    return auth;
+    // auth.tokens = tokens;
+    return { ...auth, tokens };
   }
 
   @Get('status')
