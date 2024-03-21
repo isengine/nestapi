@@ -157,6 +157,43 @@ export const CommonController = <T extends Type<unknown>>(
       return result;
     }
 
+    @Get('findfirst')
+    @ApiOperation({ summary: 'Найти одну запись по условиям' })
+    @ApiQuery({
+      name: 'relations',
+      required: false,
+      description: 'Массив объектов с нужными связами',
+      type: '[RelationsDto], необязательный',
+      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
+    })
+    @ApiQuery({
+      name: 'where',
+      required: true,
+      description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
+      type: `${classDto.name}, обязательный`,
+      example: JSON.stringify({ id: 1 }),
+    })
+    @ApiExtraModels(classDto, RelationsDto)
+    @ApiBody({ schema: { anyOf: [
+      { $ref: getSchemaPath(classDto) },
+      { $ref: getSchemaPath(RelationsDto) },
+    ] } })
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: 'Выполнено',
+      type: classDto,
+    })
+    @ApiResponse({
+      status: HttpStatus.BAD_REQUEST,
+      description: 'Ошибка',
+    })
+    async findFirst(
+      @Data('where') where: object,
+      @Data('relations') relationsDto: Array<RelationsDto>
+    ): Promise<Entity> {
+      return await this.service.findFirst(where, relationsDto);
+    }
+
     @Get('filter')
     @ApiOperation({ summary: 'Отфильтровать записи, поля которых соответствуют заданным условиям' })
     @ApiQuery({

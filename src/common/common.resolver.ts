@@ -44,6 +44,16 @@ export const CommonResolver = <T extends Type<unknown>>(
       return await this.service.findOne(id, relationsDto);
     }
 
+    @Query(() => classEntity, { name: `${name}FindFirst` })
+    async findFirst(
+      @Args('where', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
+      where: object,
+      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+      relationsDto: Array<RelationsDto>,
+    ): Promise<Entity> {
+      return await this.service.findFirst(where, relationsDto);
+    }
+
     @Query(() => [classEntity], { name: `${name}FindMany` })
     async findMany(
       @Args('ids', { type: () => [Number || String] })

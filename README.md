@@ -40,6 +40,7 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
     - [Метод findAll](#метод-findall)
     - [Метод findOne](#метод-findone)
     - [Метод findMany](#метод-findmany)
+    - [Метод findFirst](#метод-findfirst)
     - [Метод filter](#метод-filter)
     - [Метод search](#метод-search)
     - [Метод create](#метод-create)
@@ -595,9 +596,10 @@ export class PostsController {
 
 Эти методы:
 
-- findall - получить все записи,
+- find - получить все записи или записи по заданным условиям,
 - findone - получить одну запись по id,
 - findmany - получить несколько записей по списку id,
+- findfirst - получить одну запись по заданным условиям,
 - filter - найти записи, поля которых соответствуют заданным условиям,
 - search - поиск по записям, которые имеют заданные совпадения в заданных полях,
 - create - создать новую запись,
@@ -666,42 +668,7 @@ GraphQL:
 
 В ответ попадает массив записей с запрошенными полями.
 
-[^ к оглавлению](#оглавление)
-
-### Метод findAll
-
-Получить все записи
-
-RestAPI:
-
-    GET findall
-
-GraphQL:
-
-    query findAll {
-        result: findAll {
-            ...
-        }
-    }
-
-Параметры:
-
-    нет
-
-Ответ:
-
-    {
-        "data": {
-            "result": [
-                {
-                    ...
-                },
-                ...
-            ]
-        }
-    }
-
-В ответ попадает массив записей с запрошенными полями.
+Чтобы получить абсолютно все записи, используйте пустое поле where.
 
 [^ к оглавлению](#оглавление)
 
@@ -711,7 +678,7 @@ GraphQL:
 
 RestAPI:
 
-    GET findone
+    GET find/:id
 
 GraphQL:
 
@@ -747,7 +714,7 @@ GraphQL:
 
 RestAPI:
 
-    GET findmany
+    GET findmany/:ids
 
 GraphQL:
 
@@ -777,6 +744,44 @@ GraphQL:
     }
 
 В ответ попадает массив записей с запрошенными полями.
+
+[^ к оглавлению](#оглавление)
+
+### Метод findFirst
+
+Получить одну запись по заданным условиям
+
+RestAPI:
+
+    GET findfirst
+
+GraphQL:
+
+    query findFirst($where: JSONObject) {
+        result: findFirst(where: $where) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "where": {
+            ...
+        }
+    }
+
+Ответ:
+
+    {
+        "data": {
+            "result": {
+                ...
+            }
+        }
+    }
+
+В ответ попадает одна, самая первая, запись с запрошенными полями.
 
 [^ к оглавлению](#оглавление)
 

@@ -30,6 +30,18 @@ export class CommonService<
     });
   }
 
+  async findFirst(
+    where: FindOptionsWhere<any> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
+  ): Promise<Entity> {
+    const order: FindOptionsOrder<any> = { id: 'ASC' };
+    return await this.repository.findOne({
+      relations: relationsDto?.map(i => i.name),
+      order,
+      where,
+    });
+  }
+
   async findAll(
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<Entity[]> {
