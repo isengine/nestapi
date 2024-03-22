@@ -2689,16 +2689,16 @@ GOOGLE_CLIENT_SECRET=...
 GOOGLE_CLIENT_CALLBACK=...
 ```
 
-Пути мы задаем с помощью контроллера **auth**.
+Пути мы задаем с помощью контроллера **strategies**.
 
 Мы используем следующий шаблон:
 
-- /auth/google/login - для пути к форме входа,
-- /auth/google/redirect - для пути редиректа.
+- /strategies/google/login - для пути к форме входа,
+- /strategies/google/redirect - для пути редиректа.
 
-Для ограничения доступа к этим путям, мы создаем защитника **GoogleAuthGuard**:
+Для ограничения доступа к этим путям, мы создаем защитника **GoogleStrategyGuard**:
 
-    /auth/guard/google.guard
+    /strategies/guard/google.guard
 
 И применяем его в контроллере:
 

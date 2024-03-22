@@ -5,24 +5,15 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  Param,
-  ParseArrayPipe,
-  ParseIntPipe,
   Post,
   Req,
   Session,
-  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
-import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
-import { LeaderProvider } from '@src/auth/provider/leader.provider';
-import { SessionsService } from '@src/sessions/sessions.service';
-import { TokensService } from '@src/tokens/tokens.service';
 import { Client } from '@src/clients/clients.decorator';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -31,9 +22,6 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly sessionsService: SessionsService,
-    private readonly tokensService: TokensService,
-    private readonly leaderProvider: LeaderProvider,
   ) {}
 
   @Auth()
@@ -96,42 +84,6 @@ export class AuthController {
   @Post('logout')
   async logout(@Req() req: any) {
     return this.authService.logout(req);
-  }
-
-  @Get('google/login')
-  @UseGuards(GoogleAuthGuard)
-  async googleLogin() {
-    return;
-  }
-
-  @Get('google/redirect')
-  @UseGuards(GoogleAuthGuard)
-  async googleRedirect(@Req() req: any) {
-    const { user: auth } = req;
-    const tokens = await this.tokensService.tokensCreatePair(auth);
-    await this.sessionsService.createSession(auth, tokens, req);
-    auth.tokens = tokens;
-    return auth;
-  }
-
-  @Get('leader/login')
-  @UseGuards(LeaderAuthGuard)
-  async leaderLogin() {
-    return;
-  }
-
-  @Get('leader/redirect')
-  // @UseGuards(LeaderAuthGuard)
-  async leaderRedirect(@Req() req: any) {
-    const account = await this.leaderProvider.activate(req);
-    if (!account) {
-      return account;
-    }
-    const auth = await this.leaderProvider.validate(account);
-    const tokens = await this.tokensService.tokensCreatePair(auth);
-    await this.sessionsService.createSession(auth, tokens, req);
-    // auth.tokens = tokens;
-    return { ...auth, tokens };
   }
 
   @Get('status')
