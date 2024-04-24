@@ -13,11 +13,16 @@ import { TokensModule } from '@src/tokens/tokens.module';
 import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
 import { FormStrategy } from '@src/auth/strategy/form.strategy';
 import { StrategiesModule } from '@src/strategies/strategies.module';
+import { AuthOauthService } from '@src/auth/service/auth.oauth.service';
+import { ClientsModule } from '@src/clients/clients.module';
+import { ConfirmModule } from '@src/confirm/confirm.module';
 
 @Module({
   controllers: [AuthController],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
+    forwardRef(() => ConfirmModule),
+    forwardRef(() => ClientsModule),
     forwardRef(() => SessionsModule),
     forwardRef(() => StrategiesModule),
     forwardRef(() => TokensModule),
@@ -26,12 +31,16 @@ import { StrategiesModule } from '@src/strategies/strategies.module';
   ],
   providers: [
     AuthService,
+    AuthOauthService,
     AuthResolver,
     FromClientStrategy,
     FormStrategy,
     JwtStrategy,
     SessionSerializer,
   ],
-  exports: [AuthService],
+  exports: [
+    AuthService,
+    AuthOauthService,
+  ],
 })
 export class AuthModule {}

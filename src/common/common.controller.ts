@@ -8,7 +8,7 @@ import {
   ParseArrayPipe,
   ParseIntPipe,
   Post,
-  Put,
+  Patch,
   Type,
 } from '@nestjs/common';
 import { OptionsDto } from '@src/common/dto/options.dto';
@@ -24,7 +24,6 @@ export const CommonController = <T extends Type<unknown>>(
   name: string,
   classEntity: T,
   classDto,
-  classFilter = null,
 ) => {
   @ApiTags(name)
   class BaseController<
@@ -40,7 +39,7 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -85,7 +84,7 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -123,7 +122,7 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -162,7 +161,7 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -188,63 +187,18 @@ export const CommonController = <T extends Type<unknown>>(
       description: 'Ошибка',
     })
     async findFirst(
-      @Data('where') where: object,
+      @Data('where') where: Object,
       @Data('relations') relationsDto: Array<RelationsDto>
     ): Promise<Entity> {
       return await this.service.findFirst(where, relationsDto);
     }
 
     @Get('filter')
-    @ApiOperation({ summary: 'Отфильтровать записи, поля которых соответствуют заданным условиям' })
+    @ApiOperation({ summary: 'Отфильтровать записи, которые имеют совпадения и соответствуют заданным условиям' })
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiQuery({
-      name: 'options',
-      required: false,
-      description: 'В опциях вы можете задать лимиты и группировку',
-      type: 'OptionsDto, необязательный',
-    })
-    @ApiQuery({
-      name: 'filter',
-      required: false,
-      description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
-      type: classDto.name,
-    })
-    @ApiExtraModels(classDto, OptionsDto, RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(classDto) },
-      { $ref: getSchemaPath(OptionsDto) },
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено', type: [classFilter] })
-    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
-    async filter(
-      @Data('filter') dto: Dto,
-      @Data('options') optionsDto: OptionsDto,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-    ): Promise<Filter[]> {
-      const result = await this.service.filter(
-        dto,
-        optionsDto,
-        relationsDto,
-      );
-      if (!result) {
-        throw new NotFoundException('Any results not found');
-      }
-      return result;
-    }
-
-    @Get('search')
-    @ApiOperation({ summary: 'Найти записи, которые имеют заданные совпадения в заданных полях' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -260,20 +214,29 @@ export const CommonController = <T extends Type<unknown>>(
       description: 'Объект с полями и текстом, согласно которым будет вестись поиск',
       type: 'SearchDto',
     })
-    @ApiExtraModels(SearchDto, OptionsDto, RelationsDto)
+    @ApiQuery({
+      name: 'where',
+      required: false,
+      description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
+      type: classDto.name,
+    })
+    @ApiExtraModels(classDto, SearchDto, OptionsDto, RelationsDto)
     @ApiBody({ schema: { anyOf: [
+      { $ref: getSchemaPath(classDto) },
       { $ref: getSchemaPath(SearchDto) },
       { $ref: getSchemaPath(OptionsDto) },
       { $ref: getSchemaPath(RelationsDto) },
     ] } })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено', type: [classFilter] })
+    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено' })
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
-    async search(
+    async filter(
+      @Data('where') dto: Dto,
       @Data('search') searchDto: SearchDto,
       @Data('options') optionsDto: OptionsDto,
       @Data('relations') relationsDto: Array<RelationsDto>,
     ): Promise<Filter[]> {
-      const result = await this.service.search(
+      const result = await this.service.filter(
+        dto,
         searchDto,
         optionsDto,
         relationsDto,
@@ -289,7 +252,7 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -310,15 +273,16 @@ export const CommonController = <T extends Type<unknown>>(
       @Body('create') dto: Dto,
       @Body('relations') relationsDto: Array<RelationsDto>,
     ): Promise<Entity> {
+      console.log('-- dto', dto);
       return await this.service.create(dto, relationsDto);
     }
 
-    @Put('update')
-    @ApiOperation({ summary: 'Обновить запись' })
+    @Patch('update/:id')
+    @ApiOperation({ summary: 'Обновить запись по ее id' })
     @ApiQuery({
       name: 'relations',
       required: false,
-      description: 'Массив объектов с нужными связами',
+      description: 'Массив объектов с нужными связями',
       type: '[RelationsDto], необязательный',
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
@@ -336,10 +300,15 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено', type: classDto })
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
     async update(
+      @Param('id', ParseIntPipe) id: number,
       @Body('update') dto: Dto,
       @Body('relations') relationsDto: Array<RelationsDto>,
     ): Promise<Entity> {
-      return await this.service.update(dto, relationsDto);
+      const result = await this.service.update(Number(id), dto, relationsDto);
+      if (!result) {
+        throw new NotFoundException('Entry not found');
+      }
+      return result;
     }
 
     @Delete('remove/:id')

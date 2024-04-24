@@ -66,26 +66,17 @@ export const CommonResolver = <T extends Type<unknown>>(
 
     @Query(() => [classFilter], { name: `${name}Filter` })
     async filter(
-      @Args('filter', { type: () => classDto })
+      @Args('where', { nullable: true, defaultValue: {}, type: () => classDto })
       dto: Dto,
-      @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
-      optionsDto: OptionsDto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
-    ): Promise<Filter[]> {
-      return await this.service.filter(dto, optionsDto, relationsDto);
-    }
-
-    @Query(() => [classFilter], { name: `${name}Search` })
-    async search(
-      @Args('search', { type: () => classDto })
+      @Args('search', { nullable: true, defaultValue: {}, type: () => SearchDto })
       searchDto: SearchDto,
       @Args('options', { nullable: true, defaultValue: {}, type: () => OptionsDto })
       optionsDto: OptionsDto,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
     ): Promise<Filter[]> {
-      return await this.service.search(
+      return await this.service.filter(
+        dto,
         searchDto,
         optionsDto,
         relationsDto,
@@ -104,12 +95,14 @@ export const CommonResolver = <T extends Type<unknown>>(
 
     @Mutation(() => classEntity, { name: `${name}Update` })
     async update(
+      @Args('id')
+      id: number,
       @Args('update', { type: () => classDto })
       dto: Dto,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
     ): Promise<Entity> {
-      return await this.service.update(dto, relationsDto);
+      return await this.service.update(id, dto, relationsDto);
     }
 
     @Mutation(() => Number, { name: `${name}Remove` })

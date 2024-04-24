@@ -103,7 +103,9 @@ export const optionsService = async (
   }
 
   const result = await query.getMany();
-  const count = optionsDto.limit ? await query.count() : result.length;
+  const count = optionsDto.limit
+    ? await query.skip().take().getCount()
+    : result.length;
 
   if (optionsDto.group) {
     return optionsGroup(result, optionsDto);

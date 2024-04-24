@@ -3,7 +3,7 @@ import { genSalt, hash } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientsDto } from '@src/clients/dto/clients.dto';
+import { ClientsDto } from '@src/clients/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
@@ -37,7 +37,7 @@ export class ClientsService extends CommonService<
       client_id: client.client_id,
     }, 'JWT_CLIENTS_EXPIRES');
     client.client_secret = clientSecretData.token;
-    const updated = await this.update({...client});
+    const updated = await this.update(client.id, client);
     return updated ? client : null;
   }
 
@@ -78,15 +78,9 @@ export class ClientsService extends CommonService<
     clientsDto: ClientsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<ClientsEntity> {
-    clientsDto.client_id = v4();
+    if (!clientsDto.client_id) {
+      clientsDto.client_id = `${v4()}`;
+    }
     return await super.create(clientsDto, relationsDto);
-  }
-
-  async update(
-    clientsDto: ClientsDto,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<ClientsEntity> {
-    delete clientsDto.client_id;
-    return await super.update(clientsDto, relationsDto);
   }
 }

@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
 import { ApiProperty } from '@nestjs/swagger';
 
 @InputType()
@@ -27,8 +26,8 @@ export class SearchDto {
 
   @ApiProperty({
     required: false,
-    description: 'Объект с нужными полями записей и их значениями, по которым записи будут дополнительно фильтроваться',
+    description: 'Метод объединения совпадений. По-умолчанию "и", если включить данную опицию, будет "или"',
   })
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  where?: object;
+  @Field(() => Boolean, { nullable: true })
+  or?: boolean;
 }

@@ -59,8 +59,7 @@ export class UsersService extends CommonService<
         relationsDto,
       );
     }
-    usersDto.id = user.id;
-    return await this.update(usersDto, relationsDto);
+    return await this.update(user.id, usersDto, relationsDto);
   }
 
   async removeByAuthId(authId: number): Promise<boolean> {

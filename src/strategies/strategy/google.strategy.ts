@@ -38,15 +38,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         .then(async (result) => await this.prepareResult(result, profile));
     }
 
-    authDto.id = auth.id;
     return await this.authService
-      .update(authDto)
+      .update(auth.id, authDto)
       .then(async (result) => await this.prepareResult(result, profile));
   }
 
   async prepareResult(auth, profile): Promise<AuthDto> {
     const account = profile._json;
-    await this.strategiesService.updateByAuthId({
+    await this.strategiesService.updateBy({
       auth: { id: auth.id },
       name: profile.provider,
       uid: profile.id,

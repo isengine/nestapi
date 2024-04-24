@@ -6,7 +6,6 @@ import { entityGetParams } from '@src/common/service/entity.service';
 import { relationsCreate } from '@src/common/service/relations.service';
 import { filterService } from '@src/common/service/filter.service';
 import { optionsService } from '@src/common/service/options.service';
-import { searchService } from '@src/common/service/search.service';
 import { CommonDto } from '@src/common/dto/common.dto';
 import { CommonEntity } from '@src/common/common.entity';
 
@@ -16,7 +15,6 @@ export class CommonService<
   Filter
 > {
   protected readonly repository: Repository<Entity>;
-  protected readonly entity: Entity;
 
   async find(
     where: FindOptionsWhere<any> = undefined,
@@ -78,25 +76,19 @@ export class CommonService<
 
   async filter(
     dto: Dto,
-    optionsDto: OptionsDto,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<Filter[]> {
-    const { root, fields } = entityGetParams(this.entity);
-    const query = this.repository.createQueryBuilder(root);
-    const where = filterService(dto, root, fields);
-    query.where(where);
-    relationsCreate(query, relationsDto, root);
-    return await optionsService(query, optionsDto, relationsDto, root);
-  }
-
-  async search(
     searchDto: SearchDto,
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<Filter[]> {
-    const { root, core, fields } = entityGetParams(this.entity);
+    const { root, core, fields } = entityGetParams(this.repository.target);
     const query = this.repository.createQueryBuilder(root);
-    const where = searchService(searchDto, root, core, fields);
+    const where = filterService(
+      dto,
+      searchDto,
+      root,
+      core,
+      fields,
+    );
     query.where(where);
     relationsCreate(query, relationsDto, root);
     return await optionsService(query, optionsDto, relationsDto, root);
@@ -109,19 +101,37 @@ export class CommonService<
     delete dto.createdAt;
     delete dto.updatedAt;
     const entry: DeepPartial<any> = { ...dto };
+    if (entry.id) {
+      entry.id = `${entry.id}`;
+    }
     const created = await this.repository.save(entry);
     return await this.findOne(created.id, relationsDto);
   }
 
   async update(
+    id: number,
     dto: Dto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<Entity> {
-    const { id } = dto;
     if (id === undefined) {
       return;
     }
-    return await this.create(dto, relationsDto);
+
+    const where: FindOptionsWhere<any> = { id };
+    const find = await this.repository.findOne({
+      where,
+    });
+    if (!find) {
+      return;
+    }
+
+    dto.id = id;
+    const entry: DeepPartial<any> = { ...dto };
+    if (entry.id) {
+      entry.id = `${entry.id}`;
+    }
+    const created = await this.repository.save(entry);
+    return await this.findOne(created.id, relationsDto);
   }
 
   async remove(id: number): Promise<boolean> {

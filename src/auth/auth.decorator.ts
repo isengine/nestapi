@@ -9,8 +9,6 @@ import { ApiType } from '@src/common/type/api.type';
 import { JwtAuthGuard } from '@src/auth/guard/jwt.guard';
 import { GqlAuthGuard } from '@src/auth/guard/gql.guard';
 import { FormAuthGuard } from '@src/auth/guard/form.guard';
-import { GqlFromClientAuthGuard } from '@src/auth/guard/gqlFromClient.guard';
-import { JwtFromClientAuthGuard } from '@src/auth/guard/jwtFromClient.guard';
 
 export const Auth = (apiType: ApiType = undefined) => {
   if (apiType === 'gql') {
@@ -20,13 +18,6 @@ export const Auth = (apiType: ApiType = undefined) => {
     return applyDecorators(UseGuards(FormAuthGuard));
   }
   return applyDecorators(UseGuards(JwtAuthGuard));
-};
-
-export const FromClient = (apiType: ApiType = undefined) => {
-  if (apiType === 'gql') {
-    return applyDecorators(UseGuards(GqlFromClientAuthGuard));
-  }
-  return applyDecorators(UseGuards(JwtFromClientAuthGuard));
 };
 
 export const Self = createParamDecorator(

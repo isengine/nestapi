@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Param,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokensService } from '@src/tokens/tokens.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { StrategiesService } from './strategies.service';
 
 @ApiTags('Стратегии авторизации')
 @Controller('strategies')

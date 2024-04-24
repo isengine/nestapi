@@ -19,58 +19,21 @@ export class StrategiesService extends CommonService<
     super();
   }
 
-  async findByAuthId(
-    authId: number,
-    name: string,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<StrategiesEntity> {
-    const strategy = await this.repository.find({
-      relations: relationsDto?.map(i => i.name),
-      where: {
-        name,
-        auth: {
-          id: authId,
-        },
-      },
-      take: 1,
-    });
-    if (!strategy || !strategy.length) {
-      return;
-    }
-    const result = strategy[0];
-    return result;
-  }
-
-  async updateByAuthId(
+  async updateBy(
     strategiesDto: StrategiesDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<StrategiesEntity> {
-    const authId = strategiesDto.auth?.id;
-    delete strategiesDto.auth;
-    const strategy = await this.findByAuthId(
-      authId,
-      strategiesDto.name,
-    );
+    const strategy = await this.findFirst(strategiesDto);
     if (!strategy) {
-      return await this.create(
-        {
-          ...strategiesDto,
-          auth: {
-            id: authId,
-          },
-        },
-        relationsDto,
-      );
+      return await this.create(strategiesDto, relationsDto);
     }
-    strategiesDto.id = strategy.id;
-    return await this.update(strategiesDto, relationsDto);
+    return await this.update(strategy.id, strategiesDto, relationsDto);
   }
 
-  async removeByAuthId(
-    authId: number,
-    name: string,
+  async removeBy(
+    strategiesDto: StrategiesDto,
   ): Promise<boolean> {
-    const strategy = await this.findByAuthId(authId, name);
+    const strategy = await this.findFirst(strategiesDto);
     if (!strategy) {
       return;
     }

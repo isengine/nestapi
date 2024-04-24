@@ -16,7 +16,7 @@ export class AppController {
     const { body, headers, protocol } = req;
 
     const tokens = await axios({
-      url: `${protocol}://${headers.host}/clients/token`,
+      url: `${protocol}://${headers.host}/tokens`,
       method: 'post',
       data: {
         grant_type: 'password',

@@ -15,13 +15,13 @@ import { RedirectsEntity } from '@src/redirects/redirects.entity';
 @ObjectType()
 @Entity({ name: 'clients' })
 export class ClientsEntity extends CommonEntity {
-  @Field({ defaultValue: null, nullable: true })
+  @Field({ nullable: true })
   @Column({
-    type: 'uuid',
+    type: 'varchar',
+    length: 64,
     nullable: true,
-    default: null,
+    unique: true,
   })
-  // @Generated('uuid')
   client_id: string;
 
   @Field({ nullable: true })

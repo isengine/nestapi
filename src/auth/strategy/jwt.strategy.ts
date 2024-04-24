@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate({ id }: Pick<AuthEntity, 'id'>) {
     const auth = await this.authService.findOne(id);
-    if (!auth.id) {
+    if (!auth.id || !auth.isActivated) {
       throw new ForbiddenException('You have no rights!');
     }
     return auth;

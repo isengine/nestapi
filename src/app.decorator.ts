@@ -5,9 +5,14 @@ export const Data = createParamDecorator(
     const request = context.switchToHttp().getRequest();
     const { body, query } = request;
     const data = { ...query, ...body };
-    if (!arg) {
-      return data;
+    let result = arg ? data[arg] : data;
+    if (typeof result === 'string') {
+      try {
+        result = JSON.parse(result);
+      } catch (e) {
+        console.log(e);
+      }
     }
-    return data[arg];
+    return result;
   },
 );

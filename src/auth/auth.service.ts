@@ -12,6 +12,7 @@ import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokensService } from '@src/tokens/tokens.service';
+import { ConfirmService } from '@src/confirm/confirm.service';
 import { CommonService } from '@src/common/service/common.service';
 import { AuthFilter } from '@src/auth/auth.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
@@ -28,6 +29,7 @@ export class AuthService extends CommonService<
     protected readonly userService: UsersService,
     protected readonly sessionsService: SessionsService,
     protected readonly tokensService: TokensService,
+    protected readonly confirmService: ConfirmService,
   ) {
     super();
   }
@@ -58,6 +60,7 @@ export class AuthService extends CommonService<
     } catch {
       throw new UnauthorizedException('Session does not exist!');
     }
+    delete request.user;
     return true;
   }
 
@@ -70,13 +73,60 @@ export class AuthService extends CommonService<
     }
     const salt = await genSalt(10);
     authDto.password = await hash(authDto.password, salt);
+
+    // используйте данную строку, если пользователь будет сразу же активирован
+    // authDto.isActivated = true;
+
     const auth = await this.create(authDto);
     const tokens = await this.tokensService.tokensCreatePair(auth);
     if (request) {
       await this.sessionsService.createSession(auth, tokens, request);
     }
     auth.tokens = tokens;
+
+    // закомментируйте строки ниже, если пользователь будет сразу же активирован
+    // используйте confirmGenerate чтобы генерировать код из цифр
+    const confirm = await this.confirmService.confirmCreate(auth);
+    auth.confirm = confirm;
+
     return auth;
+  }
+
+  async confirm(code: string): Promise<boolean> {
+    const confirm = await this.confirmService.confirmValidate(code);
+    if (confirm) {
+      const { auth } = confirm;
+      await super.update(auth.id, {
+        isActivated: true,
+      });
+    }
+    return !!confirm;
+  }
+
+  async restore(authDto: AuthDto, code: string): Promise<boolean> {
+    const confirm = await this.confirmService.confirmValidate(code);
+    if (!confirm) {
+      throw new BadRequestException('Restore code is not valid');
+    }
+    const { auth } = confirm;
+    if (!auth || auth.username !== authDto.username) {
+      throw new UnauthorizedException('User not found');
+    }
+    const salt = await genSalt(10);
+    const password = await hash(authDto.password, salt);
+    await super.update(auth.id, {
+      password,
+    });
+    return !!confirm;
+  }
+
+  async restorePrepare(authDto: AuthDto): Promise<boolean> {
+    const auth = await this.findByUsername(authDto.username);
+    if (!auth) {
+      throw new UnauthorizedException('User not found');
+    }
+    const confirm = await this.confirmService.confirmCreate(auth);
+    return !!confirm;
   }
 
   async findByUsername(username: string): Promise<AuthEntity> {
@@ -100,14 +150,14 @@ export class AuthService extends CommonService<
   }
 
   async update(
+    id: number,
     authDto: AuthDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<AuthEntity> {
-    const result = await super.update(authDto, relationsDto);
-    await this.userService.update({
+    const result = await super.update(id, authDto, relationsDto);
+    await this.userService.update(result.id, {
       email: result.username,
       auth: {
-        id: result.id,
         username: result.username,
         isActivated: result.isActivated,
       },

@@ -10,16 +10,16 @@ import { AppService } from '@src/app.service';
 import { AuthModule } from '@src/auth/auth.module';
 import { CategoriesModule } from '@src/categories/categories.module';
 import { ClientsModule } from '@src/clients/clients.module';
-// import { ConfirmModule } from '@src/confirm/confirm.module';
-import { SocketsModule } from '@src/sockets/sockets.module';
-import { RoomsModule } from '@src/rooms/rooms.module';
+import { ConfirmModule } from '@src/confirm/confirm.module';
 import { FilesModule } from '@src/files/files.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { RandomModule } from '@src/random/random.module';
 import { RedirectsModule } from '@src/redirects/redirects.module';
 import { RolesModule } from '@src/roles/roles.module';
+import { RoomsModule } from '@src/rooms/rooms.module';
 import { SessionsModule } from '@src/sessions/sessions.module';
+import { SocketsModule } from '@src/sockets/sockets.module';
 import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
@@ -47,6 +47,7 @@ import { TokensModule } from '@src/tokens/tokens.module';
     AuthModule,
     CategoriesModule,
     ClientsModule,
+    ConfirmModule,
     FilesModule,
     MailModule,
     PostsModule,

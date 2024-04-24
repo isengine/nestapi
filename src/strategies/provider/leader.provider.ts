@@ -66,9 +66,8 @@ export class LeaderProvider {
         .then(async (result) => await this.prepareResult(result, account));
     }
 
-    authDto.id = auth.id;
     return await this.authService
-      .update(authDto)
+      .update(auth.id, authDto)
       .then(async (result) => await this.prepareResult(result, account));
   }
 
@@ -77,29 +76,12 @@ export class LeaderProvider {
       male: 'm',
       female: 'w',
     };
-    const { postCode, country, region, city, street, house, building, wing, apartment, place } = account.address;
-    const address = `${
-        postCode ? `${postCode}, ` : ''
-      }${
-        country ? `${country}, ` : ''
-      }${
-        region ? `${region}, ` : ''
-      }${
-        city ? `${city}, ` : ''
-      }${
-        street ? `${street}, ` : ''
-      }${
-        house ? `${house}, ` : ''
-      }${
-        building ? `${building}, ` : ''
-      }${
-        wing ? `${wing}, ` : ''
-      }${
-        apartment ? `${apartment}, ` : ''
-      }${
-        place ? `${place}, ` : ''
-      }`;
-    await this.strategiesService.updateByAuthId({
+    const fields = [ 'postCode', 'country', 'region', 'city', 'street', 'house', 'building', 'wing', 'apartment', 'place' ];
+    const address = fields.filter(i => {
+      const r = account.address?.[i];
+      return !!r ? r : undefined;
+    }).join(', ');
+    await this.strategiesService.updateBy({
       auth: { id: auth.id },
       name: 'leaderid',
       uid: account.id,

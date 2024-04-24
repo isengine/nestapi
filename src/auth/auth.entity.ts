@@ -4,6 +4,7 @@ import { CommonEntity } from '@src/common/common.entity';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { TokensEntity } from '@src/tokens/tokens.entity';
 import { StrategiesEntity } from '@src/strategies/strategies.entity';
+import { ConfirmEntity } from '@src/confirm/confirm.entity';
 
 @ObjectType()
 @Entity({ name: 'auth' })
@@ -38,4 +39,10 @@ export class AuthEntity extends CommonEntity {
     onDelete: 'CASCADE',
   })
   strategies: StrategiesEntity[];
+
+  @OneToMany(() => ConfirmEntity, (confirm) => confirm.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  confirm: ConfirmEntity;
 }
