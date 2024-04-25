@@ -1,5 +1,5 @@
 import { Resolver } from '@nestjs/graphql';
-import { CommonResolver } from '@src/common/common.resolver';
+import { CommonResolver } from '@src/common/resolver/common.resolver';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsFilter } from '@src/tags/tags.filter';

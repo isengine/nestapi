@@ -43,8 +43,10 @@ export class AuthOauthService {
       // },
       client_id: authOauthDto.client_id,
       redirect_uri: authOauthDto.redirect_uri,
-    }, [{ name: 'auth' }]);
-    // }, [{ name: 'auth' }]);
+    }, [
+      { name: 'auth' },
+      { name: 'redirects' },
+    ]);
     if (!result?.length) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
@@ -59,7 +61,7 @@ export class AuthOauthService {
     if (!updated) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
-    return `${updated.redirect_uri}?code=${updated.code}&client_id=${updated.client_id}${state ? `&state=${state}` : ''}`;
+    return `${clientsDto.redirect_uri}?code=${updated.code}&client_id=${updated.client_id}${state ? `&state=${state}` : ''}`;
   }
 
   async oauthToken(

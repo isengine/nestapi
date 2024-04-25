@@ -1,5 +1,5 @@
 import { Resolver } from '@nestjs/graphql';
-import { CommonResolver } from '@src/common/common.resolver';
+import { CommonResolver } from '@src/common/resolver/common.resolver';
 import { SocketsDto } from '@src/sockets/sockets.dto';
 import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsFilter } from '@src/sockets/sockets.filter';

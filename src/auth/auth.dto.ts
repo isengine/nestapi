@@ -2,6 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
 import { CommonDto } from '@src/common/dto/common.dto';
 import { IsEmail, IsString, MinLength } from 'class-validator';
+// import { RolesDto } from '@src/roles/roles.dto';
+// import { ClientsDto } from '@src/clients/clients.dto';
 // import { TokensDto } from '@src/tokens/tokens.dto';
 // import { StrategiesDto } from '@src/strategies/strategies.dto';
 
@@ -33,6 +35,12 @@ export class AuthDto extends CommonDto {
   })
   @Field({ nullable: true, defaultValue: false })
   isActivated?: boolean;
+
+  // @Field(() => [RolesDto], { nullable: true })
+  // roles?: RolesDto[];
+
+  // @Field(() => [ClientsDto], { nullable: true })
+  // clients?: ClientsDto[];
 
   // @ApiProperty({
   //   required: false,

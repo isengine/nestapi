@@ -1,5 +1,5 @@
 import { Resolver } from '@nestjs/graphql';
-import { CommonResolver } from '@src/common/common.resolver';
+import { CommonResolver } from '@src/common/resolver/common.resolver';
 import { RoomsDto } from '@src/rooms/rooms.dto';
 import { RoomsEntity } from '@src/rooms/rooms.entity';
 import { RoomsFilter } from '@src/rooms/rooms.filter';

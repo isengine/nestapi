@@ -1,5 +1,5 @@
 import { Args, Resolver, Query } from '@nestjs/graphql';
-import { CommonResolver } from '@src/common/common.resolver';
+import { CommonResolver } from '@src/common/resolver/common.resolver';
 import { SessionsDto } from '@src/sessions/sessions.dto';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { SessionsService } from '@src/sessions/sessions.service';

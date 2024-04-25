@@ -10,7 +10,7 @@ import { PostsDto } from '@src/posts/posts.dto';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesTypes } from '@src/roles/roles.enum';
 import { RolesService } from '@src/roles/roles.service';
-import { UsersDto } from '@src/users/users.dto';
+import { AuthDto } from '@src/auth/auth.dto';
 
 type Subjects = InferSubjects<typeof PostsDto | typeof RolesDto> | 'all';
 
@@ -20,13 +20,13 @@ export type AppAbility = Ability<[RolesTypes, Subjects]>;
 export class RolesFactory {
   constructor(private readonly rolesService: RolesService) {}
 
-  async createRole(user: UsersDto) {
+  async createRole(auth: AuthDto) {
     const { can, cannot, build } = new AbilityBuilder<
       Ability<[RolesTypes, Subjects]>
     >(Ability as AbilityClass<AppAbility>);
 
     const roles = [];
-    await this.rolesService.rolesGetByUserId(user.id).then((r) => {
+    await this.rolesService.rolesGetByAuthId(auth.id).then((r) => {
       r?.forEach((i) => {
         roles.push(i.type);
       });
@@ -38,7 +38,7 @@ export class RolesFactory {
       can(RolesTypes.read, 'all'); // read-only access to everything
     }
 
-    can(RolesTypes.update, PostsDto, { user });
+    can(RolesTypes.update, PostsDto, { auth });
     cannot(RolesTypes.delete, PostsDto, { isPublished: true });
 
     return build({
@@ -51,7 +51,7 @@ export class RolesFactory {
 
 /*
 использовать:
-const roles = await this.RolesFactory.createRole(user);
+const roles = await this.RolesFactory.createRole(auth);
 roles.can(RolesTypes.read, post); // true
 roles.can(RolesTypes.delete, post); // false
 roles.can(RolesTypes.create, post); // false

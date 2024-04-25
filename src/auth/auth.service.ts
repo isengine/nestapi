@@ -87,7 +87,7 @@ export class AuthService extends CommonService<
     // закомментируйте строки ниже, если пользователь будет сразу же активирован
     // используйте confirmGenerate чтобы генерировать код из цифр
     const confirm = await this.confirmService.confirmCreate(auth);
-    auth.confirm = confirm;
+    auth.confirm = [confirm];
 
     return auth;
   }
@@ -142,8 +142,6 @@ export class AuthService extends CommonService<
       email: result.username,
       auth: {
         id: result.id,
-        username: result.username,
-        isActivated: result.isActivated,
       },
     });
     return result;

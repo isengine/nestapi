@@ -7,14 +7,13 @@ import {
   JoinColumn,
   JoinTable,
 } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
-import { UsersEntity } from '@src/users/users.entity';
+import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { TagsEntity } from '@src/tags/tags.entity';
 
 @ObjectType()
 @Entity({ name: 'posts' })
-export class PostsEntity extends CommonEntity {
+export class PostsEntity extends ProtectedEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -47,13 +46,6 @@ export class PostsEntity extends CommonEntity {
     name: 'is_published',
   })
   isPublished: boolean;
-
-  @ManyToOne(() => UsersEntity, (user) => user.posts, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: UsersEntity;
 
   @Field(() => CategoriesEntity, { nullable: true })
   @ManyToOne(() => CategoriesEntity, (category) => category.posts, {

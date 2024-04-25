@@ -16,6 +16,7 @@ import { StrategiesModule } from '@src/strategies/strategies.module';
 import { AuthOauthService } from '@src/auth/service/auth.oauth.service';
 import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
+import { RolesModule } from '@src/roles/roles.module';
 
 @Module({
   controllers: [AuthController],
@@ -27,6 +28,7 @@ import { ConfirmModule } from '@src/confirm/confirm.module';
     forwardRef(() => StrategiesModule),
     forwardRef(() => TokensModule),
     forwardRef(() => UsersModule),
+    forwardRef(() => RolesModule),
     ConfigModule,
   ],
   providers: [

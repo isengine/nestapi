@@ -17,7 +17,7 @@ import { SearchDto } from '@src/common/dto/search.dto';
 import { Data } from '@src/app.decorator';
 import { CommonService } from '@src/common/service/common.service';
 import { CommonDto } from '@src/common/dto/common.dto';
-import { CommonEntity } from '@src/common/common.entity';
+import { CommonEntity } from '@src/common/entity/common.entity';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 
 export const CommonController = <T extends Type<unknown>>(
@@ -272,8 +272,8 @@ export const CommonController = <T extends Type<unknown>>(
     async create(
       @Body('create') dto: Dto,
       @Body('relations') relationsDto: Array<RelationsDto>,
+      authId: number = undefined,
     ): Promise<Entity> {
-      console.log('-- dto', dto);
       return await this.service.create(dto, relationsDto);
     }
 
@@ -318,6 +318,7 @@ export const CommonController = <T extends Type<unknown>>(
     @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
     async remove(
       @Param('id', ParseIntPipe) id: number,
+      authId: number = undefined,
     ): Promise<boolean> {
       return await this.service.remove(id);
     }

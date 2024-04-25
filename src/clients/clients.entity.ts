@@ -2,19 +2,16 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import {
   Entity,
   Column,
-  ManyToOne,
-  JoinColumn,
   OneToMany,
   // Generated,
 } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
-import { AuthEntity } from '@src/auth/auth.entity';
+import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { TypeClients } from '@src/clients/clients.enum';
 import { RedirectsEntity } from '@src/redirects/redirects.entity';
 
 @ObjectType()
 @Entity({ name: 'clients' })
-export class ClientsEntity extends CommonEntity {
+export class ClientsEntity extends ProtectedEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -81,14 +78,6 @@ export class ClientsEntity extends CommonEntity {
     length: 2048,
     nullable: true,
   })
-  redirect_uri: string;
-
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 2048,
-    nullable: true,
-  })
   code: string;
 
   @Field({ defaultValue: () => 'CURRENT_TIMESTAMP', nullable: true })
@@ -108,11 +97,6 @@ export class ClientsEntity extends CommonEntity {
     name: 'is_published',
   })
   isPublished: boolean;
-
-  @Field()
-  @ManyToOne(() => AuthEntity)
-  @JoinColumn({ name: 'auth_id', referencedColumnName: 'id' })
-  auth: AuthEntity;
 
   @OneToMany(() => RedirectsEntity, (redirect) => redirect.client, {
     cascade: true,

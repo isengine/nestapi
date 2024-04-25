@@ -1,10 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, OneToMany, Index } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
+import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
+import { CommonEntity } from '@src/common/entity/common.entity';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { TokensEntity } from '@src/tokens/tokens.entity';
 import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { ConfirmEntity } from '@src/confirm/confirm.entity';
+import { ClientsEntity } from '@src/clients/clients.entity';
+import { RolesEntity } from '@src/roles/roles.entity';
 
 @ObjectType()
 @Entity({ name: 'auth' })
@@ -31,18 +33,35 @@ export class AuthEntity extends CommonEntity {
   @OneToMany(() => SessionsEntity, (session) => session.auth, {
     cascade: true,
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   sessions: SessionsEntity[];
 
   @OneToMany(() => StrategiesEntity, (strategy) => strategy.auth, {
     cascade: true,
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   strategies: StrategiesEntity[];
 
   @OneToMany(() => ConfirmEntity, (confirm) => confirm.auth, {
     cascade: true,
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
-  confirm: ConfirmEntity;
+  confirm: ConfirmEntity[];
+
+  @OneToMany(() => ClientsEntity, (clients) => clients.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  clients: ClientsEntity[];
+
+  @OneToMany(() => RolesEntity, (roles) => roles.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  roles: RolesEntity[];
 }

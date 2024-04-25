@@ -1,12 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { CommonDto } from '@src/common/dto/common.dto';
+import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { TagsDto } from '@src/tags/tags.dto';
 import { CategoriesDto } from '@src/categories/categories.dto';
-import { UsersDto } from '@src/users/users.dto';
 
 @InputType()
-export class PostsDto extends CommonDto {
+export class PostsDto extends ProtectedDto {
   @ApiProperty({
     required: false,
     description: 'Заголовок',
@@ -48,11 +47,4 @@ export class PostsDto extends CommonDto {
   })
   @Field(() => [TagsDto], { nullable: true })
   tags?: TagsDto[];
-
-  @ApiProperty({
-    required: false,
-    description: 'Данные пользователя, связанного с данной записью',
-  })
-  @Field(() => UsersDto, { nullable: true })
-  user?: UsersDto;
 }

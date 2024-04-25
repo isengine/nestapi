@@ -3,10 +3,10 @@ import { ClientsDto } from '@src/clients/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { ClientsService } from '@src/clients/clients.service';
-import { CommonResolver } from '@src/common/common.resolver';
+import { ProtectedResolver } from '@src/common/resolver/protected.resolver';
 
 @Resolver(ClientsEntity)
-export class ClientsResolver extends CommonResolver(
+export class ClientsResolver extends ProtectedResolver(
   'clients',
   ClientsEntity,
   ClientsDto,

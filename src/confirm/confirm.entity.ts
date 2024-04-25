@@ -1,16 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import {
-  Entity,
-  Column,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
-import { AuthEntity } from '@src/auth/auth.entity';
+import { Entity, Column } from 'typeorm';
+import { ProtectedEntity } from '@src/common/entity/protected.entity';
 
 @ObjectType()
 @Entity({ name: 'confirm' })
-export class ConfirmEntity extends CommonEntity {
+export class ConfirmEntity extends ProtectedEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -18,11 +12,4 @@ export class ConfirmEntity extends CommonEntity {
     nullable: true,
   })
   code: string;
-
-  @OneToOne(() => AuthEntity, (auth) => auth.confirm, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'auth_id', referencedColumnName: 'id' })
-  auth: AuthEntity;
 }

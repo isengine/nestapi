@@ -7,7 +7,7 @@ import { relationsCreate } from '@src/common/service/relations.service';
 import { filterService } from '@src/common/service/filter.service';
 import { optionsService } from '@src/common/service/options.service';
 import { CommonDto } from '@src/common/dto/common.dto';
-import { CommonEntity } from '@src/common/common.entity';
+import { CommonEntity } from '@src/common/entity/common.entity';
 
 export class CommonService<
   Entity extends CommonEntity,
@@ -97,6 +97,7 @@ export class CommonService<
   async create(
     dto: Dto,
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<Entity> {
     delete dto.createdAt;
     delete dto.updatedAt;
@@ -134,8 +135,11 @@ export class CommonService<
     return await this.findOne(created.id, relationsDto);
   }
 
-  async remove(id: number): Promise<boolean> {
+  async remove(id: number, authId: number = undefined): Promise<boolean> {
     const result = await this.repository.delete(id);
     return !!result?.affected;
+    // const result = await this.repository.remove(id);
+    // console.log('-- result', result);
+    // return result;
   }
 }

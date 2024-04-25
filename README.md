@@ -429,11 +429,23 @@ npm run prod
 
 Для TypeORM это:
 
-    src/typeorm/entity/common.entity.ts
+    src/common/entity/common.entity.ts
 
 Для DTO это:
 
-    src/typeorm/entity/common.dto.ts
+    src/common/entity/common.dto.ts
+
+Есть защищенная модель данных, которая требует передачи id учетной записи. Она наследуется от базовой модели, но имеет дополнительное поле:
+
+- auth
+
+Для TypeORM это:
+
+    src/common/entity/protected.entity.ts
+
+Для DTO это:
+
+    src/common/entity/protected.dto.ts
 
 [^ к оглавлению](#оглавление)
 
@@ -961,7 +973,7 @@ GraphQL:
 
     import { ObjectType } from '@nestjs/graphql';
     import { ...Entity } from '@src/.../....entity';
-    import { FilterType } from '@src/typeorm/types/filter.type';
+    import { FilterType } from '@src/common/type/filter.type';
 
     @ObjectType()
     export class ...Filter extends FilterType(...Entity) {}
@@ -1233,9 +1245,9 @@ GraphQL:
 
 ### Опции технически
 
-Поля опций заданы в файле **src/typeorm/dto/options.dto.ts**.
+Поля опций заданы в файле **src/common/dto/options.dto.ts**.
 
-Сервисные функции, которые обрабатывают эти поля, заданы в файле **src/typeorm/services/options.service.ts**.
+Сервисные функции, которые обрабатывают эти поля, заданы в файле **src/common/service/options.service.ts**.
 
 Чтобы не вызывать каждую функцию отдельно, мы включили сервисную функцию **optionsService**, которая, собственно подготавливает объект опций.
 
@@ -1259,7 +1271,7 @@ GraphQL:
 
 Базовый контроллер находится по пути
 
-    /common/common.controller.ts
+    /common/controller/common.controller.ts
 
 Код наследования в вашем контроллере:
 
@@ -1279,13 +1291,32 @@ export class PostsController extends CommonController<
 }
 ```
 
+Есть защищенный контроллер, который требует авторизации пользователя и id учетной записи.
+
+Он наследуется от базового контроллера и защищает методы:
+
+- create,
+- update,
+- remove.
+
+Защищенный контроллер находится по пути
+
+    /common/controller/protected.controller.ts
+
+Код наследования в вашем контроллере:
+
+```
+@Controller('posts')
+export class PostsController extends ProtectedController...
+```
+
 [^ к оглавлению](#оглавление)
 
 ### Наследование резолвера
 
 Базовый резолвер находится по пути
 
-    /common/common.resolver.ts
+    /common/resolver/common.resolver.ts
 
 Код наследования в вашем контроллере:
 
@@ -1310,15 +1341,34 @@ export class PostsResolver extends CommonResolver(
 }
 ```
 
+Есть защищенный резолвер, который требует авторизации пользователя и id учетной записи.
+
+Он наследуется от базового резолвера и защищает методы:
+
+- create,
+- update,
+- remove.
+
+Защищенный резолвер находится по пути
+
+    /common/resolver/protected.resolver.ts
+
+Код наследования в вашем контроллере:
+
+```
+@Resolver(PostsEntity)
+export class PostsResolver extends ProtectedResolver...
+```
+
 [^ к оглавлению](#оглавление)
 
 ### Наследование сервисов
 
 Базовые сервисы находятся по пути
 
-    /common/common.services.ts
+    /common/service/common.service.ts
 
-Код наследования в вашем контроллере:
+Код наследования в ваших сервисах:
 
 ```
 @Injectable()
@@ -1372,6 +1422,25 @@ export class PostsService extends CommonService<
     delete postsDto.tagsList;
     return await super.create(postsDto, relationsDto);
   }
+```
+
+Есть защищенные сервисы, которые проверяют включают в работу условия проверки и фильтрации по id учетной записи.
+
+Они наследуются от базовых сервисов и защищают методы:
+
+- create,
+- update,
+- remove.
+
+Защищенные сервисы находится по пути
+
+    /common/service/protected.service.ts
+
+Код наследования в ваших сервисах:
+
+```
+@Injectable()
+export class PostsService extends ProtectedService...
 ```
 
 [^ к оглавлению](#оглавление)

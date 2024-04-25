@@ -4,11 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesEntity } from '@src/roles/roles.entity';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { CommonService } from '@src/common/service/common.service';
+import { ProtectedService } from '@src/common/service/protected.service';
 import { RolesFilter } from '@src/roles/roles.filter';
 
 @Injectable()
-export class RolesService extends CommonService<
+export class RolesService extends ProtectedService<
   RolesEntity,
   RolesDto,
   RolesFilter
@@ -20,15 +20,15 @@ export class RolesService extends CommonService<
     super();
   }
 
-  async rolesGetByUserId(
-    userId: number,
+  async rolesGetByAuthId(
+    authId: number,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<RolesEntity[]> {
     const roles = await this.repository.find({
       relations: relationsDto?.map(i => i.name),
       where: {
-        user: {
-          id: userId,
+        auth: {
+          id: authId,
         },
       },
     });

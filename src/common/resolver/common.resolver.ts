@@ -5,7 +5,7 @@ import { RelationsDto } from '@src/common/dto/relations.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
 import { CommonService } from '@src/common/service/common.service';
 import { CommonDto } from '@src/common/dto/common.dto';
-import { CommonEntity } from '@src/common/common.entity';
+import { CommonEntity } from '@src/common/entity/common.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
 
 export const CommonResolver = <T extends Type<unknown>>(
@@ -89,6 +89,7 @@ export const CommonResolver = <T extends Type<unknown>>(
       dto: Dto,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
+      authId: number = undefined,
     ): Promise<Entity> {
       return await this.service.create(dto, relationsDto);
     }
@@ -108,6 +109,7 @@ export const CommonResolver = <T extends Type<unknown>>(
     @Mutation(() => Number, { name: `${name}Remove` })
     async remove(
       @Args('id') id: number,
+      authId: number = undefined,
     ): Promise<boolean> {
       return await this.service.remove(id);
     }

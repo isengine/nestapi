@@ -10,12 +10,12 @@ export class RedirectsDto extends CommonDto {
     description: 'Зарегистрированная ссылка для клиента',
   })
   @Field({ nullable: true })
-  url: string;
+  uri: string;
 
   @ApiProperty({
     required: false,
     description: 'Данные клиента, связанного с этой записью',
   })
   @Field(() => ClientsDto, { nullable: true })
-  clients?: ClientsDto;
+  client?: ClientsDto;
 }

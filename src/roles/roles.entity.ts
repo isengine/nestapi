@@ -1,12 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, JoinColumn, ManyToOne } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
+import { Entity, Column } from 'typeorm';
+import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { RolesTypes } from '@src/roles/roles.enum';
-import { UsersEntity } from '@src/users/users.entity';
 
 @ObjectType()
 @Entity({ name: 'roles' })
-export class RolesEntity extends CommonEntity {
+export class RolesEntity extends ProtectedEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -23,11 +22,4 @@ export class RolesEntity extends CommonEntity {
     nullable: true,
   })
   type: RolesTypes;
-
-  @ManyToOne(() => UsersEntity, (user) => user.roles, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: UsersEntity;
 }

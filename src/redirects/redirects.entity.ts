@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
+import { CommonEntity } from '@src/common/entity/common.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
 
 @ObjectType()
@@ -17,7 +17,7 @@ export class RedirectsEntity extends CommonEntity {
     length: 2048,
     nullable: true,
   })
-  url: string;
+  uri: string;
 
   @ManyToOne(() => ClientsEntity, (client) => client.redirects, {
     onDelete: 'CASCADE',

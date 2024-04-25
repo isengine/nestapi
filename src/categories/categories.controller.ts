@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { CategoriesService } from '@src/categories/categories.service';
 import { CategoriesDto } from '@src/categories/categories.dto';
-import { CommonController } from '@src/common/common.controller';
+import { CommonController } from '@src/common/controller/common.controller';
 import { CategoriesEntity } from './categories.entity';
 import { CategoriesFilter } from './categories.filter';
 

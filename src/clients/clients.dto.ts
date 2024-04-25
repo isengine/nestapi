@@ -1,12 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
-import { CommonDto } from '@src/common/dto/common.dto';
+import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { TypeClients } from '@src/clients/clients.enum';
-import { AuthDto } from '@src/auth/auth.dto';
 import { RedirectsDto } from '@src/redirects/redirects.dto';
 
 @InputType()
-export class ClientsDto extends CommonDto {
+export class ClientsDto extends ProtectedDto {
   @ApiProperty({
     required: false,
     description: 'Уникальное имя клиентского приложения, по-умолчанию в формате uuid',
@@ -61,7 +60,7 @@ export class ClientsDto extends CommonDto {
 
   @ApiProperty({
     required: false,
-    description: 'Поле с разрешенным редиректом, по которому сервер будет отправлять данных авторизации',
+    description: 'Поле с разрешенным редиректом, по которому сервер будет отправлять данные авторизации',
   })
   @Field({ nullable: true })
   redirect_uri?: string;
@@ -93,11 +92,4 @@ export class ClientsDto extends CommonDto {
   })
   @Field(() => [RedirectsDto], { nullable: true })
   redirects?: RedirectsDto[];
-
-  @ApiProperty({
-    required: false,
-    description: 'Данные auth записи, связанной с этим клиентским приложением',
-  })
-  @Field(() => AuthDto, { nullable: true })
-  auth?: AuthDto;
 }

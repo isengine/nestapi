@@ -7,11 +7,12 @@ import { ClientsDto } from '@src/clients/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
+import { RedirectsService } from '@src/redirects/redirects.service';
 import { TokensService } from '@src/tokens/tokens.service';
-import { CommonService } from '@src/common/service/common.service';
+import { ProtectedService } from '@src/common/service/protected.service';
 
 @Injectable()
-export class ClientsService extends CommonService<
+export class ClientsService extends ProtectedService<
   ClientsEntity,
   ClientsDto,
   ClientsFilter
@@ -19,19 +20,35 @@ export class ClientsService extends CommonService<
   constructor(
     @InjectRepository(ClientsEntity)
     protected readonly repository: Repository<ClientsEntity>,
+    protected readonly redirectsService: RedirectsService,
     protected readonly tokensService: TokensService,
   ) {
     super();
   }
 
-  async register(clientsDto: ClientsDto): Promise<ClientsEntity> {
+  async create(
+    clientsDto: ClientsDto,
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number,
+  ): Promise<ClientsEntity> {
     if (clientsDto.client_password) {
       const salt = await genSalt(10);
       clientsDto.client_password = await hash(clientsDto.client_password, salt);
     }
-    const client = await this.create(clientsDto);
+    if (!clientsDto.client_id) {
+      clientsDto.client_id = `${v4()}`;
+    }
+    const client = await super.create(clientsDto, relationsDto, authId);
     if (!client) {
       throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
+    }
+    if (clientsDto.redirect_uri) {
+      await this.redirectsService.create({
+        client: {
+          id: client.id,
+        },
+        uri: clientsDto.redirect_uri,
+      }, null, authId);
     }
     const clientSecretData = await this.tokensService.tokensGenerateOne({
       client_id: client.client_id,
@@ -72,15 +89,5 @@ export class ClientsService extends CommonService<
       relations: relationsDto?.map(i => i.name),
       where,
     });
-  }
-
-  async create(
-    clientsDto: ClientsDto,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<ClientsEntity> {
-    if (!clientsDto.client_id) {
-      clientsDto.client_id = `${v4()}`;
-    }
-    return await super.create(clientsDto, relationsDto);
   }
 }
