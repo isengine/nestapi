@@ -15,7 +15,7 @@ export class AuthOauthService {
   async oauthCodeGenerate(clientsDto: ClientsDto): Promise<ClientsEntity> {
     const code = await Buffer.from(`${Date.now()}|${clientsDto.client_id}|${clientsDto.redirect_uri}`).toString('base64');
     clientsDto.code = code;
-    return await this.clientsService.update(clientsDto.id, clientsDto);
+    return await this.clientsService.update(clientsDto.id, clientsDto, null, null);
   }
 
   async oauthCodeVerify(code: string, clientsDto: ClientsDto): Promise<boolean> {

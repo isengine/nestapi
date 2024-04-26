@@ -102,6 +102,7 @@ export const CommonResolver = <T extends Type<unknown>>(
       dto: Dto,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
+      authId: number = undefined,
     ): Promise<Entity> {
       return await this.service.update(id, dto, relationsDto);
     }

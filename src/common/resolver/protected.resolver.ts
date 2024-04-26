@@ -47,6 +47,7 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       return await this.service.create(dto, relationsDto, authId);
     }
 
+    @Auth('gql')
     @Mutation(() => classEntity, { name: `${name}Update` })
     async update(
       @Args('id')
@@ -55,8 +56,10 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       dto: Dto,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
+      @Self('gql')
+      authId: number,
     ): Promise<Entity> {
-      return await this.service.update(id, dto, relationsDto);
+      return await this.service.update(id, dto, relationsDto, authId);
     }
 
     @Auth('gql')

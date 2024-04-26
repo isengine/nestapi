@@ -62,7 +62,7 @@ export class ClientsService extends ProtectedService<
       client_id: client.client_id,
     }, 'JWT_CLIENTS_EXPIRES');
     client.client_secret = clientSecretData.token;
-    const updated = await this.update(client.id, client);
+    const updated = await this.update(client.id, client, null, authId);
     return updated ? client : null;
   }
 

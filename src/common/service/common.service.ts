@@ -113,6 +113,7 @@ export class CommonService<
     id: number,
     dto: Dto,
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<Entity> {
     if (id === undefined) {
       return;

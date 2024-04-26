@@ -139,7 +139,7 @@ export class GrantsTokenService {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
     client.code = null
-    await this.clientsService.update(client.id, { ...client });
+    await this.clientsService.update(client.id, { ...client }, null, client.auth.id);
     const token = await this.tokenService.tokenCreatePair({ id: client.auth.id });
     if (!token) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');

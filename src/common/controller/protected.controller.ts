@@ -70,6 +70,7 @@ export const ProtectedController = <T extends Type<unknown>>(
       return await this.service.create(dto, relationsDto, authId);
     }
 
+    @Auth()
     @Patch('update/:id')
     @ApiOperation({ summary: 'Обновить запись по ее id' })
     @ApiQuery({
@@ -96,8 +97,9 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Param('id', ParseIntPipe) id: number,
       @Body('update') dto: Dto,
       @Body('relations') relationsDto: Array<RelationsDto>,
+      @Self() authId: number,
     ): Promise<Entity> {
-      const result = await this.service.update(Number(id), dto, relationsDto);
+      const result = await this.service.update(Number(id), dto, relationsDto, authId);
       if (!result) {
         throw new NotFoundException('Entry not found');
       }

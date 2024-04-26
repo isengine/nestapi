@@ -303,6 +303,7 @@ export const CommonController = <T extends Type<unknown>>(
       @Param('id', ParseIntPipe) id: number,
       @Body('update') dto: Dto,
       @Body('relations') relationsDto: Array<RelationsDto>,
+      authId: number = undefined,
     ): Promise<Entity> {
       const result = await this.service.update(Number(id), dto, relationsDto);
       if (!result) {

@@ -46,12 +46,14 @@ export class ProtectedService<
     id: number,
     dto: Dto,
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number,
   ): Promise<Entity> {
     if (id === undefined) {
       return;
     }
 
-    const where: FindOptionsWhere<any> = { id };
+    const auth = { id: authId };
+    const where: FindOptionsWhere<any> = { id, auth };
     const find = await this.repository.findOne({
       where,
     });
