@@ -27,7 +27,9 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
 Возможно, на удаление:
 
 - FromClientStrategy
-- auth.oauth.service * часть функций используется в tokens
+- auth.oauth.service * часть функций используется в token
+- clientsGetWhere relationsDto
+- ClientsService create relationsDto
 
 # Оглавление
 
@@ -1990,7 +1992,7 @@ const num = randomClass.random(1, 10);
 - **roles** - роли и права пользователей,
 - **sessions** - сессионные данные пользователя,
 - **strategies** - данные сторонних стратегий авторизации,
-- **tokens** - работа с токенами,
+- **token** - работа с токенами,
 - **users** - персональные данные пользователя.
 
 Все они хранятся в своих таблицах. Для работы с ними есть свои декораторы, DTO-шки, интерфейсы, стратегии, сервисы и пр., а также свой модуль с контроллером.
@@ -2273,7 +2275,7 @@ RestAPI:
         "username": "user@mail.com",
         "password": "$2a$10$lCopu3GG.RStYEh4uEY0teqPUZb.xmsdDYvfMmN9BsFejAblc2LW6",
         "isActivated": false,
-        "tokens": {
+        "token": {
             "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiaWF0IjoxNzEzOTkyNTI5LCJleHAiOjE3MTM5OTM0Mjl9.ReMBHHwxPRVYtH2dnIvundHl7bUbXAl8GcmCeK_Itwo",
             "expires_in": 900,
             "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1IiwiaWF0IjoxNzEzOTkyNTI5LCJleHAiOjE3MTY1ODQ1Mjl9.IhESO7kDMXCVxb_DkGLWVef8mFPQ42b71iaMjqUcHoc"
@@ -2920,6 +2922,8 @@ GOOGLE_CLIENT_CALLBACK=...
 
 На самом деле, время жизни токена доступа лучше назначать исходя из того, сколько времени может уйти на ряд стандартных операций, которые производит пользователь, заходя в ваше приложение.
 
+В токене доступа хранится только **id** учетной записи и тип токена **type** в значении **access**. Хранить в токене личные данные нельзя. Бехопасность достигается только проверкой зашифрованной подписи. Сами же данные внутри токена легко дешифруется.
+
 Токен доступа отправляется клиенту в теле ответа, а затем принимается в заголовке **authorization** в виде **bearer token**.
 
 На стороне клиента **access_token** можно хранить во временном хранилище, например в менеджере состояний.
@@ -2934,6 +2938,8 @@ GOOGLE_CLIENT_CALLBACK=...
 - **JWT_REFRESH_EXPIRES** - задает время жизни токена.
 
 Токен обновления работает в точности так же, как и токен доступа.
+
+Тип токена **type** устанавливается в значении **refresh**. Хранение и проверка типов предотвращает использование токена обновления в качестве токена доступа и наоборот.
 
 По-умолчанию, время жизни устанавливается в 30 дней. Мы не рекомендуем делать время жизни токена слишком маленьким. Иначе пользователю придется часто выполнять вход.
 
@@ -2967,11 +2973,11 @@ GOOGLE_CLIENT_CALLBACK=...
 
 ### Получение токена доступа по типу password
 
+С помощью этого метода можно обновить токен доступа для пользователя.
+
 Этот метод выдает токен после проверки данных пользователя.
 
 Пример использования - для авторизации через форму входа.
-
-Т.к. пользователь не авторизован, метод не является защищенным.
 
 RestAPI:
 
@@ -2998,17 +3004,28 @@ RestAPI:
 
 ### Получение токена доступа по типу refresh token
 
-При обновлении токена доступа, мы не можем корректно его валидировать, т.к. срок токена истек. Поэтому метод не является защищенным.
+С помощью этого метода можно обновить токен доступа для пользователя или токен доступа для клиента.
+
+Сервер определяет назначение по входящим данным.
 
 RestAPI:
 
     POST /token
 
-Параметры:
+Параметры для пользователя:
 
     {
         "grant_type": "refresh_token",
         "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M"
+    }
+
+Параметры для клиента:
+
+    {
+        "grant_type": "refresh_token",
+        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExIiwiaWF0IjoxNzA5ODA4NTg5LCJleHAiOjE3MTI0MDA1ODl9.De3n3d6TG-sime-vE9JKjGFO0gLJttrdzOJQyyfJr0M",
+        "client_id": "s6BhdRkqt3",
+        "client_secret": "7Fjfp0ZBr1KtDRbnfVdmIw"
     }
 
 Ответ:
@@ -3024,9 +3041,7 @@ RestAPI:
 
 ### Получение токена доступа по типу сlient credentials
 
-Т.к. каждый клиент привязан к пользователю, можно авторизовать пользователя, предоставив данные клиента.
-
-Метод также не является защищенным.
+С помощью этого метода можно обновить токен доступа для клиента, предоставив его данные.
 
 RestAPI:
 

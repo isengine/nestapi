@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 import { CommonDto } from '@src/common/dto/common.dto';
 
 @InputType()
-export class TokensDto extends CommonDto {
+export class TokenDto extends CommonDto {
   @ApiProperty({
     required: false,
     description: 'Токен доступа',

@@ -1,16 +1,16 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { TokensController } from '@src/tokens/tokens.controller';
-import { TokensService } from '@src/tokens/tokens.service';
-import { TokensResolver } from '@src/tokens/tokens.resolver';
+import { TokenController } from '@src/token/token.controller';
+import { TokenService } from '@src/token/service/token.service';
+import { TokenResolver } from '@src/token/token.resolver';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getJwtConfig } from '@src/config/jwt.config';
 import { AuthModule } from '@src/auth/auth.module';
 import { ClientsModule } from '@src/clients/clients.module';
-import { TokensGrantsService } from './service/tokens.grants.service';
+import { GrantsTokenService } from '@src/token/service/grants.service';
 
 @Module({
-  controllers: [TokensController],
+  controllers: [TokenController],
   imports: [
     ConfigModule,
     JwtModule.registerAsync({
@@ -22,13 +22,13 @@ import { TokensGrantsService } from './service/tokens.grants.service';
     forwardRef(() => ClientsModule),
   ],
   providers: [
-    TokensService,
-    TokensGrantsService,
-    TokensResolver,
+    TokenService,
+    GrantsTokenService,
+    TokenResolver,
   ],
   exports: [
-    TokensService,
-    TokensGrantsService,
+    TokenService,
+    GrantsTokenService,
   ],
 })
-export class TokensModule {}
+export class TokenModule {}

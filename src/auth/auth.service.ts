@@ -11,7 +11,7 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { SessionsService } from '@src/sessions/sessions.service';
-import { TokensService } from '@src/tokens/tokens.service';
+import { TokenService } from '@src/token/service/token.service';
 import { ConfirmService } from '@src/confirm/confirm.service';
 import { CommonService } from '@src/common/service/common.service';
 import { AuthFilter } from '@src/auth/auth.filter';
@@ -28,7 +28,7 @@ export class AuthService extends CommonService<
     protected readonly repository: Repository<AuthEntity>,
     protected readonly userService: UsersService,
     protected readonly sessionsService: SessionsService,
-    protected readonly tokensService: TokensService,
+    protected readonly tokenService: TokenService,
     protected readonly confirmService: ConfirmService,
   ) {
     super();
@@ -43,11 +43,11 @@ export class AuthService extends CommonService<
     if (!isValidPassword) {
       throw new UnauthorizedException('Invalid password');
     }
-    const tokens = await this.tokensService.tokensCreatePair(auth);
+    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
     if (request) {
-      await this.sessionsService.createSession(auth, tokens, request);
+      await this.sessionsService.createSession(auth, token, request);
     }
-    auth.tokens = tokens;
+    auth.token = token;
     return auth;
   }
 
@@ -78,11 +78,11 @@ export class AuthService extends CommonService<
     // authDto.isActivated = true;
 
     const auth = await this.create(authDto);
-    const tokens = await this.tokensService.tokensCreatePair(auth);
+    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
     if (request) {
-      await this.sessionsService.createSession(auth, tokens, request);
+      await this.sessionsService.createSession(auth, token, request);
     }
-    auth.tokens = tokens;
+    auth.token = token;
 
     // закомментируйте строки ниже, если пользователь будет сразу же активирован
     // используйте confirmGenerate чтобы генерировать код из цифр

@@ -9,7 +9,7 @@ import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
 import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
-import { TokensService } from '@src/tokens/tokens.service';
+import { TokenService } from '@src/token/service/token.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StrategiesService } from './strategies.service';
 
@@ -18,7 +18,7 @@ import { StrategiesService } from './strategies.service';
 export class StrategiesController {
   constructor(
     private readonly sessionsService: SessionsService,
-    private readonly tokensService: TokensService,
+    private readonly tokenService: TokenService,
     private readonly leaderProvider: LeaderProvider,
   ) {}
 
@@ -32,9 +32,9 @@ export class StrategiesController {
   @UseGuards(GoogleAuthGuard)
   async googleRedirect(@Req() req: any) {
     const { user: auth } = req;
-    const tokens = await this.tokensService.tokensCreatePair(auth);
-    await this.sessionsService.createSession(auth, tokens, req);
-    auth.tokens = tokens;
+    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
+    await this.sessionsService.createSession(auth, token, req);
+    auth.token = token;
     return auth;
   }
 
@@ -52,9 +52,9 @@ export class StrategiesController {
       return account;
     }
     const auth = await this.leaderProvider.validate(account);
-    const tokens = await this.tokensService.tokensCreatePair(auth);
-    await this.sessionsService.createSession(auth, tokens, req);
-    // auth.tokens = tokens;
-    return { ...auth, tokens };
+    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
+    await this.sessionsService.createSession(auth, token, req);
+    // auth.token = token;
+    return { ...auth, token };
   }
 }

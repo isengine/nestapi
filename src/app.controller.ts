@@ -15,8 +15,8 @@ export class AppController {
   ) {
     const { body, headers, protocol } = req;
 
-    const tokens = await axios({
-      url: `${protocol}://${headers.host}/tokens`,
+    const token = await axios({
+      url: `${protocol}://${headers.host}/token`,
       method: 'post',
       data: {
         grant_type: 'password',
@@ -26,7 +26,7 @@ export class AppController {
       withCredentials: true,
     })
     
-    const access_token = tokens?.data?.access_token;
+    const access_token = token?.data?.access_token;
 
     if (!access_token) {
       throw new BadRequestException('Specified datas is not valid for generate token', 'do not issue token');
@@ -43,7 +43,7 @@ export class AppController {
     // localStorage.setItem('jwt', access_token);
 
     if (!req.body?.data) {
-      return tokens?.data;
+      return token?.data;
     }
 
     const { data } = req.body;

@@ -8,7 +8,7 @@ import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { RedirectsService } from '@src/redirects/redirects.service';
-import { TokensService } from '@src/tokens/tokens.service';
+import { TokenService } from '@src/token/service/token.service';
 import { ProtectedService } from '@src/common/service/protected.service';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class ClientsService extends ProtectedService<
     @InjectRepository(ClientsEntity)
     protected readonly repository: Repository<ClientsEntity>,
     protected readonly redirectsService: RedirectsService,
-    protected readonly tokensService: TokensService,
+    protected readonly tokenService: TokenService,
   ) {
     super();
   }
@@ -34,6 +34,14 @@ export class ClientsService extends ProtectedService<
     if (clientsDto.client_password) {
       const salt = await genSalt(10);
       clientsDto.client_password = await hash(clientsDto.client_password, salt);
+    }
+    if (clientsDto.client_id) {
+      const exists = await this.clientsGetWhere({
+        client_id: clientsDto.client_id,
+      });
+      if (exists) {
+        throw new BadRequestException('Client is exists', { cause: new Error(), description: 'invalid_client' });
+      }
     }
     if (!clientsDto.client_id) {
       clientsDto.client_id = `${v4()}`;
@@ -50,7 +58,7 @@ export class ClientsService extends ProtectedService<
         uri: clientsDto.redirect_uri,
       }, null, authId);
     }
-    const clientSecretData = await this.tokensService.tokensGenerateOne({
+    const clientSecretData = await this.tokenService.tokenGenerateOne({
       client_id: client.client_id,
     }, 'JWT_CLIENTS_EXPIRES');
     client.client_secret = clientSecretData.token;
@@ -84,8 +92,8 @@ export class ClientsService extends ProtectedService<
   async clientsGetWhere(
     where: Object,
     relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<ClientsEntity[]> {
-    return await this.repository.find({
+  ): Promise<ClientsEntity> {
+    return await this.repository.findOne({
       relations: relationsDto?.map(i => i.name),
       where,
     });

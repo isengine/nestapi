@@ -24,7 +24,7 @@ import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TagsModule } from '@src/tags/tags.module';
 import { UsersModule } from '@src/users/users.module';
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
-import { TokensModule } from '@src/tokens/tokens.module';
+import { TokenModule } from '@src/token/token.module';
 
 @Module({
   controllers: [AppController],
@@ -59,7 +59,7 @@ import { TokensModule } from '@src/tokens/tokens.module';
     SocketsModule,
     StrategiesModule,
     TagsModule,
-    TokensModule,
+    TokenModule,
     UsersModule,
   ],
   providers: [AppService],

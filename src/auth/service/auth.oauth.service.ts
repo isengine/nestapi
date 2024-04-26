@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ClientsDto } from '@src/clients/clients.dto';
-import { TokensService } from '@src/tokens/tokens.service';
+import { TokenService } from '@src/token/service/token.service';
 import { AuthOauthDto } from '@src/auth/dto/auth.oauth.dto';
 import { ClientsService } from '@src/clients/clients.service';
 import { ClientsEntity } from '@src/clients/clients.entity';
@@ -9,7 +9,7 @@ import { ClientsEntity } from '@src/clients/clients.entity';
 export class AuthOauthService {
   constructor(
     private readonly clientsService: ClientsService,
-    private readonly tokensService: TokensService,
+    private readonly tokenService: TokenService,
   ) {}
 
   async oauthCodeGenerate(clientsDto: ClientsDto): Promise<ClientsEntity> {
@@ -47,10 +47,10 @@ export class AuthOauthService {
       { name: 'auth' },
       { name: 'redirects' },
     ]);
-    if (!result?.length) {
+    if (!result) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
-    return result[0];
+    return result;
   }
 
   async oauthCode(
@@ -68,10 +68,10 @@ export class AuthOauthService {
     clientsDto: ClientsDto,
     state: string,
   ): Promise<string> {
-    const tokens = await this.tokensService.tokensCreatePair(clientsDto.auth);
-    if (!tokens) {
+    const token = await this.tokenService.tokenCreatePair({ id: clientsDto.auth.id });
+    if (!token) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
-    return `${clientsDto.redirect_uri}?token_type=Bearer&expires_in=${tokens.expires_in}${state ? `&state=${state}` : ''}#access_token=${tokens.access_token}`;
+    return `${clientsDto.redirect_uri}?token_type=Bearer&expires_in=${token.expires_in}${state ? `&state=${state}` : ''}#access_token=${token.access_token}`;
   }
 }

@@ -20,7 +20,7 @@ export class SessionsService extends CommonService<
     super();
   }
 
-  async logSessions(auth, tokens, request, description = '') {
+  async logSessions(auth, token, request, description = '') {
     const { ip, method, originalUrl, headers } = request;
     const data = {
       ip,
@@ -32,14 +32,14 @@ export class SessionsService extends CommonService<
       timezone: headers['timezone'],
       auth,
       description,
-      access_token: tokens?.access_token || null,
-      refresh_token: tokens?.refresh_token || null,
+      access_token: token?.access_token || null,
+      refresh_token: token?.refresh_token || null,
     };
     return await this.create(data);
   }
 
-  async createSession(auth, tokens, request) {
-    const { refresh_token } = tokens;
+  async createSession(auth, token, request) {
+    const { refresh_token } = token;
     const { session } = request;
     // console.log('-- session create', session);
     if (!session) {
@@ -47,7 +47,7 @@ export class SessionsService extends CommonService<
     }
     session.token = refresh_token;
     session.save(async (e) => {
-      await this.logSessions(auth, tokens, request, e ? 'create error' : 'create');
+      await this.logSessions(auth, token, request, e ? 'create error' : 'create');
     });
     // console.log('-- session save', session);
   }

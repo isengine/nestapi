@@ -9,7 +9,7 @@ import { AuthResolver } from '@src/auth/auth.resolver';
 import { SessionSerializer } from '@src/auth/session/serialize.session';
 import { UsersModule } from '@src/users/users.module';
 import { SessionsModule } from '@src/sessions/sessions.module';
-import { TokensModule } from '@src/tokens/tokens.module';
+import { TokenModule } from '@src/token/token.module';
 import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
 import { FormStrategy } from '@src/auth/strategy/form.strategy';
 import { StrategiesModule } from '@src/strategies/strategies.module';
@@ -26,7 +26,7 @@ import { RolesModule } from '@src/roles/roles.module';
     forwardRef(() => ClientsModule),
     forwardRef(() => SessionsModule),
     forwardRef(() => StrategiesModule),
-    forwardRef(() => TokensModule),
+    forwardRef(() => TokenModule),
     forwardRef(() => UsersModule),
     forwardRef(() => RolesModule),
     ConfigModule,
