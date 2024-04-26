@@ -36,18 +36,7 @@ export class ClientsController extends ProtectedController(
   @Client()
   @Get('self')
   @ApiExcludeEndpoint()
-  async clientsSelfGet(@SelfClient() id: number) {
-    const result = await this.service.findOne(id);
-    if (!result) {
-      throw new NotFoundException('Entry not found');
-    }
-    return result;
-  }
-
-  @Client()
-  @Post('self')
-  @ApiExcludeEndpoint()
-  async clientsSelfPost(@SelfClient() id: number) {
+  async clientsSelf(@SelfClient() id: number) {
     const result = await this.service.findOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');

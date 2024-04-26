@@ -71,28 +71,6 @@ export class AuthController {
   }
 
   @Auth()
-  @Get('self')
-  @ApiExcludeEndpoint()
-  async authSelfGet(@Self() id: number) {
-    const result = await this.authService.findOne(id);
-    if (!result) {
-      throw new NotFoundException('Entry not found');
-    }
-    return result;
-  }
-
-  @Auth()
-  @Post('self')
-  @ApiExcludeEndpoint()
-  async authSelfPost(@Self() id: number) {
-    const result = await this.authService.findOne(id);
-    if (!result) {
-      throw new NotFoundException('Entry not found');
-    }
-    return result;
-  }
-
-  @Auth()
   @Client()
   @Post('secure')
   @ApiExcludeEndpoint()
@@ -111,12 +89,15 @@ export class AuthController {
     return await this.authService.findAll();
   }
 
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
-  @Post('login')
+  @Auth()
+  @Get('self')
   @ApiExcludeEndpoint()
-  async login(@Body() authDto: AuthDto, @Req() req: any) {
-    return this.authService.login(authDto, req);
+  async clientsSelf(@Self() id: number) {
+    const result = await this.authService.findOne(id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
   }
 
   @UsePipes(new ValidationPipe())
@@ -211,14 +192,5 @@ export class AuthController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
   async logout(@Req() req: any) {
     return this.authService.logout(req);
-  }
-
-  @Get('status')
-  @Auth()
-  @ApiOperation({ summary: 'Проверка статуса авторизации' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
-  async authStatus(@Req() request: any) {
-    return { msg: request?.user ? 'Authenticated' : 'Not Authenticated' };
   }
 }
