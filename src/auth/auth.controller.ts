@@ -17,15 +17,15 @@ import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { Client, SelfClient } from '@src/clients/clients.decorator';
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
-import { AuthOauthDto } from '@src/auth/dto/auth.oauth.dto';
-import { AuthOauthService } from '@src/auth/service/auth.oauth.service';
+import { OAuthDto } from '@src/auth/dto/oauth.dto';
+import { OAuthService } from '@src/auth/service/oauth.service';
 
 @ApiTags('Авторизация')
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly authOauthService: AuthOauthService,
+    private readonly oauthService: OAuthService,
   ) {}
 
   // @Auth()
@@ -33,39 +33,39 @@ export class AuthController {
   @Get('oauth')
   @ApiOperation({ summary: 'Базовый метод авторизации' })
   @ApiQuery({
-    name: 'authOauthDto',
+    name: 'oauthDto',
     required: true,
     description: 'Объект полей авторизации',
-    type: '[AuthOauthDto], обязательный',
+    type: '[OAuthDto], обязательный',
     example: JSON.stringify([{ response_type: 'code', client_id: '...', redirect_uri: '...' }]),
   })
-  @ApiExtraModels(AuthOauthDto)
+  @ApiExtraModels(OAuthDto)
   @ApiBody({ schema: { anyOf: [
-    { $ref: getSchemaPath(AuthOauthDto) },
+    { $ref: getSchemaPath(OAuthDto) },
   ] } })
   @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
   async oauth(
-    @Body() authOauthDto: AuthOauthDto,
+    @Body() oauthDto: OAuthDto,
     // @Self() id: number,
     @SelfClient() id: number,
     @Res() res: any,
   ) {
     let url = '';
-    const result = await this.authOauthService.oauthPrepare(authOauthDto, id);
-    if (authOauthDto.response_type === 'code') {
+    const result = await this.oauthService.oauthPrepare(oauthDto, id);
+    if (oauthDto.response_type === 'code') {
       // response_type=code
       // client_id=s6BhdRkqt3
       // state=xyz
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
-      url = await this.authOauthService.oauthCode(result, authOauthDto.state);
+      url = await this.oauthService.oauthCode(result, oauthDto.state);
     }
-    if (authOauthDto.response_type === 'token') {
+    if (oauthDto.response_type === 'token') {
       // response_type=token
       // client_id=s6BhdRkqt3
       // state=xyz
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
-      url = await this.authOauthService.oauthToken(result, authOauthDto.state);
+      url = await this.oauthService.oauthToken(result, oauthDto.state);
     }
     return await res.redirect(url);
   }

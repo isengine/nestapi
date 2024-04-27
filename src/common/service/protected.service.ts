@@ -2,7 +2,7 @@ import { DeepPartial, FindOptionsWhere, Repository } from 'typeorm';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 
 export class ProtectedService<
   Entity extends ProtectedEntity,

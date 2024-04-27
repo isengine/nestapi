@@ -4,7 +4,7 @@ import { UsersService } from '@src/users/users.service';
 import { UsersDto } from '@src/users/users.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { Data } from '@src/app.decorator';
-import { CommonController } from '@src/common/controller/common.controller';
+import { CommonController } from '@src/common/common.controller';
 import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 

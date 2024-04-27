@@ -1,12 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ClientsDto } from '@src/clients/clients.dto';
-import { TokenService } from '@src/token/service/token.service';
-import { AuthOauthDto } from '@src/auth/dto/auth.oauth.dto';
+import { TokenService } from '@src/token/token.service';
+import { OAuthDto } from '@src/auth/dto/oauth.dto';
 import { ClientsService } from '@src/clients/clients.service';
 import { ClientsEntity } from '@src/clients/clients.entity';
 
 @Injectable()
-export class AuthOauthService {
+export class OAuthService {
   constructor(
     private readonly clientsService: ClientsService,
     private readonly tokenService: TokenService,
@@ -28,11 +28,11 @@ export class AuthOauthService {
   }
 
   async oauthPrepare(
-    authOauthDto: AuthOauthDto,
+    oauthDto: OAuthDto,
     id: number,
   ): Promise<ClientsDto> {
-    const { response_type } = authOauthDto;
-    console.log(' ---- authOauthDto ', authOauthDto);
+    const { response_type } = oauthDto;
+    console.log(' ---- oauthDto ', oauthDto);
     if (['code', 'token'].indexOf(response_type) < 0) {
       throw new BadRequestException('Specified type of response_type field is not supported in this request', 'invalid_request');
     }
@@ -41,8 +41,8 @@ export class AuthOauthService {
       // auth: {
       //   id,
       // },
-      client_id: authOauthDto.client_id,
-      redirect_uri: authOauthDto.redirect_uri,
+      client_id: oauthDto.client_id,
+      redirect_uri: oauthDto.redirect_uri,
     }, [
       { name: 'auth' },
       { name: 'redirects' },

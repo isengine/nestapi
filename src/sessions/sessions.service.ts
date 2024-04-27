@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SessionsDto } from '@src/sessions/sessions.dto';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 import { SessionsFilter } from './sessions.filter';
 
 @Injectable()

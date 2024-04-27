@@ -6,7 +6,7 @@ import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsFilter } from '@src/sockets/sockets.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { RoomsService } from '@src/rooms/rooms.service';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
 export class SocketsService extends CommonService<

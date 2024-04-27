@@ -8,7 +8,7 @@ import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { RedirectsService } from '@src/redirects/redirects.service';
-import { TokenService } from '@src/token/service/token.service';
+import { TokenService } from '@src/token/token.service';
 import { ProtectedService } from '@src/common/service/protected.service';
 
 @Injectable()

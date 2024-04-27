@@ -15,7 +15,7 @@ import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { CommonController } from '@src/common/controller/common.controller';
+import { CommonController } from '@src/common/common.controller';
 
 export const ProtectedController = <T extends Type<unknown>>(
   name: string,

@@ -13,7 +13,7 @@ import { TokenModule } from '@src/token/token.module';
 import { FromClientStrategy } from '@src/auth/strategy/fromclient.strategy';
 import { FormStrategy } from '@src/auth/strategy/form.strategy';
 import { StrategiesModule } from '@src/strategies/strategies.module';
-import { AuthOauthService } from '@src/auth/service/auth.oauth.service';
+import { OAuthService } from '@src/auth/service/oauth.service';
 import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
 import { RolesModule } from '@src/roles/roles.module';
@@ -33,7 +33,7 @@ import { RolesModule } from '@src/roles/roles.module';
   ],
   providers: [
     AuthService,
-    AuthOauthService,
+    OAuthService,
     AuthResolver,
     FromClientStrategy,
     FormStrategy,
@@ -42,7 +42,7 @@ import { RolesModule } from '@src/roles/roles.module';
   ],
   exports: [
     AuthService,
-    AuthOauthService,
+    OAuthService,
   ],
 })
 export class AuthModule {}

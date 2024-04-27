@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StrategiesDto } from '@src/strategies/strategies.dto';
 import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
 export class StrategiesService extends CommonService<

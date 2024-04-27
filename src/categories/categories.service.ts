@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesFilter } from '@src/categories/categories.filter';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
 export class CategoriesService extends CommonService<

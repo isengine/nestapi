@@ -6,8 +6,8 @@ import { entityGetParams } from '@src/common/service/entity.service';
 import { relationsCreate } from '@src/common/service/relations.service';
 import { filterService } from '@src/common/service/filter.service';
 import { optionsService } from '@src/common/service/options.service';
-import { CommonDto } from '@src/common/dto/common.dto';
-import { CommonEntity } from '@src/common/entity/common.entity';
+import { CommonDto } from '@src/common/common.dto';
+import { CommonEntity } from '@src/common/common.entity';
 
 export class CommonService<
   Entity extends CommonEntity,

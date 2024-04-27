@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 // import { RolesDto } from '@src/roles/roles.dto';
 // import { ClientsDto } from '@src/clients/clients.dto';
-// import { TokenDto } from '@src/token/dto/token.dto';
+// import { TokenDto } from '@src/token/token.dto';
 // import { StrategiesDto } from '@src/strategies/strategies.dto';
 
 @InputType()

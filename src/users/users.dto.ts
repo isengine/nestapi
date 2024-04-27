@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthDto } from '@src/auth/auth.dto';
 // import { IsEnum, NotEquals } from 'class-validator';
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 import { GenderUsers } from '@src/users/users.enum';
 
 @InputType()

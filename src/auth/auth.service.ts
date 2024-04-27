@@ -11,9 +11,9 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { SessionsService } from '@src/sessions/sessions.service';
-import { TokenService } from '@src/token/service/token.service';
+import { TokenService } from '@src/token/token.service';
 import { ConfirmService } from '@src/confirm/confirm.service';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 import { AuthFilter } from '@src/auth/auth.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 

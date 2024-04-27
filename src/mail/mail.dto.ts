@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 import { IsEmail, IsString } from 'class-validator';
 
 @InputType()

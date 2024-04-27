@@ -1,7 +1,7 @@
 import { Args, Resolver, Query, Context } from '@nestjs/graphql';
 import { AuthEntity } from '@src/auth/auth.entity';
-import { TokenDto } from '@src/token/dto/token.dto';
-import { TokenService } from '@src/token/service/token.service';
+import { TokenDto } from '@src/token/token.dto';
+import { TokenService } from '@src/token/token.service';
 
 @Resolver('Token')
 export class TokenResolver {

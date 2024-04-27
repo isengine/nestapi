@@ -9,7 +9,7 @@ import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
 import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
-import { TokenService } from '@src/token/service/token.service';
+import { TokenService } from '@src/token/token.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StrategiesService } from './strategies.service';
 

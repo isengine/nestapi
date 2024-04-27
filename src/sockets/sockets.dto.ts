@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { RoomsDto } from '@src/rooms/rooms.dto';
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 import { UsersDto } from '@src/users/users.dto';
 
 @InputType()

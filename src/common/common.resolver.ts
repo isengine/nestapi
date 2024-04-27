@@ -3,9 +3,9 @@ import { Type } from '@nestjs/common';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
-import { CommonService } from '@src/common/service/common.service';
-import { CommonDto } from '@src/common/dto/common.dto';
-import { CommonEntity } from '@src/common/entity/common.entity';
+import { CommonService } from '@src/common/common.service';
+import { CommonDto } from '@src/common/common.dto';
+import { CommonEntity } from '@src/common/common.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
 
 export const CommonResolver = <T extends Type<unknown>>(

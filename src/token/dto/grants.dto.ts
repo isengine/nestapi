@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 import { GrantTypeClients } from '@src/clients/clients.enum';
 
 @InputType()

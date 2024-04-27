@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TagsDto } from '@src/tags/tags.dto';
 import { TagsEntity } from '@src/tags/tags.entity';
 import { TagsFilter } from '@src/tags/tags.filter';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
 export class TagsService extends CommonService<

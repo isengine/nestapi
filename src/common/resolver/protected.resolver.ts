@@ -8,7 +8,7 @@ import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { CommonResolver } from '@src/common/resolver/common.resolver';
+import { CommonResolver } from '@src/common/common.resolver';
 
 export const ProtectedResolver = <T extends Type<unknown>>(
   name: string,

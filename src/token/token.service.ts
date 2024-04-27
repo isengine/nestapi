@@ -5,7 +5,7 @@ import {
 import * as moment from 'moment';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { TokenDto } from '@src/token/dto/token.dto';
+import { TokenDto } from '@src/token/token.dto';
 
 @Injectable()
 export class TokenService {

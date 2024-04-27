@@ -15,9 +15,9 @@ import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
 import { Data } from '@src/app.decorator';
-import { CommonService } from '@src/common/service/common.service';
-import { CommonDto } from '@src/common/dto/common.dto';
-import { CommonEntity } from '@src/common/entity/common.entity';
+import { CommonService } from '@src/common/common.service';
+import { CommonDto } from '@src/common/common.dto';
+import { CommonEntity } from '@src/common/common.entity';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 
 export const CommonController = <T extends Type<unknown>>(

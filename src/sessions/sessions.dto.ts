@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthDto } from '@src/auth/auth.dto';
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 
 @InputType()
 export class SessionsDto extends CommonDto {

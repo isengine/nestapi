@@ -5,7 +5,7 @@ import { UsersFilter } from '@src/users/users.filter';
 import { UsersService } from '@src/users/users.service';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { CommonResolver } from '@src/common/resolver/common.resolver';
+import { CommonResolver } from '@src/common/common.resolver';
 
 @Resolver(UsersEntity)
 export class UsersResolver extends CommonResolver(

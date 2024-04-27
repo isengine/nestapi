@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { CommonEntity } from '@src/common/entity/common.entity';
+import { CommonEntity } from '@src/common/common.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
 
 @ObjectType()

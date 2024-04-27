@@ -5,7 +5,7 @@ import { UsersDto } from '@src/users/users.dto';
 import { UsersEntity } from '@src/users/users.entity';
 import { UsersFilter } from '@src/users/users.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { CommonService } from '@src/common/service/common.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
 export class UsersService extends CommonService<

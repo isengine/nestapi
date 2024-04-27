@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
-import { CommonDto } from '@src/common/dto/common.dto';
+import { CommonDto } from '@src/common/common.dto';
 import { ResponseTypeClients } from '@src/clients/clients.enum';
 
 @InputType()
-export class AuthOauthDto extends CommonDto {
+export class OAuthDto extends CommonDto {
   @ApiProperty({
     required: true,
     description: 'Тип запроса. Один из token или code',
