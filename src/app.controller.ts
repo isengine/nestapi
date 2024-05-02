@@ -2,11 +2,15 @@ import { BadRequestException, Controller, Get, Header, Post, Render, Res, Req } 
 import { ApiExcludeController } from '@nestjs/swagger';
 import { AppService } from '@src/app.service';
 import axios from 'axios';
+import { TokenService } from '@src/token/token.service';
 
 @ApiExcludeController()
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   @Post('form/auth')
   async auth(
@@ -14,9 +18,11 @@ export class AppController {
     @Res({ passthrough: true }) res: any,
   ) {
     const { body, headers, protocol } = req;
+    const url = `${protocol}://${headers.host}/token`;
+    console.log('-- url', url);
 
     const token = await axios({
-      url: `${protocol}://${headers.host}/token`,
+      url,
       method: 'post',
       data: {
         grant_type: 'password',
@@ -24,17 +30,20 @@ export class AppController {
         password: body.password,
       },
       withCredentials: true,
-    })
+    }).then((r) => r?.data);
+    console.log('-- token', token);
     
-    const access_token = token?.data?.access_token;
+    const access_token = token?.access_token;
 
     if (!access_token) {
       throw new BadRequestException('Specified datas is not valid for generate token', 'do not issue token');
     }
-  
+
+    const tokenParse = await this.tokenService.tokenVerify(access_token, 'access');
+
     res.cookie(
-      'jwt',
-      access_token,
+      'id',
+      tokenParse.id,
       {
         httpOnly: true,
         secure: false,
@@ -42,26 +51,31 @@ export class AppController {
     );
     // localStorage.setItem('jwt', access_token);
 
-    if (!req.body?.data) {
-      return token?.data;
+    console.log('-- body.data', body.data);
+
+    if (!body.redirect_uri) {
+      return token;
     }
 
-    const { data } = req.body;
+    const { redirect_uri, client_id, response_type } = body;
+    // const uri = `${protocol}://${headers.host}/auth?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}`;
+    const uri = `/auth?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}`;
+    return await res.redirect(uri);
 
-    const dataDecoded = await Buffer.from(data, 'base64').toString('utf-8');
-    const dataParsed = dataDecoded ? JSON.parse(dataDecoded) : {};
-
-    const response = await axios({
-      url: dataParsed.url,
-      method: dataParsed.method,
-      data: dataParsed.body,
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      }
-    });
-
-    return response?.data;
+    // const dataDecoded = await Buffer.from(data, 'base64').toString('utf-8');
+    // const dataParsed = dataDecoded ? JSON.parse(dataDecoded) : {};
+    // 
+    // const response = await axios({
+    //   url: dataParsed.url,
+    //   method: dataParsed.method,
+    //   data: dataParsed.body,
+    //   withCredentials: true,
+    //   headers: {
+    //     Authorization: `Bearer ${access_token}`,
+    //   }
+    // });
+    // 
+    // return response?.data;
   }
 
   @Get('form/login.html')

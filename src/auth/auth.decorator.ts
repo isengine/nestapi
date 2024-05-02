@@ -9,6 +9,7 @@ import { ApiType } from '@src/common/type/api.type';
 import { JwtAuthGuard } from '@src/auth/guard/jwt.guard';
 import { GqlAuthGuard } from '@src/auth/guard/gql.guard';
 import { FormAuthGuard } from '@src/auth/guard/form.guard';
+import { LocalAuthGuard } from '@src/auth/guard/local.guard';
 
 export const Auth = (apiType: ApiType = undefined) => {
   if (apiType === 'gql') {
@@ -16,6 +17,9 @@ export const Auth = (apiType: ApiType = undefined) => {
   }
   if (apiType === 'form') {
     return applyDecorators(UseGuards(FormAuthGuard));
+  }
+  if (apiType === 'local') {
+    return applyDecorators(UseGuards(LocalAuthGuard));
   }
   return applyDecorators(UseGuards(JwtAuthGuard));
 };

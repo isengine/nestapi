@@ -2196,11 +2196,7 @@ const num = randomClass.random(1, 10);
 
 RestAPI:
 
-    POST /auth
-
-Заголовки:
-
-    Client_secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiJiNTc5MzdlOS0zMWQ0LTQ3NDEtYTU5Zi1hY2I4YzRmODg1MzkiLCJpYXQiOjE3MDk4MDg0NDF9.oBQw2e3_h_FjywdkF85-jxosIRTL0CQa8Clj2BP4DwQ
+    GET /auth
 
 Параметры:
 
@@ -2225,7 +2221,7 @@ RestAPI:
 
 RestAPI:
 
-    POST /auth
+    GET /auth
 
 Заголовки:
 

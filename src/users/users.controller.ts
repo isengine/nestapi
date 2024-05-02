@@ -38,9 +38,9 @@ export class UsersController extends CommonController(
     return result;
   }
 
-  @Get('findself')
   @Auth()
-  async findSelf(
+  @Get('self')
+  async self(
     @Self() id: number,
     @Data('relations') relationsDto: Array<RelationsDto>,
   ) {

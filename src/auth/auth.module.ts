@@ -17,6 +17,7 @@ import { OAuthService } from '@src/auth/service/oauth.service';
 import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
 import { RolesModule } from '@src/roles/roles.module';
+import { LocalStrategy } from '@src/auth/strategy/local.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -36,6 +37,7 @@ import { RolesModule } from '@src/roles/roles.module';
     OAuthService,
     AuthResolver,
     FromClientStrategy,
+    LocalStrategy,
     FormStrategy,
     JwtStrategy,
     SessionSerializer,

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -19,6 +20,7 @@ import { Client, SelfClient } from '@src/clients/clients.decorator';
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OAuthDto } from '@src/auth/dto/oauth.dto';
 import { OAuthService } from '@src/auth/service/oauth.service';
+import { Data } from '@src/app.decorator';
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -28,9 +30,7 @@ export class AuthController {
     private readonly oauthService: OAuthService,
   ) {}
 
-  // @Auth()
-  @Client()
-  @Get('oauth')
+  @Get('')
   @ApiOperation({ summary: 'Базовый метод авторизации' })
   @ApiQuery({
     name: 'oauthDto',
@@ -45,55 +45,51 @@ export class AuthController {
   ] } })
   @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
-  async oauth(
-    @Body() oauthDto: OAuthDto,
-    // @Self() id: number,
-    @SelfClient() id: number,
-    @Res() res: any,
+  async auth(
+    @Data() oauthDto: OAuthDto,
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
   ) {
+    console.log('-- Базовый метод авторизации...');
+    console.log('-- oauthDto', oauthDto);
+
+    const client = await this.oauthService.oauthVerify(oauthDto);
+
+    const idCookie = req.cookies['id'];
+    console.log('-- idCookie', idCookie);
+
+    if (!idCookie) {
+      const uri = '/form/login.html';
+      const queries = Object.entries(oauthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');
+      return await res.redirect(`${uri}?${queries}`);
+    }
+
     let url = '';
-    const result = await this.oauthService.oauthPrepare(oauthDto, id);
+
     if (oauthDto.response_type === 'code') {
       // response_type=code
       // client_id=s6BhdRkqt3
       // state=xyz
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
-      url = await this.oauthService.oauthCode(result, oauthDto.state);
+      url = await this.oauthService.oauthCode(client, idCookie, oauthDto.state);
     }
     if (oauthDto.response_type === 'token') {
       // response_type=token
       // client_id=s6BhdRkqt3
       // state=xyz
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
-      url = await this.oauthService.oauthToken(result, oauthDto.state);
+      url = await this.oauthService.oauthToken(client, idCookie, oauthDto.state);
     }
+    console.log('-- url', url);
+    console.log('-- res.redirect...');
     return await res.redirect(url);
-  }
-
-  @Auth()
-  @Client()
-  @Post('secure')
-  @ApiExcludeEndpoint()
-  async authSecure(@Self() id: number) {
-    const result = await this.authService.findOne(id);
-    if (!result) {
-      throw new NotFoundException('Entry not found');
-    }
-    return result;
-  }
-
-  @Auth()
-  @Get('get_all')
-  @ApiExcludeEndpoint()
-  async authGetAll() {
-    return await this.authService.findAll();
   }
 
   @Auth()
   @Get('self')
   @ApiExcludeEndpoint()
   async clientsSelf(@Self() id: number) {
-    const result = await this.authService.findOne(id);
+    const result = await this.authService.findOne(id, [{ name: 'user' }]);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }

@@ -37,6 +37,7 @@ export class GrantsTokenService {
     }
     const { username, password } = grantsTokenDto;
     const login = await this.authService.login({ username, password });
+    console.log('-- login', login);
     return await this.grantsTokenPrepare(login.token, grantsTokenDto.state);
   }
 
@@ -123,27 +124,37 @@ export class GrantsTokenService {
       throw new BadRequestException('Not specified authorization code, client_id or redirect uri in this request', 'invalid_grant');
     }
     const { code, client_id, redirect_uri } = grantsTokenDto;
-    const codeMatched = this.oauthService.oauthCodeVerify(code, {
+    const id = await this.oauthService.oauthCodeVerify(code, {
       client_id,
       redirect_uri,
     })
-    if (!codeMatched) {
+    if (!id) {
       throw new BadRequestException('Specified authorization code is invalid', 'invalid_grant');
     }
     const client = await this.clientsService.clientsGetWhere({
       code,
       client_id,
-      redirect_uri,
-    }, [{ name: 'auth' }]);
+      redirects: {
+        uri: redirect_uri,
+      },
+    }, [
+      { name: 'auth' },
+      { name: 'redirects' },
+    ]);
     if (!client?.auth) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
     client.code = null
     await this.clientsService.update(client.id, { ...client }, null, client.auth.id);
-    const token = await this.tokenService.tokenCreatePair({ id: client.auth.id });
+
+    // здесь токен для учетки
+    // const token = await this.tokenService.tokenCreatePair({ id: client.auth.id });
+    // либо должен быть токен для клиента, либо редирект на авторизацию пользователя
+    const token = await this.tokenService.tokenCreatePair({ id });
     if (!token) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
     return await this.grantsTokenPrepare(token, grantsTokenDto.state);
+
   }
 }

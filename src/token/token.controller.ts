@@ -2,6 +2,7 @@ import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { GrantsTokenService } from '@src/token/service/grants.service';
 import { GrantsTokenDto } from '@src/token/dto/grants.dto';
+import axios from 'axios';
 
 @ApiTags('Токены')
 @Controller('token')
@@ -54,13 +55,14 @@ export class TokenController {
     // client_id=s6BhdRkqt3
     // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
     if (grantsTokenDto.grant_type === 'authorization_code') {
-      const result = await this.grantsTokenService.grantsTokenAuthorizationCode(grantsTokenDto);
-      const args = [];
-      Object.entries(result)?.forEach(([key, value]) => {
-        args.push(`${key}=${value}`);
-      });
-      const url = `${grantsTokenDto.redirect_uri}?${args.join('&')}`;
-      return response.redirect(url);
+      return await this.grantsTokenService.grantsTokenAuthorizationCode(grantsTokenDto);
+      // const result = await this.grantsTokenService.grantsTokenAuthorizationCode(grantsTokenDto);
+      // const args = [];
+      // Object.entries(result)?.forEach(([key, value]) => {
+      //   args.push(`${key}=${encodeURIComponent(`${value}`)}`);
+      // });
+      // const url = `${grantsTokenDto.redirect_uri}?${args.join('&')}`;
+      // return response.redirect(url);
     }
   }
 }

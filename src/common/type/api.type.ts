@@ -1,1 +1,1 @@
-export type ApiType = 'gql' | 'form' | undefined;
+export type ApiType = 'gql' | 'form' | 'local' | undefined;

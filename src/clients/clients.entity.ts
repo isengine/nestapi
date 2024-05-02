@@ -98,8 +98,8 @@ export class ClientsEntity extends ProtectedEntity {
   })
   isPublished: boolean;
 
+  @Field(() => [RedirectsEntity], { nullable: true })
   @OneToMany(() => RedirectsEntity, (redirect) => redirect.client, {
-    cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

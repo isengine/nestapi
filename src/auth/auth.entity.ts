@@ -7,6 +7,7 @@ import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { ConfirmEntity } from '@src/confirm/confirm.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { RolesEntity } from '@src/roles/roles.entity';
+import { UsersEntity } from '@src/users/users.entity';
 
 @ObjectType()
 @Entity({ name: 'auth' })

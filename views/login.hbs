@@ -12,13 +12,23 @@
     <div class="form">
         <form action="/form/auth" method="post">
             <h3>Вход</h3>
-            <!--
-            <p>
-                {{#each query}}
-                    {{@key}}: {{this}}
-                {{/each}}
-            </p>
-            -->
+            <div>
+                <input
+                    name="client_id"
+                    type="hidden"
+                    value="{{ query.client_id }}"
+                >
+                <input
+                    name="redirect_uri"
+                    type="hidden"
+                    value="{{ query.redirect_uri }}"
+                >
+                <input
+                    name="response_type"
+                    type="hidden"
+                    value="{{ query.response_type }}"
+                >
+            </div>
             <div class="form-group">
                 <input
                     class="form-control item"

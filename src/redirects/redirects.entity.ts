@@ -19,7 +19,9 @@ export class RedirectsEntity extends CommonEntity {
   })
   uri: string;
 
+  @Field(() => ClientsEntity, { nullable: true })
   @ManyToOne(() => ClientsEntity, (client) => client.redirects, {
+    cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
