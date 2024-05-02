@@ -9,6 +9,7 @@ import { TokenModule } from '@src/token/token.module';
 import { ConfigModule } from '@nestjs/config';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { UsersModule } from '@src/users/users.module';
+import { Id1tStrategy } from '@src/strategies/strategy/id1t.strategy';
 import { GoogleStrategy } from '@src/strategies/strategy/google.strategy';
 import { LeaderStrategy } from '@src/strategies/strategy/leader.strategy';
 
@@ -25,6 +26,7 @@ import { LeaderStrategy } from '@src/strategies/strategy/leader.strategy';
   providers: [
     StrategiesService,
     LeaderProvider,
+    Id1tStrategy,
     LeaderStrategy,
     GoogleStrategy,
   ],
