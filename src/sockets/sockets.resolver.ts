@@ -1,12 +1,12 @@
 import { Resolver } from '@nestjs/graphql';
-import { CommonResolver } from '@src/common/common.resolver';
+import { ProtectedResolver } from '@src/common/resolver/protected.resolver';
 import { SocketsDto } from '@src/sockets/sockets.dto';
 import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsFilter } from '@src/sockets/sockets.filter';
 import { SocketsService } from '@src/sockets/sockets.service';
 
 @Resolver(SocketsEntity)
-export class SocketsResolver extends CommonResolver(
+export class SocketsResolver extends ProtectedResolver(
   'sockets',
   SocketsEntity,
   SocketsDto,

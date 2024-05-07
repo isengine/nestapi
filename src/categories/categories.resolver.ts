@@ -3,10 +3,10 @@ import { CategoriesDto } from '@src/categories/categories.dto';
 import { CategoriesEntity } from '@src/categories/categories.entity';
 import { CategoriesFilter } from '@src/categories/categories.filter';
 import { CategoriesService } from '@src/categories/categories.service';
-import { CommonResolver } from '@src/common/common.resolver';
+import { ClosedResolver } from '@src/common/resolver/closed.resolver';
 
 @Resolver(CategoriesEntity)
-export class CategoriesResolver extends CommonResolver(
+export class CategoriesResolver extends ClosedResolver(
   'categories',
   CategoriesEntity,
   CategoriesDto,

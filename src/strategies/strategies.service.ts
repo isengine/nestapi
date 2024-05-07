@@ -23,7 +23,7 @@ export class StrategiesService extends CommonService<
     strategiesDto: StrategiesDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<StrategiesEntity> {
-    const strategy = await this.findFirst(strategiesDto);
+    const strategy = await this.first(strategiesDto);
     if (!strategy) {
       return await this.create(strategiesDto, relationsDto);
     }
@@ -33,7 +33,7 @@ export class StrategiesService extends CommonService<
   async removeBy(
     strategiesDto: StrategiesDto,
   ): Promise<boolean> {
-    const strategy = await this.findFirst(strategiesDto);
+    const strategy = await this.first(strategiesDto);
     if (!strategy) {
       return;
     }

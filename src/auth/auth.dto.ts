@@ -31,10 +31,18 @@ export class AuthDto extends CommonDto {
   @ApiProperty({
     required: false,
     default: false,
-    description: 'Флаг, который показывает является ли учетная запись пользователя активированной. Например, подтвержденной по email.',
+    description: 'Флаг, который показывает, является ли учетная запись пользователя активированной. Например, подтвержденной по email.',
   })
   @Field({ nullable: true, defaultValue: false })
   isActivated?: boolean;
+
+  @ApiProperty({
+    required: false,
+    default: false,
+    description: 'Флаг, который показывает, назначены ли учетной записи пользователя права суперпользователя (администратора).',
+  })
+  @Field({ nullable: true, defaultValue: false })
+  isSuperuser?: boolean;
 
   // @Field(() => [RolesDto], { nullable: true })
   // roles?: RolesDto[];

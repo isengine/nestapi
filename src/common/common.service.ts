@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { DeepPartial, FindOptionsOrder, FindOptionsWhere, In, Repository } from 'typeorm';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
@@ -20,58 +21,110 @@ export class CommonService<
     where: FindOptionsWhere<any> = undefined,
     order: FindOptionsOrder<any> = { id: 'ASC' },
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<Entity[]> {
-    return await this.repository.find({
-      relations: relationsDto?.map(i => i.name),
-      order,
-      where,
-    });
-  }
-
-  async findFirst(
-    where: FindOptionsWhere<any> = undefined,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<Entity> {
-    const order: FindOptionsOrder<any> = { id: 'ASC' };
-    return await this.repository.findOne({
-      relations: relationsDto?.map(i => i.name),
-      order,
-      where,
-    });
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where = { ...where, auth };
+    }
+    try {
+      return await this.repository.find({
+        relations: relationsDto?.map(i => i.name),
+        order,
+        where,
+      });
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 
   async findAll(
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<Entity[]> {
     const order: FindOptionsOrder<any> = { id: 'ASC' };
-    return await this.repository.find({
-      relations: relationsDto?.map(i => i.name),
-      order,
-    });
+    const where: FindOptionsWhere<any> = {};
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where.auth = auth;
+    }
+    try {
+      return await this.repository.find({
+        relations: relationsDto?.map(i => i.name),
+        order,
+        where,
+      });
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
+  }
+
+  async first(
+    where: FindOptionsWhere<any> = undefined,
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<Entity> {
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where = { ...where, auth };
+    }
+    const order: FindOptionsOrder<any> = { id: 'ASC' };
+    try {
+      return await this.repository.findOne({
+        relations: relationsDto?.map(i => i.name),
+        order,
+        where,
+      });
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
+  }
+
+  async many(
+    ids: Array<number | string>,
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<Entity[]> {
+    const order: FindOptionsOrder<any> = { id: 'ASC' };
+    const where: FindOptionsWhere<any> = { id: In(ids?.map(i => Number(i) || 0)) };
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where.auth = auth;
+    }
+    try {
+      return await this.repository.find({
+        relations: relationsDto?.map(i => i.name),
+        order,
+        where,
+      });
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 
   async findOne(
     id: number,
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<Entity> {
     const where: FindOptionsWhere<any> = { id };
-    return await this.repository.findOne({
-      relations: relationsDto?.map(i => i.name),
-      where,
-    });
-  }
-
-  async findMany(
-    ids: Array<number | string>,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<Entity[]> {
-    const order: FindOptionsOrder<any> = { id: 'ASC' };
-    const where: FindOptionsWhere<any> = { id: In(ids?.map(i => Number(i) || 0)) };
-    return await this.repository.find({
-      relations: relationsDto?.map(i => i.name),
-      order,
-      where,
-    });
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where.auth = auth;
+    }
+    try {
+      return await this.repository.findOne({
+        relations: relationsDto?.map(i => i.name),
+        where,
+      });
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 
   async filter(
@@ -79,7 +132,12 @@ export class CommonService<
     searchDto: SearchDto,
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<Filter[]> {
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      dto = { ...dto, auth };
+    }
     const { root, core, fields } = entityGetParams(this.repository.target);
     const query = this.repository.createQueryBuilder(root);
     const where = filterService(
@@ -91,7 +149,12 @@ export class CommonService<
     );
     query.where(where);
     relationsCreate(query, relationsDto, root);
-    return await optionsService(query, optionsDto, relationsDto, root);
+    try {
+      return await optionsService(query, optionsDto, relationsDto, root);
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 
   async create(
@@ -105,8 +168,17 @@ export class CommonService<
     if (entry.id) {
       entry.id = `${entry.id}`;
     }
-    const created = await this.repository.save(entry);
-    return await this.findOne(created.id, relationsDto);
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      entry.auth = auth;
+    }
+    try {
+      const created = await this.repository.save(entry);
+      return await this.findOne(created.id, relationsDto, authId);
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 
   async update(
@@ -120,6 +192,10 @@ export class CommonService<
     }
 
     const where: FindOptionsWhere<any> = { id };
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where.auth = auth;
+    }
     const find = await this.repository.findOne({
       where,
     });
@@ -132,15 +208,31 @@ export class CommonService<
     if (entry.id) {
       entry.id = `${entry.id}`;
     }
-    const created = await this.repository.save(entry);
-    return await this.findOne(created.id, relationsDto);
+
+    try {
+      const created = await this.repository.save(entry);
+      return await this.findOne(created.id, relationsDto, authId);
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 
-  async remove(id: number, authId: number = undefined): Promise<boolean> {
-    const result = await this.repository.delete(id);
-    return !!result?.affected;
-    // const result = await this.repository.remove(id);
-    // console.log('-- result', result);
-    // return result;
+  async remove(
+    id: number,
+    authId: number = undefined,
+  ): Promise<boolean> {
+    const where: FindOptionsWhere<any> = { id };
+    if (authId !== undefined) {
+      const auth = { id: authId };
+      where.auth = auth;
+    }
+    try {
+      const result = await this.repository.delete(where);
+      return !!result?.affected;
+    }
+    catch {
+      throw new BadRequestException('Incorrect request conditions');
+    }
   }
 }

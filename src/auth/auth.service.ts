@@ -138,28 +138,13 @@ export class AuthService extends CommonService<
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<AuthEntity> {
     const result = await super.create(authDto, relationsDto);
-    await this.userService.create({
-      email: result.username,
-      auth: {
-        id: result.id,
+    await this.userService.create(
+      {
+        email: result.username,
       },
-    });
-    return result;
-  }
-
-  async update(
-    id: number,
-    authDto: AuthDto,
-    relationsDto: Array<RelationsDto> = undefined,
-  ): Promise<AuthEntity> {
-    const result = await super.update(id, authDto, relationsDto);
-    await this.userService.update(result.id, {
-      email: result.username,
-      auth: {
-        username: result.username,
-        isActivated: result.isActivated,
-      },
-    });
+      null,
+      result.id,
+    );
     return result;
   }
 }

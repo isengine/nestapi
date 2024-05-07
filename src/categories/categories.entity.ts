@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, OneToMany } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
+import { ClosedEntity } from '@src/common/entity/closed.entity';
 import { PostsEntity } from '@src/posts/posts.entity';
 
 @ObjectType()
 @Entity({ name: 'categories' })
-export class CategoriesEntity extends CommonEntity {
+export class CategoriesEntity extends ClosedEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',

@@ -1,12 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthDto } from '@src/auth/auth.dto';
 // import { IsEnum, NotEquals } from 'class-validator';
-import { CommonDto } from '@src/common/common.dto';
+import { PrivateDto } from '@src/common/dto/private.dto';
 import { GenderUsers } from '@src/users/users.enum';
 
 @InputType()
-export class UsersDto extends CommonDto {
+export class UsersDto extends PrivateDto {
   @ApiProperty({
     required: false,
     description: 'Контактный email, не обязательно совпадает с логином',
@@ -88,11 +87,4 @@ export class UsersDto extends CommonDto {
   // @IsEnum(GenderUsers)
   // @NotEquals(GenderUsers[GenderUsers.DEFAULT])
   gender?: GenderUsers;
-
-  @ApiProperty({
-    required: false,
-    description: 'Данные auth записи, связанной с данным пользователем',
-  })
-  @Field(() => AuthDto, { nullable: true })
-  auth?: AuthDto;
 }

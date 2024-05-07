@@ -25,6 +25,7 @@ export class SocketsService extends CommonService<
   async create(
     socketsDto: SocketsDto,
     relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
   ): Promise<SocketsEntity> {
     const roomId = socketsDto.room?.id;
     if (roomId) {
@@ -32,6 +33,6 @@ export class SocketsService extends CommonService<
       socketsDto.room = room;
     }
     delete socketsDto.room;
-    return await super.create(socketsDto, relationsDto);
+    return await super.create(socketsDto, relationsDto, authId);
   }
 }

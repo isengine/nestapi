@@ -4,11 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesEntity } from '@src/roles/roles.entity';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { ProtectedService } from '@src/common/service/protected.service';
+import { CommonService } from '@src/common/common.service';
 import { RolesFilter } from '@src/roles/roles.filter';
 
 @Injectable()
-export class RolesService extends ProtectedService<
+export class RolesService extends CommonService<
   RolesEntity,
   RolesDto,
   RolesFilter

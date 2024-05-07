@@ -8,25 +8,26 @@ import {
   Post,
   Patch,
   Type,
+  ForbiddenException,
 } from '@nestjs/common';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { CommonService } from '@src/common/common.service';
-import { ProtectedDto } from '@src/common/dto/protected.dto';
-import { ProtectedEntity } from '@src/common/entity/protected.entity';
+import { ClosedDto } from '@src/common/dto/closed.dto';
+import { ClosedEntity } from '@src/common/entity/closed.entity';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { CommonController } from '@src/common/common.controller';
 import { AuthDto } from '@src/auth/auth.dto';
 
-export const ProtectedController = <T extends Type<unknown>>(
+export const ClosedController = <T extends Type<unknown>>(
   name: string,
   classEntity: T,
   classDto,
 ) => {
-  class BaseProtectedController<
+  class BaseClosedController<
     Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends ProtectedEntity,
-    Dto extends ProtectedDto,
+    Entity extends ClosedEntity,
+    Dto extends ClosedDto,
     Filter
   > extends CommonController(
     name,
@@ -68,8 +69,10 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Body('relations') relationsDto: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.id;
-      return await this.service.create(dto, relationsDto, authId);
+      if (!auth?.isSuperuser) {
+        throw new ForbiddenException('You have no rights!');
+      }
+      return await this.service.create(dto, relationsDto);
     }
 
     @Auth()
@@ -101,8 +104,10 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Body('relations') relationsDto: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      const result = await this.service.update(Number(id), dto, relationsDto, authId);
+      if (!auth?.isSuperuser) {
+        throw new ForbiddenException('You have no rights!');
+      }
+      const result = await this.service.update(Number(id), dto, relationsDto);
       if (!result) {
         throw new NotFoundException('Entry not found');
       }
@@ -119,9 +124,11 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Param('id', ParseIntPipe) id: number,
       @Self() auth: AuthDto,
     ): Promise<boolean> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.remove(id, authId);
+      if (!auth?.isSuperuser) {
+        throw new ForbiddenException('You have no rights!');
+      }
+      return await this.service.remove(id);
     }
   }
-  return BaseProtectedController;
+  return BaseClosedController;
 }

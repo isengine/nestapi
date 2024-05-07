@@ -5,7 +5,7 @@ import { SessionsDto } from '@src/sessions/sessions.dto';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { CommonService } from '@src/common/common.service';
-import { SessionsFilter } from './sessions.filter';
+import { SessionsFilter } from '@src/sessions/sessions.filter';
 
 @Injectable()
 export class SessionsService extends CommonService<

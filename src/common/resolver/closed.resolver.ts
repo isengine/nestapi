@@ -1,23 +1,23 @@
 import { Args, Mutation } from '@nestjs/graphql';
-import { Type } from '@nestjs/common';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { CommonService } from '@src/common/common.service';
-import { ProtectedDto } from '@src/common/dto/protected.dto';
-import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { Auth, Self } from '@src/auth/auth.decorator';
+import { ForbiddenException, Type } from '@nestjs/common';
+import { CommonService } from '@src/common/common.service';
+import { ClosedDto } from '@src/common/dto/closed.dto';
+import { ClosedEntity } from '@src/common/entity/closed.entity';
 import { CommonResolver } from '@src/common/common.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
 
-export const ProtectedResolver = <T extends Type<unknown>>(
+export const ClosedResolver = <T extends Type<unknown>>(
   name: string,
   classEntity: T,
   classDto,
   classFilter,
 ) => {
-  class BaseProtectedResolver<
+  class BaseClosedResolver<
     Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends ProtectedEntity,
-    Dto extends ProtectedDto,
+    Entity extends ClosedEntity,
+    Dto extends ClosedDto,
     Filter
   > extends CommonResolver(
     name,
@@ -42,8 +42,10 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.id;
-      return await this.service.create(dto, relationsDto, authId);
+      if (!auth?.isSuperuser) {
+        throw new ForbiddenException('You have no rights!');
+      }
+      return await this.service.create(dto, relationsDto);
     }
 
     @Auth('gql')
@@ -58,8 +60,10 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.update(id, dto, relationsDto, authId);
+      if (!auth?.isSuperuser) {
+        throw new ForbiddenException('You have no rights!');
+      }
+      return await this.service.update(id, dto, relationsDto);
     }
 
     @Auth('gql')
@@ -70,9 +74,11 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<boolean> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.remove(id, authId);
+      if (!auth?.isSuperuser) {
+        throw new ForbiddenException('You have no rights!');
+      }
+      return await this.service.remove(id);
     }
   }
-  return BaseProtectedResolver;
+  return BaseClosedResolver;
 }

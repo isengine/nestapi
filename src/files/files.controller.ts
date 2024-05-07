@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { FilesService } from '@src/files/files.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { FilesInterface } from './files.interface';
+import { FilesInterface } from '@src/files/files.interface';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 @ApiExcludeController()

@@ -5,13 +5,13 @@ import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { SocketsGateway } from '@src/sockets/sockets.gateway';
 import { SocketsService } from '@src/sockets/sockets.service';
 import { RoomsModule } from '@src/rooms/rooms.module';
-import { UsersModule } from '@src/users/users.module';
+import { AuthModule } from '@src/auth/auth.module';
 
 @Module({
   controllers: [SocketsController],
   imports: [
     TypeOrmModule.forFeature([SocketsEntity]),
-    forwardRef(() => UsersModule),
+    forwardRef(() => AuthModule),
     forwardRef(() => RoomsModule),
   ],
   providers: [SocketsService, SocketsGateway],

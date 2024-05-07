@@ -1,28 +1,41 @@
 import { Args, Mutation, Query } from '@nestjs/graphql';
-import { Type } from '@nestjs/common';
+import { ForbiddenException, Type } from '@nestjs/common';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
 import { CommonService } from '@src/common/common.service';
-import { CommonDto } from '@src/common/common.dto';
-import { CommonEntity } from '@src/common/common.entity';
+import { PrivateDto } from '@src/common/dto/private.dto';
+import { PrivateEntity } from '@src/common/entity/private.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { Auth, Self } from '@src/auth/auth.decorator';
+import { ProtectedResolver } from '@src/common/resolver/protected.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
 
-export const CommonResolver = <T extends Type<unknown>>(
+export const PrivateResolver = <T extends Type<unknown>>(
   name: string,
   classEntity: T,
   classDto,
   classFilter,
 ) => {
-  class BaseResolver<
+  class BasePrivateResolver<
     Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends CommonEntity,
-    Dto extends CommonDto,
+    Entity extends PrivateEntity,
+    Dto extends PrivateDto,
+    Filter
+  > extends ProtectedResolver(
+    name,
+    classEntity,
+    classDto,
+    classFilter,
+  )<
+    Service,
+    Entity,
+    Dto,
     Filter
   > {
     readonly service: Service;
 
+    @Auth('gql')
     @Query(() => [classEntity], { name: `${name}Find` })
     async find(
       @Args('where', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
@@ -31,44 +44,56 @@ export const CommonResolver = <T extends Type<unknown>>(
       order: object,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Self('gql')
+      auth: AuthDto,
     ): Promise<Entity[]> {
-      return await this.service.find(where, order, relationsDto);
+      const authId = auth.isSuperuser ? undefined : auth.id;
+      return await this.service.find(where, order, relationsDto, authId);
     }
 
+    @Auth('gql')
     @Query(() => classEntity, { name: `${name}FindOne` })
     async findOne(
       @Args('id')
       id: number,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Self('gql')
+      auth: AuthDto,
     ): Promise<Entity> {
-      return await this.service.findOne(id, relationsDto);
+      const authId = auth.isSuperuser ? undefined : auth.id;
+      return await this.service.findOne(id, relationsDto, authId);
     }
 
+    @Auth('gql')
     @Query(() => classEntity, { name: `${name}First` })
     async first(
       @Args('where', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
       where: object,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Self('gql')
+      auth: AuthDto,
     ): Promise<Entity> {
-      return await this.service.first(where, relationsDto);
+      const authId = auth.isSuperuser ? undefined : auth.id;
+      return await this.service.first(where, relationsDto, authId);
     }
 
+    @Auth('gql')
     @Query(() => [classEntity], { name: `${name}Many` })
     async many(
       @Args('ids', { type: () => [Number || String] })
       ids: Array<number | string>,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Self('gql')
+      auth: AuthDto,
     ): Promise<Entity[]> {
-      return await this.service.many(ids, relationsDto);
+      const authId = auth.isSuperuser ? undefined : auth.id;
+      return await this.service.many(ids, relationsDto, authId);
     }
 
+    @Auth('gql')
     @Query(() => [classFilter], { name: `${name}Filter` })
     async filter(
       @Args('where', { nullable: true, defaultValue: {}, type: () => classDto })
@@ -79,47 +104,18 @@ export const CommonResolver = <T extends Type<unknown>>(
       optionsDto: OptionsDto,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Self('gql')
+      auth: AuthDto,
     ): Promise<Filter[]> {
+      const authId = auth.isSuperuser ? undefined : auth.id;
       return await this.service.filter(
         dto,
         searchDto,
         optionsDto,
         relationsDto,
+        authId,
       );
     }
-
-    @Mutation(() => classEntity, { name: `${name}Create` })
-    async create(
-      @Args('create', { type: () => classDto })
-      dto: Dto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
-    ): Promise<Entity> {
-      return await this.service.create(dto, relationsDto);
-    }
-
-    @Mutation(() => classEntity, { name: `${name}Update` })
-    async update(
-      @Args('id')
-      id: number,
-      @Args('update', { type: () => classDto })
-      dto: Dto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
-    ): Promise<Entity> {
-      return await this.service.update(id, dto, relationsDto);
-    }
-
-    @Mutation(() => Number, { name: `${name}Remove` })
-    async remove(
-      @Args('id') id: number,
-      auth: AuthDto = undefined,
-    ): Promise<boolean> {
-      return await this.service.remove(id);
-    }
   }
-  return BaseResolver;
+  return BasePrivateResolver;
 }

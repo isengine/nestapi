@@ -4,10 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PostsDto } from '@src/posts/posts.dto';
 import { PostsEntity } from '@src/posts/posts.entity';
 import { PostsFilter } from '@src/posts/posts.filter';
-import { ProtectedService } from '@src/common/service/protected.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
-export class PostsService extends ProtectedService<
+export class PostsService extends CommonService<
   PostsEntity,
   PostsDto,
   PostsFilter

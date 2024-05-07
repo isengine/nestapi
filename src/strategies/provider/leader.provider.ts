@@ -87,19 +87,24 @@ export class LeaderProvider {
       uid: account.id,
       json: JSON.stringify(account),
     });
-    await this.userService.updateByAuthId({
-      auth: { id: auth.id },
-      email: account.email,
-      phone: `7${account.phone}`,
-      name: account.firstName,
-      lastName: account.lastName,
-      parentName: account.fatherName,
-      avatar: account.photo,
-      birthday: account.birthday,
-      address,
-      timezone: account.address?.timezone,
-      gender: genders[account.gender] || '',
-    });
+    const user = await this.userService.first(null, null, auth.id);
+    await this.userService.update(
+      user.id,
+      {
+        email: account.email,
+        phone: `7${account.phone}`,
+        name: account.firstName,
+        lastName: account.lastName,
+        parentName: account.fatherName,
+        avatar: account.photo,
+        birthday: account.birthday,
+        address,
+        timezone: account.address?.timezone,
+        gender: genders[account.gender] || '',
+      },
+      null,
+      auth.id,
+    );
     return auth;
   }
 }

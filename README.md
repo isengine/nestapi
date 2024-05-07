@@ -46,6 +46,7 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
   - [Типы сущностей](#типы-сущностей)
   - [Расширение типов сущностей](#расширение-типов-сущностей)
 - [Отношения](#отношения)
+- [Защита данных](#защита-данных)
 - [Модели данных](#модели-данных)
 - [Контроллеры и резолверы](#контроллеры-и-резолверы)
   - [Аргументы запросов](#аргументы-запросов)
@@ -56,10 +57,9 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
 - [Методы](#методы)
   - [Базовые методы](#базовые-методы)
     - [Метод find](#метод-find)
-    - [Метод findAll](#метод-findall)
     - [Метод findOne](#метод-findone)
-    - [Метод findMany](#метод-findmany)
-    - [Метод findFirst](#метод-findfirst)
+    - [Метод first](#метод-first)
+    - [Метод many](#метод-many)
     - [Метод filter](#метод-filter)
     - [Метод create](#метод-create)
     - [Метод update](#метод-update)
@@ -417,6 +417,29 @@ npm run prod
 
 [^ к оглавлению](#оглавление)
 
+# Защита данных
+
+Сервер предлагает четыре уровня защиты данных:
+
+- common - общая,
+- protected - защищенная,
+- private - частная,
+- closed - закрытый.
+
+Общая защита, **common**, представляет собой открытость всех данных и операций по ним. Это означает, что любой пользователь может читать, создавать, изменять и удалять любые записи.
+
+Второй уровень защиты, **protected**, позволяет всем пользователям читать любые записи, но изменять и удалять только свои. При создании новой записи, она автоматически привязывается к учетной записи пользователя.
+
+Третий уровень защиты, **private**, позволяет пользователям читать, изменять и удалять только свои записи. При создании новой записи, она также автоматически привязывается к учетной записи пользователя.
+
+Самый высокий уровень защиты, **closed**, разрешает пользователям читать все записи, но запрещает создавать, изменять и удалять их. Исключение составляют только суперпользователи, и те пользователи, у которых есть соответствующие права.
+
+> Если вам нужны более гибкие ограничения, их можно задать на уровне прав и ролей.
+
+> На данный момент механизм прав и ролей реализован не полностью!
+
+[^ к оглавлению](#оглавление)
+
 # Модели данных
 
 Модель данных в **TypeORM** автоматически формирует базу данных с необходимыми полями и связями. Также на ее основе автоматически генерируется схема GraphQL. Такие модели представлены файлами с расширением **.entity.ts**.
@@ -437,17 +460,21 @@ npm run prod
 
     src/common/entity/common.dto.ts
 
-Есть защищенная модель данных, которая требует передачи id учетной записи. Она наследуется от базовой модели, но имеет дополнительное поле:
+Есть защищенные модели данных, которые требуют передачи id учетной записи. Они наследуются от базовой модели, но имеют дополнительное поле:
 
 - auth
 
 Для TypeORM это:
 
     src/common/entity/protected.entity.ts
+    src/common/entity/private.entity.ts
+    src/common/entity/closed.entity.ts
 
 Для DTO это:
 
     src/common/entity/protected.dto.ts
+    src/common/entity/private.dto.ts
+    src/common/entity/closed.dto.ts
 
 [^ к оглавлению](#оглавление)
 
@@ -509,8 +536,8 @@ api/resource/endpoint
 import { ... Get, ... } from '@nestjs/common';
 ...
 
-  @Get('findall')
-  async postsFindAll() {
+  @Get('find')
+  async postsFind() {
     ...
 ```
 
@@ -559,18 +586,18 @@ PREFIX=/api/v3
 export class PostsController {
   ...
 
-  @Get('findall')
-  async postsFindAll() {
+  @Get('find')
+  async postsFind() {
     ...
 ```
 
 Данный метод будет вызван по адресу запроса
 
-    /posts/findall
+    /posts/find
 
 Если вы использовали глобальный префикс, например **api**, то адрес будет таким:
 
-    /api/posts/findall
+    /api/posts/find
 
 [^ к оглавлению](#оглавление)
 
@@ -634,8 +661,8 @@ export class PostsController {
 
 - find - получить все записи или записи по заданным условиям,
 - findone - получить одну запись по id,
-- findmany - получить несколько записей по списку id,
-- findfirst - получить одну запись по заданным условиям,
+- many - получить несколько записей по списку id,
+- first - получить одну запись по заданным условиям,
 - filter - найти записи, поля которых соответствуют заданным условиям,
 - create - создать новую запись,
 - update - обновить запись,
@@ -643,12 +670,12 @@ export class PostsController {
 
 Важно учитывать, что в сервисах и резолверах эти методы имеют впереди название сущности и пишутся в стиле camelCase. Например:
 
-    postsFindAll
+    postsFind
 
 В контроллерах эти методы записываются в стиле flatcase. Название сущности задается в имени контроллера. Например:
 
-    findall
-    /posts/findall
+    find
+    /posts/find
 
 Мы используем такую нотацию потому что базовые методы короткие. Если вы используете свои методы с длинными названиями, рекомедуем использовать нотации kebab-case или snake_case. Например:
 
@@ -667,12 +694,12 @@ export class PostsController {
 
 RestAPI:
 
-    GET find
+    GET .../find
 
 GraphQL:
 
-    query find($where: JSONObject, $order: JSONObject) {
-        result: find(where: $where, order: $order) {
+    query ...Find($where: JSONObject, $order: JSONObject) {
+        result: ...Find(where: $where, order: $order) {
             ...
         }
     }
@@ -713,12 +740,12 @@ GraphQL:
 
 RestAPI:
 
-    GET find/:id
+    GET .../find/:id
 
 GraphQL:
 
-    query findOne($id: Float!) {
-        result: findOne(id: $id) {
+    query ...FindOne($id: Float!) {
+        result: ...FindOne(id: $id) {
             ...
         }
     }
@@ -743,18 +770,56 @@ GraphQL:
 
 [^ к оглавлению](#оглавление)
 
-### Метод findMany
+### Метод first
+
+Получить одну запись по заданным условиям
+
+RestAPI:
+
+    GET .../first
+
+GraphQL:
+
+    query ...First($where: JSONObject) {
+        result: ...First(where: $where) {
+            ...
+        }
+    }
+
+Параметры:
+
+    {
+        "where": {
+            ...
+        }
+    }
+
+Ответ:
+
+    {
+        "data": {
+            "result": {
+                ...
+            }
+        }
+    }
+
+В ответ попадает одна, самая первая, запись с запрошенными полями.
+
+[^ к оглавлению](#оглавление)
+
+### Метод many
 
 Получить несколько записей по списку id
 
 RestAPI:
 
-    GET findmany/:ids
+    GET .../many/:ids
 
 GraphQL:
 
-    query findMany($ids: [Float!]!) {
-        result: findMany(ids: $ids) {
+    query ...Many($ids: [Float!]!) {
+        result: ...Many(ids: $ids) {
             ...
         }
     }
@@ -779,44 +844,6 @@ GraphQL:
     }
 
 В ответ попадает массив записей с запрошенными полями.
-
-[^ к оглавлению](#оглавление)
-
-### Метод findFirst
-
-Получить одну запись по заданным условиям
-
-RestAPI:
-
-    GET findfirst
-
-GraphQL:
-
-    query findFirst($where: JSONObject) {
-        result: findFirst(where: $where) {
-            ...
-        }
-    }
-
-Параметры:
-
-    {
-        "where": {
-            ...
-        }
-    }
-
-Ответ:
-
-    {
-        "data": {
-            "result": {
-                ...
-            }
-        }
-    }
-
-В ответ попадает одна, самая первая, запись с запрошенными полями.
 
 [^ к оглавлению](#оглавление)
 
@@ -1144,8 +1171,8 @@ GraphQL:
 
 Например:
 
-    postsFindAll()
-    postsFindAll(relations)
+    postsFind()
+    postsFind(relations)
 
 Вы можете даже использовать двухуровневые связи типа **post.category**, но только если вложенные сущности не дублируют исходную сущность.
 
@@ -1301,15 +1328,27 @@ export class PostsController extends CommonController<
 - update,
 - remove.
 
-Защищенный контроллер находится по пути
+Защищенные контроллеры находятся по пути
 
     /common/controller/protected.controller.ts
+    /common/controller/private.controller.ts
+    /common/controller/closed.controller.ts
 
 Код наследования в вашем контроллере:
 
 ```
 @Controller('posts')
 export class PostsController extends ProtectedController...
+```
+
+```
+@Controller('posts')
+export class PostsController extends PrivateController...
+```
+
+```
+@Controller('posts')
+export class PostsController extends ClosedController...
 ```
 
 [^ к оглавлению](#оглавление)
@@ -1351,15 +1390,27 @@ export class PostsResolver extends CommonResolver(
 - update,
 - remove.
 
-Защищенный резолвер находится по пути
+Защищенные резолверы находятся по пути
 
     /common/resolver/protected.resolver.ts
+    /common/resolver/private.resolver.ts
+    /common/resolver/closed.resolver.ts
 
 Код наследования в вашем контроллере:
 
 ```
 @Resolver(PostsEntity)
 export class PostsResolver extends ProtectedResolver...
+```
+
+```
+@Resolver(PostsEntity)
+export class PostsResolver extends PrivateResolver...
+```
+
+```
+@Resolver(PostsEntity)
+export class PostsResolver extends ClosedResolver...
 ```
 
 [^ к оглавлению](#оглавление)
@@ -1418,7 +1469,7 @@ export class PostsService extends CommonService<
     delete postsDto.categoryId;
     const { tagsList } = postsDto;
     if (tagsList && tagsList.length) {
-      const tags = await this.tagsService.findMany(tagsList);
+      const tags = await this.tagsService.many(tagsList);
       postsDto.tags = (postsDto.tags || []).concat(tags);
     }
     delete postsDto.tagsList;
@@ -1426,24 +1477,9 @@ export class PostsService extends CommonService<
   }
 ```
 
-Есть защищенные сервисы, которые проверяют включают в работу условия проверки и фильтрации по id учетной записи.
+Для сервисов отсутствует понятие защищенности, потому что на этом уровне представления системе не должно быть известно о политике защиты.
 
-Они наследуются от базовых сервисов и защищают методы:
-
-- create,
-- update,
-- remove.
-
-Защищенные сервисы находится по пути
-
-    /common/service/protected.service.ts
-
-Код наследования в ваших сервисах:
-
-```
-@Injectable()
-export class PostsService extends ProtectedService...
-```
+Сервисы имеют условия фильтрации по id учетной записи. Но условия проверки ложатся на контроллеры, резолверы и внешние вызовы сервисных методов.
 
 [^ к оглавлению](#оглавление)
 
@@ -1986,7 +2022,7 @@ const num = randomClass.random(1, 10);
 
 Обычно в системах данные пользователей и данные авторизации/аутентификации хранятся в одной таблице. В данном случае мы выделили каждую сущность отдельно:
 
-- **auth** - данные авторизации/аутентификации,
+- **auth** - данные авторизации/аутентификации, учетная запись пользователя,
 - **clients** - данные клиентских приложений, созданных пользователями,
 - **confirm** - данные подтверждения,
 - **roles** - роли и права пользователей,
@@ -2016,7 +2052,8 @@ const num = randomClass.random(1, 10);
 - updated_at,
 - username,
 - password,
-- is_activated.
+- is_activated,
+- is_superuser.
 
 По полю **id** мы связываем запись авторизации/аутентификации с другими данными пользователя, хранящимися в таблице **users**.
 
@@ -2025,6 +2062,10 @@ const num = randomClass.random(1, 10);
 Пароли по-умолчанию хэшируются алгоритмом **bcrypt**.
 
 Поле **is_activated** служит для подтверждения того, что регистрация пользователя подтверждена и он является активным.
+
+Поле **is_superuser** служит для назначения пользователю прав суперпользователя (администратора).
+
+> На данный момент назначение прав суперпользователя возможно только вручную!
 
 [^ к оглавлению](#оглавление)
 

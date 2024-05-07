@@ -7,6 +7,8 @@ import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { ConfirmEntity } from '@src/confirm/confirm.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { RolesEntity } from '@src/roles/roles.entity';
+import { SocketsEntity } from '@src/sockets/sockets.entity';
+import { PostsEntity } from '@src/posts/posts.entity';
 import { UsersEntity } from '@src/users/users.entity';
 
 @ObjectType()
@@ -27,6 +29,10 @@ export class AuthEntity extends CommonEntity {
   @Field({ defaultValue: false })
   @Column({ default: false, name: 'is_activated' })
   isActivated: boolean;
+
+  @Field({ defaultValue: false })
+  @Column({ default: false, name: 'is_superuser' })
+  isSuperuser: boolean;
 
   @Field({ nullable: true })
   token: TokenEntity;
@@ -59,10 +65,31 @@ export class AuthEntity extends CommonEntity {
   })
   clients: ClientsEntity[];
 
+  @OneToMany(() => PostsEntity, (posts) => posts.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  posts: PostsEntity[];
+
   @OneToMany(() => RolesEntity, (roles) => roles.auth, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   roles: RolesEntity[];
+
+  @OneToMany(() => SocketsEntity, (sockets) => sockets.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  sockets: SocketsEntity[];
+
+  @OneToMany(() => UsersEntity, (users) => users.auth, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  users: UsersEntity[];
 }

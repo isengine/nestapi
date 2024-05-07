@@ -33,11 +33,4 @@ export class SocketsDto extends CommonDto {
   })
   @Field(() => RoomsDto, { nullable: true })
   room?: RoomsDto;
-
-  @ApiProperty({
-    required: false,
-    description: 'Данные пользователя, связанного с этим подключением',
-  })
-  @Field(() => UsersDto, { nullable: true })
-  user?: UsersDto;
 }

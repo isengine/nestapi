@@ -1,15 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, OneToOne, OneToMany, JoinColumn } from 'typeorm';
-import { CommonEntity } from '@src/common/common.entity';
-import { AuthEntity } from '@src/auth/auth.entity';
-import { PostsEntity } from '@src/posts/posts.entity';
+import { Entity, Column } from 'typeorm';
+import { PrivateEntity } from '@src/common/entity/private.entity';
 import { GenderUsers } from '@src/users/users.enum';
-import { RolesEntity } from '@src/roles/roles.entity';
-import { SocketsEntity } from '@src/sockets/sockets.entity';
 
 @ObjectType()
 @Entity({ name: 'users' })
-export class UsersEntity extends CommonEntity {
+export class UsersEntity extends PrivateEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -101,16 +97,4 @@ export class UsersEntity extends CommonEntity {
     nullable: true,
   })
   gender?: GenderUsers;
-
-  @Field()
-  @OneToOne(() => AuthEntity)
-  @JoinColumn({ name: 'auth_id', referencedColumnName: 'id' })
-  auth: AuthEntity;
-
-  @OneToMany(() => SocketsEntity, (socket) => socket.user, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  sockets: SocketsEntity[];
 }

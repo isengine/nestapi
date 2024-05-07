@@ -2,7 +2,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ForbiddenException, UnauthorizedException, Injectable } from '@nestjs/common';
-
 import { AuthService } from '@src/auth/auth.service';
 // import { AuthEntity } from '@src/auth/auth.entity';
 

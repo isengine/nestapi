@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { CommonDto } from '@src/common/common.dto';
+import { ClosedDto } from '@src/common/dto/closed.dto';
 import { PostsDto } from '@src/posts/posts.dto';
 
 @InputType()
-export class CategoriesDto extends CommonDto {
+export class CategoriesDto extends ClosedDto {
   @ApiProperty({
     required: false,
     description: 'Название категории',

@@ -74,13 +74,17 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
       uid: profile.auth.id,
       json: JSON.stringify(profile),
     });
-
-    await this.userService.updateByAuthId({
-      auth: { id: auth.id },
-      email: profile.username,
-      name: profile.name,
-      avatar: profile.avatar,
-    });
+    const user = await this.userService.first(null, null, auth.id);
+    await this.userService.update(
+      user.id,
+      {
+        email: profile.username,
+        name: profile.name,
+        avatar: profile.avatar,
+      },
+      null,
+      auth.id,
+    );
     return auth;
   }
 }

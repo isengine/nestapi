@@ -51,14 +51,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       uid: profile.id,
       json: JSON.stringify(account),
     });
-    await this.userService.updateByAuthId({
-      auth: { id: auth.id },
-      email: account.email,
-      name: account.given_name,
-      lastName: account.family_name,
-      avatar: account.picture,
-      locale: account.locale,
-    });
+    const user = await this.userService.first(null, null, auth.id);
+    await this.userService.update(
+      user.id,
+      {
+        email: account.email,
+        name: account.given_name,
+        lastName: account.family_name,
+        avatar: account.picture,
+        locale: account.locale,
+      },
+      null,
+      auth.id,
+    );
     return auth;
   }
 }

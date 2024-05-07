@@ -9,10 +9,10 @@ import { ClientsFilter } from '@src/clients/clients.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { RedirectsService } from '@src/redirects/redirects.service';
 import { TokenService } from '@src/token/token.service';
-import { ProtectedService } from '@src/common/service/protected.service';
+import { CommonService } from '@src/common/common.service';
 
 @Injectable()
-export class ClientsService extends ProtectedService<
+export class ClientsService extends CommonService<
   ClientsEntity,
   ClientsDto,
   ClientsFilter
