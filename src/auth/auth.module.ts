@@ -7,8 +7,6 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthResolver } from '@src/auth/auth.resolver';
 import { OAuthService } from '@src/auth/service/oauth.service';
-import { SessionSerializer } from '@src/auth/session/serialize.session';
-import { JwtStrategy } from '@src/auth/strategy/jwt.strategy';
 
 import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
@@ -39,8 +37,6 @@ import { UsersModule } from '@src/users/users.module';
     AuthService,
     OAuthService,
     AuthResolver,
-    JwtStrategy,
-    SessionSerializer,
   ],
   exports: [
     AuthService,

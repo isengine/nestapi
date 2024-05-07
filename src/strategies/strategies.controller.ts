@@ -5,9 +5,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Id1tAuthGuard } from '@src/auth/guard/id1t.guard';
-import { GoogleAuthGuard } from '@src/auth/guard/google.guard';
-import { LeaderAuthGuard } from '@src/auth/guard/leader.guard';
+import { Id1tAuthGuard } from '@src/strategies/guard/id1t.guard';
+import { GoogleAuthGuard } from '@src/strategies/guard/google.guard';
+import { LeaderAuthGuard } from '@src/strategies/guard/leader.guard';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokenService } from '@src/token/token.service';
