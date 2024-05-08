@@ -17,6 +17,10 @@ export class CommonService<
 > {
   protected readonly repository: Repository<Entity>;
 
+  error(e) {
+    throw new BadRequestException(`Incorrect request conditions: ${e.message}`);
+  }
+
   async find(
     where: FindOptionsWhere<any> = undefined,
     order: FindOptionsOrder<any> = { id: 'ASC' },
@@ -34,8 +38,8 @@ export class CommonService<
         where,
       });
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -56,8 +60,8 @@ export class CommonService<
         where,
       });
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -78,8 +82,8 @@ export class CommonService<
         where,
       });
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -101,8 +105,8 @@ export class CommonService<
         where,
       });
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -122,8 +126,8 @@ export class CommonService<
         where,
       });
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -135,7 +139,6 @@ export class CommonService<
     authId: number = undefined,
   ): Promise<Filter[]> {
     if (authId !== undefined) {
-      console.log('-- authId', authId);
       const auth = { id: authId };
       dto = { ...dto, auth };
       if (!relationsDto) {
@@ -157,8 +160,8 @@ export class CommonService<
     try {
       return await optionsService(query, optionsDto, relationsDto, root);
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -181,8 +184,8 @@ export class CommonService<
       const created = await this.repository.save(entry);
       return await this.findOne(created.id, relationsDto, authId);
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -218,8 +221,8 @@ export class CommonService<
       const created = await this.repository.save(entry);
       return await this.findOne(created.id, relationsDto, authId);
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 
@@ -236,8 +239,8 @@ export class CommonService<
       const result = await this.repository.delete(where);
       return !!result?.affected;
     }
-    catch {
-      throw new BadRequestException('Incorrect request conditions');
+    catch (e) {
+      this.error(e);
     }
   }
 }
