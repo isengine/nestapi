@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Header,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -18,7 +17,8 @@ import { AuthDto } from '@src/auth/auth.dto';
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OAuthDto } from '@src/auth/dto/oauth.dto';
 import { OAuthService } from '@src/auth/service/oauth.service';
-import { Auth, Data, Self } from '@src/common/common.decorator';
+import { Auth, Self } from '@src/auth/auth.decorator';
+import { Data } from '@src/common/common.decorator';
 
 @ApiTags('Авторизация')
 @Controller('auth')

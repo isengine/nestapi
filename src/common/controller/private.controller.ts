@@ -14,9 +14,10 @@ import { PrivateEntity } from '@src/common/entity/private.entity';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
-import { Auth, Data, Self } from '@src/common/common.decorator';
 import { ProtectedController } from '@src/common/controller/protected.controller';
 import { AuthDto } from '@src/auth/auth.dto';
+import { Auth, Self } from '@src/auth/auth.decorator';
+import { Data } from '@src/common/common.decorator';
 
 export const PrivateController = <T extends Type<unknown>>(
   name: string,

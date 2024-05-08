@@ -5,9 +5,9 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Id1tAuthGuard } from '@src/strategies/guard/id1t.guard';
-import { GoogleAuthGuard } from '@src/strategies/guard/google.guard';
-import { LeaderAuthGuard } from '@src/strategies/guard/leader.guard';
+import { Id1tStrategiesGuard } from '@src/strategies/guard/id1t.guard';
+import { GoogleStrategiesGuard } from '@src/strategies/guard/google.guard';
+import { LeaderStrategiesGuard } from '@src/strategies/guard/leader.guard';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokenService } from '@src/token/token.service';
@@ -23,14 +23,14 @@ export class StrategiesController {
   ) {}
 
   @Get('id1t/login')
-  @UseGuards(Id1tAuthGuard)
+  @UseGuards(Id1tStrategiesGuard)
   async id1tLogin() {
     return;
   }
 
   @Get('id1t/redirect')
   @Header('content-type', 'application/json')
-  @UseGuards(Id1tAuthGuard)
+  @UseGuards(Id1tStrategiesGuard)
   async id1tRedirect(@Req() req: any) {
     const { user: auth } = req;
     const tokens = await this.tokenService.tokenCreatePair({ id: auth.id });
@@ -42,13 +42,13 @@ export class StrategiesController {
   }
 
   @Get('google/login')
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards(GoogleStrategiesGuard)
   async googleLogin() {
     return;
   }
 
   @Get('google/redirect')
-  @UseGuards(GoogleAuthGuard)
+  @UseGuards(GoogleStrategiesGuard)
   async googleRedirect(@Req() req: any) {
     const { user: auth } = req;
     const token = await this.tokenService.tokenCreatePair({ id: auth.id });
@@ -58,13 +58,13 @@ export class StrategiesController {
   }
 
   @Get('leader/login')
-  @UseGuards(LeaderAuthGuard)
+  @UseGuards(LeaderStrategiesGuard)
   async leaderLogin() {
     return;
   }
 
   @Get('leader/redirect')
-  // @UseGuards(LeaderAuthGuard)
+  // @UseGuards(LeaderStrategiesGuard)
   async leaderRedirect(@Req() req: any) {
     const account = await this.leaderProvider.activate(req);
     if (!account) {

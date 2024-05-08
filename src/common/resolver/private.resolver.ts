@@ -7,9 +7,9 @@ import { CommonService } from '@src/common/common.service';
 import { PrivateDto } from '@src/common/dto/private.dto';
 import { PrivateEntity } from '@src/common/entity/private.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { Auth, Self } from '@src/common/common.decorator';
 import { ProtectedResolver } from '@src/common/resolver/protected.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
+import { Auth, Self } from '@src/auth/auth.decorator';
 
 export const PrivateResolver = <T extends Type<unknown>>(
   name: string,

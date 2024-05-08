@@ -1,7 +1,7 @@
 import { Body, Controller, Get } from '@nestjs/common';
-import { Auth } from '@src/common/common.decorator';
-import { RandomService } from '@src/random/random.service';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { RandomService } from '@src/random/random.service';
+import { Auth } from '@src/auth/auth.decorator';
 
 @ApiExcludeController()
 @Controller('random')
