@@ -17,10 +17,6 @@ export class CommonService<
 > {
   protected readonly repository: Repository<Entity>;
 
-  error(e) {
-    throw new BadRequestException(`Incorrect request conditions: ${e.message}`);
-  }
-
   async find(
     where: FindOptionsWhere<any> = undefined,
     order: FindOptionsOrder<any> = { id: 'ASC' },
@@ -242,5 +238,9 @@ export class CommonService<
     catch (e) {
       this.error(e);
     }
+  }
+
+  error(e) {
+    throw new BadRequestException(`Incorrect request conditions: ${e.message}`);
   }
 }
