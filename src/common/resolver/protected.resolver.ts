@@ -4,7 +4,7 @@ import { RelationsDto } from '@src/common/dto/relations.dto';
 import { CommonService } from '@src/common/common.service';
 import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
-import { Auth, Self } from '@src/auth/auth.decorator';
+import { Auth, Self } from '@src/common/common.decorator';
 import { CommonResolver } from '@src/common/common.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
 

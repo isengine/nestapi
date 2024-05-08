@@ -1,5 +1,5 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { Auth } from '@src/auth/auth.decorator';
+import { Auth } from '@src/common/common.decorator';
 import { RandomService } from '@src/random/random.service';
 
 @Resolver('random')

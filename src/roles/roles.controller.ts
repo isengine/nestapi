@@ -2,7 +2,7 @@ import { Controller, Get, NotFoundException } from '@nestjs/common';
 import { RolesDto } from '@src/roles/roles.dto';
 import { RolesService } from '@src/roles/roles.service';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { Data } from '@src/app.decorator';
+import { Data } from '@src/common/common.decorator';
 import { ProtectedController } from '@src/common/controller/protected.controller';
 import { RolesEntity } from '@src/roles/roles.entity';
 import { RolesFilter } from '@src/roles/roles.filter';

@@ -15,11 +15,10 @@ import {
 } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
-import { Auth, Self } from '@src/auth/auth.decorator';
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OAuthDto } from '@src/auth/dto/oauth.dto';
 import { OAuthService } from '@src/auth/service/oauth.service';
-import { Data } from '@src/app.decorator';
+import { Auth, Data, Self } from '@src/common/common.decorator';
 
 @ApiTags('Авторизация')
 @Controller('auth')

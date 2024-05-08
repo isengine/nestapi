@@ -1,6 +1,4 @@
 import {
-  Body,
-  ForbiddenException,
   Get,
   HttpStatus,
   NotFoundException,
@@ -14,10 +12,9 @@ import { CommonService } from '@src/common/common.service';
 import { PrivateDto } from '@src/common/dto/private.dto';
 import { PrivateEntity } from '@src/common/entity/private.entity';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
-import { Auth, Self } from '@src/auth/auth.decorator';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
-import { Data } from '@src/app.decorator';
+import { Auth, Data, Self } from '@src/common/common.decorator';
 import { ProtectedController } from '@src/common/controller/protected.controller';
 import { AuthDto } from '@src/auth/auth.dto';
 

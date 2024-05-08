@@ -2,7 +2,7 @@ import { Controller, Get, NotFoundException } from '@nestjs/common';
 import { SessionsDto } from '@src/sessions/sessions.dto';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { Data } from '@src/app.decorator';
+import { Data } from '@src/common/common.decorator';
 import { CommonController } from '@src/common/common.controller';
 import { SessionsEntity } from '@src/sessions/sessions.entity';
 import { SessionsFilter } from '@src/sessions/sessions.filter';

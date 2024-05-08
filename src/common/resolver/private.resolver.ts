@@ -1,5 +1,5 @@
-import { Args, Mutation, Query } from '@nestjs/graphql';
-import { ForbiddenException, Type } from '@nestjs/common';
+import { Args, Query } from '@nestjs/graphql';
+import { Type } from '@nestjs/common';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
@@ -7,7 +7,7 @@ import { CommonService } from '@src/common/common.service';
 import { PrivateDto } from '@src/common/dto/private.dto';
 import { PrivateEntity } from '@src/common/entity/private.entity';
 import { GraphQLJSONObject } from 'graphql-type-json';
-import { Auth, Self } from '@src/auth/auth.decorator';
+import { Auth, Self } from '@src/common/common.decorator';
 import { ProtectedResolver } from '@src/common/resolver/protected.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
 
