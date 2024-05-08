@@ -17,20 +17,28 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
     private readonly strategiesService: StrategiesService,
     private readonly userService: UsersService,
   ) {
-    const customAuthServer = 'http://localhost:5000';
-
-    const clientID = '16992fb0-2b4e-4752-8325-a7bb81eec4d3';
-    const clientSecret = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRfaWQiOiIxNjk5MmZiMC0yYjRlLTQ3NTItODMyNS1hN2JiODFlZWM0ZDMiLCJpYXQiOjE3MTQxNzMwNzZ9.6XBWyV3P2pv_uDF5SatMPc7k1v-7Mo68sjIRpVb1D3M';
-    const redirect_uri = 'http://localhost:3000/auth/id1t/redirect';
-    const authorizationURL = `${customAuthServer}/auth/?client_id=${clientID}&redirect_uri=${redirect_uri}&response_type=code`;
+    const clientID = configService.get('ID1T_CLIENT_ID');
+    const clientSecret = configService.get('ID1T_CLIENT_SECRET');
+    const callbackURL = configService.get('ID1T_CLIENT_CALLBACK');
+    const customAuthServer = configService.get('ID1T_SERVER');
+    const authorizationURL = `${customAuthServer}/auth/?client_id=${clientID}&redirect_uri=${callbackURL}&response_type=code`;
     const tokenURL = `${customAuthServer}/token`;
+
+    console.log('-- id1t constructor...');
+    console.log('-- clientID', clientID);
+    console.log('-- clientSecret', clientSecret);
+    console.log('-- callbackURL', callbackURL);
+    console.log('-- customAuthServer', customAuthServer);
+    console.log('-- authorizationURL', authorizationURL);
+    console.log('-- tokenURL', tokenURL);
+    console.log('-- ^^^');
 
     super({
       clientID,
       clientSecret,
       authorizationURL,
       tokenURL,
-      callbackURL: redirect_uri,
+      callbackURL,
       // scope: ['profile', 'email'],
     });
   }
@@ -40,8 +48,14 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
     // скорее всего он берет id учетки, на которую зарегаен клиент
     // нужно, чтобы сервер авторизации запрашивал токен у браузера пользователя
     // и если его нет, то чтобы давал форму входа
+    const customAuthServer = this.configService.get('ID1T_SERVER');
+
+    console.log('-- id1t validate...');
+    console.log('-- customAuthServer', customAuthServer);
+    console.log('-- ^^^');
+
     const profile = await axios.get(
-      'http://localhost:5000/users/self?relations=[{"name":"auth"}]',
+      `${customAuthServer}/users/self?relations=[{"name":"auth"}]`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
