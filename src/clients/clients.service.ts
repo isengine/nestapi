@@ -56,7 +56,7 @@ export class ClientsService extends CommonService<
           id: client.id,
         },
         uri: clientsDto.redirect_uri,
-      }, null, authId);
+      });
     }
     const clientSecretData = await this.tokenService.tokenGenerateOne({
       client_id: client.client_id,

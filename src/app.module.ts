@@ -12,6 +12,7 @@ import { CategoriesModule } from '@src/categories/categories.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
 import { FilesModule } from '@src/files/files.module';
+import { FormsModule } from '@src/forms/forms.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { RandomModule } from '@src/random/random.module';
@@ -49,6 +50,7 @@ import { TokenModule } from '@src/token/token.module';
     ClientsModule,
     ConfirmModule,
     FilesModule,
+    FormsModule,
     MailModule,
     PostsModule,
     RandomModule,

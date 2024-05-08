@@ -36,7 +36,8 @@ export class ClientsController extends ProtectedController(
   @Client()
   @Get('self')
   @ApiExcludeEndpoint()
-  async clientsSelf(@SelfClient() id: number) {
+  async clientsSelf(@SelfClient() client: ClientsDto) {
+    const { id } = client;
     const result = await this.service.findOne(id);
     if (!result) {
       throw new NotFoundException('Entry not found');

@@ -16,7 +16,6 @@ import {
 import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { Client, SelfClient } from '@src/clients/clients.decorator';
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { OAuthDto } from '@src/auth/dto/oauth.dto';
 import { OAuthService } from '@src/auth/service/oauth.service';
@@ -59,7 +58,7 @@ export class AuthController {
     console.log('-- idCookie', idCookie);
 
     if (!idCookie) {
-      const uri = '/form/login.html';
+      const uri = '/forms/login.html';
       const queries = Object.entries(oauthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');
       return await res.redirect(`${uri}?${queries}`);
     }
@@ -88,8 +87,9 @@ export class AuthController {
   @Auth()
   @Get('self')
   @ApiExcludeEndpoint()
-  async clientsSelf(@Self() id: number) {
-    const result = await this.authService.findOne(id, [{ name: 'user' }]);
+  async clientsSelf(@Self() auth: AuthDto) {
+    const { id } = auth;
+    const result = await this.authService.findOne(id, [{ name: 'users' }]);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
