@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from '@src/auth/auth.controller';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
+import { AuthStrategy } from '@src/auth/auth.strategy';
 import { AuthResolver } from '@src/auth/auth.resolver';
 import { OAuthService } from '@src/auth/service/oauth.service';
 
@@ -36,6 +37,7 @@ import { UsersModule } from '@src/users/users.module';
   providers: [
     AuthService,
     OAuthService,
+    AuthStrategy,
     AuthResolver,
   ],
   exports: [

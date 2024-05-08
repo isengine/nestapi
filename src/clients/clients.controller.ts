@@ -2,13 +2,13 @@ import { Controller, Get, Post, NotFoundException, Query } from '@nestjs/common'
 import { ClientsService } from '@src/clients/clients.service';
 import { ClientsDto } from '@src/clients/clients.dto';
 import { Client, SelfClient } from '@src/clients/clients.decorator';
-import { ProtectedController } from '@src/common/controller/protected.controller';
+import { PrivateController } from '@src/common/controller/private.controller';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { ApiOperation, ApiExtraModels, ApiBody, ApiParam, ApiQuery, ApiResponse, getSchemaPath, ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller('clients')
-export class ClientsController extends ProtectedController(
+export class ClientsController extends PrivateController(
   'Клиентские приложения',
   ClientsEntity,
   ClientsDto,

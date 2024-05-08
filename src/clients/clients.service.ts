@@ -86,7 +86,7 @@ export class ClientsService extends CommonService<
     if (!client.client_id || !client.client_secret) {
       throw new BadRequestException('Client is not authorized or has the rights to this request', { cause: new Error(), description: 'unauthorized_client' });
     }
-    return client?.id;
+    return client;
   }
 
   async clientsGetWhere(
