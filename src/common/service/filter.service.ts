@@ -19,7 +19,7 @@ export const filterService = (
   if (searchDto) {
     const searched = searchService(searchDto, quotes, root, core, fieldsMap);
     if (searched) {
-      where.push(searched);
+      where.push(`(${searched})`);
     }
   }
   return where.join(' AND ');

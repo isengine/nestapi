@@ -135,8 +135,13 @@ export class CommonService<
     authId: number = undefined,
   ): Promise<Filter[]> {
     if (authId !== undefined) {
+      console.log('-- authId', authId);
       const auth = { id: authId };
       dto = { ...dto, auth };
+      if (!relationsDto) {
+        relationsDto = [];
+      }
+      relationsDto.push({ name: 'auth', order: 'id', desc: false });
     }
     const { root, core, fields } = entityGetParams(this.repository.target);
     const query = this.repository.createQueryBuilder(root);

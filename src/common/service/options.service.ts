@@ -71,7 +71,7 @@ export const optionsOrder = (optionsDto: OptionsDto, root = '') => {
 
 export const optionsSkip = (optionsDto: OptionsDto) => {
   const { skip, limit, page } = optionsDto;
-  const offset = page ? skip + limit * (page - 1) : skip;
+  const offset = page ? skip + limit * (+page) : skip;
   return {
     take: limit,
     skip: offset,

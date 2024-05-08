@@ -49,7 +49,6 @@ export const responseServer = async ({
       });
 
     req.on('error', (e) => {
-      console.log('--e', e);
       reject(new Error(`Failed to send data to server: ${e.message}`));
     });
 
