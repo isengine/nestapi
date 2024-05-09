@@ -52,16 +52,19 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
 
     console.log('-- id1t validate...');
     console.log('-- customAuthServer', customAuthServer);
-    console.log('-- ^^^');
+    console.log('-- accessToken', accessToken);
 
     const profile = await axios.get(
-      `${customAuthServer}/users/self?relations=[{"name":"auth"}]`,
+      `${customAuthServer}/users/first?relations=[{"name":"auth"}]`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       },
     ).then(r => r.data);
+
+    console.log('-- profile', profile);
+    console.log('-- ^^^');
 
     const auth = await this.authService.findByUsername(profile.auth.username);
 

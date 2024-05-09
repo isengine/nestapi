@@ -23,7 +23,13 @@ export class StrategiesService extends CommonService<
     strategiesDto: StrategiesDto,
     relationsDto: Array<RelationsDto> = undefined,
   ): Promise<StrategiesEntity> {
-    const strategy = await this.first(strategiesDto);
+    const strategy = await this.first({
+      uid: strategiesDto.uid,
+      name: strategiesDto.name,
+      auth: {
+        id: strategiesDto.auth.id,
+      },
+    });
     if (!strategy) {
       return await this.create(strategiesDto, relationsDto);
     }
