@@ -89,7 +89,8 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
       auth: { id: auth.id },
       name: 'id1t',
       uid: profile.auth.id,
-      json: JSON.stringify(profile),
+      json: profile,
+      // json: JSON.stringify(profile),
     });
     const user = await this.userService.first(null, null, auth.id);
     await this.userService.update(
