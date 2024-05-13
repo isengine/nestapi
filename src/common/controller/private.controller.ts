@@ -141,10 +141,17 @@ export const PrivateController = <T extends Type<unknown>>(
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
     @ApiQuery({
+      name: 'order',
+      required: false,
+      description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
+      type: 'необязательный',
+      example: JSON.stringify({ id: 'DESC' }),
+    })
+    @ApiQuery({
       name: 'where',
-      required: true,
+      required: false,
       description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
-      type: `${classDto.name}, обязательный`,
+      type: `${classDto.name}, необязательный`,
       example: JSON.stringify({ id: 1 }),
     })
     @ApiExtraModels(classDto, RelationsDto)
@@ -162,12 +169,13 @@ export const PrivateController = <T extends Type<unknown>>(
       description: 'Ошибка',
     })
     async first(
-      @Data('where') where: Object,
+      @Data('where') where: object,
+      @Data('order') order: object,
       @Data('relations') relationsDto: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity> {
       const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.first(where, relationsDto, authId);
+      return await this.service.first(where, order, relationsDto, authId);
     }
 
     @Auth()
@@ -210,6 +218,54 @@ export const PrivateController = <T extends Type<unknown>>(
         throw new NotFoundException('Entry not found');
       }
       return result;
+    }
+
+    @Auth()
+    @Get('self')
+    @ApiOperation({ summary: 'Найти записи, принадлежащие учетной записи пользователя' })
+    @ApiQuery({
+      name: 'relations',
+      required: false,
+      description: 'Массив объектов с нужными связями',
+      type: '[RelationsDto], необязательный',
+      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
+    })
+    @ApiQuery({
+      name: 'order',
+      required: false,
+      description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
+      type: 'необязательный',
+      example: JSON.stringify({ id: 'DESC' }),
+    })
+    @ApiQuery({
+      name: 'where',
+      required: false,
+      description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
+      type: `${classDto.name}, необязательный`,
+      example: JSON.stringify({ id: 1 }),
+    })
+    @ApiExtraModels(classDto, RelationsDto)
+    @ApiBody({ schema: { anyOf: [
+      { $ref: getSchemaPath(classDto) },
+      { $ref: getSchemaPath(RelationsDto) },
+    ] } })
+    @ApiResponse({
+      status: HttpStatus.OK,
+      description: 'Выполнено',
+      type: classDto,
+    })
+    @ApiResponse({
+      status: HttpStatus.BAD_REQUEST,
+      description: 'Ошибка',
+    })
+    async self(
+      @Data('where') where: object,
+      @Data('order') order: object,
+      @Data('relations') relationsDto: Array<RelationsDto>,
+      @Self() auth: AuthDto,
+    ): Promise<Entity[]> {
+      const authId = auth.id;
+      return await this.service.find(where, order, relationsDto, authId);
     }
 
     @Auth()

@@ -52,6 +52,11 @@
                     value="{{ query.password }}"
                 >
             </div>
+            {{#if query.message}}
+            <div class="form-error">
+                {{ query.message }}
+            </div>
+            {{/if}}
             <div class="form-button">
                 <button class="btn" type="submit">Войти</button>
             </div>
@@ -59,18 +64,18 @@
         <div class="oauth">
             <p>Войти с помощью</p>
             <div class="link-group">
-                <a class="link" href="/auth/leader/login"><img src="/img/leader_logo.svg"></a>
-                <a class="link" href="/auth/google/login"><img src="/img/google_logo.svg"></a>
+                <a class="link" href="/strategies/leader/login"><img src="/img/leader_logo.svg"></a>
+                <a class="link" href="/strategies/google/login"><img src="/img/google_logo.svg"></a>
             </div>
         </div>
         <div class="bottom">
             <p>
             Нет аккаунта?
-            <a class="link" href="/form/register.html?data={{ query.data }}">Зарегистрироваться</a>
+            <a class="link" href="/forms/register.html">Зарегистрироваться</a>
             </p>
             <p>
             Забыли пароль?
-            <a class="link" href="/form/restore.html?data={{ query.data }}">Восстановить</a>
+            <a class="link" href="/forms/restore.html">Восстановить</a>
             </p>
         </div>
     </div>

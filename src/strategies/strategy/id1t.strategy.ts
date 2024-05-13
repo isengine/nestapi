@@ -55,7 +55,7 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
     console.log('-- accessToken', accessToken);
 
     const profile = await axios.get(
-      `${customAuthServer}/users/first?relations=[{"name":"auth"}]`,
+      `${customAuthServer}/auth/self`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -66,29 +66,29 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
     console.log('-- profile', profile);
     console.log('-- ^^^');
 
-    const auth = await this.authService.findByUsername(profile.auth.username);
+    const auth = await this.authService.findByUsername(profile.username);
 
     const authDto: AuthDto = {
-      username: profile.auth.username,
-      isActivated: !!profile.auth.isActivated,
+      username: profile.username,
+      isActivated: !!profile.isActivated,
     };
 
     if (!auth) {
       return await this.authService
         .create(authDto)
-        .then(async (result) => await this.prepareResult(result, profile));
+        .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0]));
     }
 
     return await this.authService
       .update(auth.id, authDto)
-      .then(async (result) => await this.prepareResult(result, profile));
+      .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0]));
   }
 
-  async prepareResult(auth, profile): Promise<AuthDto> {
+  async prepareResult(auth, uid, profile): Promise<AuthDto> {
     await this.strategiesService.updateBy({
       auth: { id: auth.id },
       name: 'id1t',
-      uid: profile.auth.id,
+      uid,
       json: profile,
       // json: JSON.stringify(profile),
     });
@@ -96,7 +96,7 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
     await this.userService.update(
       user.id,
       {
-        email: profile.username,
+        email: profile.email,
         name: profile.name,
         avatar: profile.avatar,
       },

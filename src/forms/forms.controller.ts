@@ -10,16 +10,16 @@ export class FormsController {
   ) {}
 
   @Post('auth')
-  async auth(
+  async authService(
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    await this.formsService.auth(req, res);
+    return await this.formsService.auth(req, res);
   }
 
-  @Get('login.html')
-  @Render('login')
-  login(@Req() req: any) {
+  @Get('auth.html')
+  @Render('auth')
+  auth(@Req() req: any) {
     return { query: req.query };
   }
 

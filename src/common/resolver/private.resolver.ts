@@ -70,13 +70,15 @@ export const PrivateResolver = <T extends Type<unknown>>(
     async first(
       @Args('where', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
       where: object,
+      @Args('order', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
+      order: object,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
       const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.first(where, relationsDto, authId);
+      return await this.service.first(where, order, relationsDto, authId);
     }
 
     @Auth('gql')
@@ -91,6 +93,22 @@ export const PrivateResolver = <T extends Type<unknown>>(
     ): Promise<Entity[]> {
       const authId = auth.isSuperuser ? undefined : auth.id;
       return await this.service.many(ids, relationsDto, authId);
+    }
+
+    @Auth('gql')
+    @Query(() => classEntity, { name: `${name}Self` })
+    async self(
+      @Args('where', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
+      where: object,
+      @Args('order', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
+      order: object,
+      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
+      relationsDto: Array<RelationsDto>,
+      @Self('gql')
+      auth: AuthDto,
+    ): Promise<Entity[]> {
+      const authId = auth.id;
+      return await this.service.find(where, order, relationsDto, authId);
     }
 
     @Auth('gql')

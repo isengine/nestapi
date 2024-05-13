@@ -63,6 +63,7 @@ export class CommonService<
 
   async first(
     where: FindOptionsWhere<any> = undefined,
+    order: FindOptionsOrder<any> = { id: 'ASC' },
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
   ): Promise<Entity> {
@@ -70,13 +71,19 @@ export class CommonService<
       const auth = { id: authId };
       where = { ...where, auth };
     }
-    const order: FindOptionsOrder<any> = { id: 'ASC' };
     try {
-      return await this.repository.findOne({
+      const [ result ] = await this.repository.find({
         relations: relationsDto?.map(i => i.name),
         order,
         where,
+        take: 1,
       });
+      return result;
+      // return await this.repository.findOne({
+      //   relations: relationsDto?.map(i => i.name),
+      //   order,
+      //   where,
+      // });
     }
     catch (e) {
       this.error(e);

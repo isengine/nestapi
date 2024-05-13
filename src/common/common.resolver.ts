@@ -51,11 +51,13 @@ export const CommonResolver = <T extends Type<unknown>>(
     async first(
       @Args('where', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
       where: object,
+      @Args('order', { nullable: true, defaultValue: undefined, type: () => GraphQLJSONObject })
+      order: object,
       @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
       relationsDto: Array<RelationsDto>,
       auth: AuthDto = undefined,
     ): Promise<Entity> {
-      return await this.service.first(where, relationsDto);
+      return await this.service.first(where, order, relationsDto);
     }
 
     @Query(() => [classEntity], { name: `${name}Many` })

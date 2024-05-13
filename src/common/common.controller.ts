@@ -130,10 +130,17 @@ export const CommonController = <T extends Type<unknown>>(
       example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
     })
     @ApiQuery({
+      name: 'order',
+      required: false,
+      description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
+      type: 'необязательный',
+      example: JSON.stringify({ id: 'DESC' }),
+    })
+    @ApiQuery({
       name: 'where',
-      required: true,
+      required: false,
       description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
-      type: `${classDto.name}, обязательный`,
+      type: `${classDto.name}, необязательный`,
       example: JSON.stringify({ id: 1 }),
     })
     @ApiExtraModels(classDto, RelationsDto)
@@ -152,10 +159,11 @@ export const CommonController = <T extends Type<unknown>>(
     })
     async first(
       @Data('where') where: Object,
+      @Data('order') order: object,
       @Data('relations') relationsDto: Array<RelationsDto>,
       auth: AuthDto = undefined,
     ): Promise<Entity> {
-      return await this.service.first(where, relationsDto);
+      return await this.service.first(where, order, relationsDto);
     }
 
     @Get('many/:ids')

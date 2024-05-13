@@ -26,6 +26,7 @@ export class GrantsTokenService {
   }
 
   async grantsTokenPassword(grantsTokenDto: GrantsTokenDto): Promise<any> {
+    console.log('-- grantsTokenPassword', grantsTokenDto);
     if (grantsTokenDto.grant_type !== 'password') {
       throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }

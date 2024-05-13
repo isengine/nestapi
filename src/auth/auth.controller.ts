@@ -57,7 +57,7 @@ export class AuthController {
     console.log('-- idCookie', idCookie);
 
     if (!idCookie) {
-      const uri = '/forms/login.html';
+      const uri = '/forms/auth.html';
       const queries = Object.entries(oauthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');
       return await res.redirect(`${uri}?${queries}`);
     }
@@ -88,7 +88,7 @@ export class AuthController {
   @ApiExcludeEndpoint()
   async clientsSelf(@Self() auth: AuthDto) {
     const { id } = auth;
-    const result = await this.authService.findOne(id, [{ name: 'users' }]);
+    const result = await this.authService.findOne(id, [{ name: 'users' }, { name: 'strategies' }]);
     if (!result) {
       throw new NotFoundException('Entry not found');
     }
