@@ -10,7 +10,7 @@ export class FormsController {
   ) {}
 
   @Post('auth')
-  async authService(
+  async auth(
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
@@ -19,25 +19,115 @@ export class FormsController {
 
   @Get('auth.html')
   @Render('auth')
-  auth(@Req() req: any) {
-    return { query: req.query };
+  authRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Вход',
+    };
+  }
+
+  @Post('change')
+  async change(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    return await this.formsService.change(req, res);
+  }
+
+
+  @Get('change.html')
+  @Render('change')
+  changeRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Смена пароля',
+    };
+  }
+
+  @Get('change_complete.html')
+  @Render('change_complete')
+  changeCompleteRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Смена пароля',
+    };
+  }
+
+  @Post('confirm')
+  async confirm(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    return await this.formsService.confirm(req, res);
+  }  
+
+  @Get('confirm.html')
+  @Render('confirm')
+  confirmRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Подтверждение регистрации',
+    };
+  }
+
+  @Get('confirm_complete.html')
+  @Render('confirm_complete')
+  confirmCompleteRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Подтверждение регистрации',
+    };
+  }
+
+  @Get('confirm_fail.html')
+  @Render('confirm_fail')
+  confirmFailRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Подтверждение регистрации',
+    };
+  }
+
+  @Post('register')
+  async register(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    return await this.formsService.register(req, res);
   }
 
   @Get('register.html')
   @Render('register')
-  register(@Req() req: any) {
-    return { query: req.query };
+  registerRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Регистрация',
+    };
   }
 
+  @Post('restore')
+  async restore(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    return await this.formsService.restore(req, res);
+  }  
+  
   @Get('restore.html')
   @Render('restore')
-  restore(@Req() req: any) {
-    return { query: req.query };
+  restoreRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Восстановление пароля',
+    };
   }
 
-  @Get('confirm.html')
-  @Render('confirm')
-  confirm(@Req() req: any) {
-    return { query: req.query };
+  @Get('restore_complete.html')
+  @Render('restore_complete')
+  restoreCompleteRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Восстановление пароля',
+    };
   }
 }

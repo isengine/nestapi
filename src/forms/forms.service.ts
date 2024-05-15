@@ -1,34 +1,44 @@
 import { BadRequestException, UnauthorizedException, Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { AuthService } from '@src/auth/auth.service';
 import { TokenService } from '@src/token/token.service';
+import { AuthEntity } from '@src/auth/auth.entity';
 
 @Injectable()
 export class FormsService {
-  constructor(private readonly tokenService: TokenService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   async auth(req, res): Promise<void> {
     const { body, headers, protocol } = req;
     const url = `${protocol}://${headers.host}/token`;
-    let token;
+    const token = await axios({
+      url,
+      method: 'post',
+      data: {
+        grant_type: body.grant_type,
+        username: body.username,
+        password: body.password,
+      },
+      withCredentials: true,
+    })
+      .then((r) => r?.data)
+      .catch(async (e) => {
+        const back = this.helperBack(req, e.response);
+        return await res.redirect(back);
+      });
 
-    try {
-      token = await axios({
-        url,
-        method: 'post',
-        data: {
-          grant_type: 'password',
-          username: body.username,
-          password: body.password,
-        },
-        withCredentials: true,
-      }).then((r) => r?.data);
-    } catch (e) {
-      const back = this.back(req, e.response);
-      return await res.redirect(back);
-    }
-    
     if (!token) {
-      return;
+      const response = {
+        data: {
+          error: 'Unauthorized',
+          message: 'Unknown error',
+        }
+      };
+      const back = this.helperBack(req, response);
+      return await res.redirect(back);
     }
 
     const access_token = token?.access_token;
@@ -76,14 +86,134 @@ export class FormsService {
     // return response?.data;
   }
 
-  async register(req, res): Promise<void> {
+  async confirm(req, res): Promise<void> {
     const { body, headers, protocol } = req;
-    const url = `${protocol}://${headers.host}/token`;
-    console.log('-- register...');
-    console.log('-- headers', headers);
+    const base = `${protocol}://${headers.host}`;
+    const url = `${base}/auth/confirm/${body.code}`;
+    const result = await axios({
+      url,
+      method: 'get',
+      withCredentials: true,
+    })
+      .then((r) => r?.data)
+      .catch(async (e) => {
+        const back = this.helperBack(req, e.response);
+        return await res.redirect(back);
+      });
+
+    if (!result) {
+      const response = {
+        data: {
+          error: 'Bad request',
+          message: 'Invalid confirm code',
+        }
+      };
+      const back = this.helperBack(req, response);
+      return await res.redirect(back);
+    }
+
+    return await res.redirect(`${base}/forms/confirm_complete.html`);
   }
 
-  back(req, res): string {
+  async register(req, res): Promise<AuthEntity> {
+    const { body, headers, protocol } = req;
+    const url = `${protocol}://${headers.host}/auth/register`;
+    const result = await axios({
+      url,
+      method: 'post',
+      data: {
+        grant_type: body.grant_type,
+        username: body.username,
+        password: body.password,
+      },
+      withCredentials: true,
+    })
+      .then((r) => r?.data)
+      .catch(async (e) => {
+        const back = this.helperBack(req, e.response);
+        return await res.redirect(back);
+      });
+
+    if (!result) {
+      const response = {
+        data: {
+          error: 'Bad request',
+          message: 'Unknown error',
+        }
+      };
+      const back = this.helperBack(req, response);
+      return await res.redirect(back);
+    }
+
+    return result;
+  }
+
+  async restore(req, res): Promise<AuthEntity> {
+    const { body, headers, protocol } = req;
+    const base = `${protocol}://${headers.host}`;
+    const url = `${base}/auth/restore`;
+    const result = await axios({
+      url,
+      method: 'post',
+      data: {
+        username: body.username,
+      },
+      withCredentials: true,
+    })
+      .then((r) => r?.data)
+      .catch(async (e) => {
+        const back = this.helperBack(req, e.response);
+        return await res.redirect(back);
+      });
+
+    if (!result) {
+      const response = {
+        data: {
+          error: 'Bad request',
+          message: 'Unknown error',
+        }
+      };
+      const back = this.helperBack(req, response);
+      return await res.redirect(back);
+    }
+
+    return await res.redirect(`${base}/forms/restore_complete.html`);
+  }
+
+  async change(req, res): Promise<void> {
+    const { body, headers, protocol } = req;
+    const base = `${protocol}://${headers.host}`;
+    const url = `${base}/auth/restore/${body.code}`;
+    const result = await axios({
+      url,
+      method: 'post',
+      data: {
+        username: body.username,
+        password: body.password,
+      },
+      withCredentials: true,
+    })
+      .then((r) => r?.data)
+      .catch(async (e) => {
+        const back = this.helperBack(req, e.response);
+        return await res.redirect(back);
+      });
+
+    if (!result) {
+      const response = {
+        data: {
+          error: 'Bad request',
+          message: 'Unknown error',
+        }
+      };
+      const back = this.helperBack(req, response);
+      return await res.redirect(back);
+    }
+
+    return await res.redirect(`${base}/forms/change_complete.html`);
+  }
+
+  helperBack(req, res): string {
     const { body, headers } = req;
     const { referer } = headers;
 
@@ -92,7 +222,7 @@ export class FormsService {
     const ref = `${protocol}//${host}${pathname}`;
 
     const { data } = res;
-    data.message = this.errorMessage(data?.error, data?.message);
+    data.message = this.helperErrorMessage(data?.error, data?.message);
     const dataArray = [];
     for (const [key, value] of Object.entries({ ...body, ...data })) {
       dataArray.push(`${key}=${ encodeURI(`${value}`) }`);
@@ -101,12 +231,16 @@ export class FormsService {
     return `${ref}?${dataArray.join('&')}`;
   }
 
-  errorMessage(error = '', message = ''): string {
+  helperErrorMessage(error = '', message = ''): string {
     const errors = {
-      'Unauthorized': 'Ошибка авторизации.',
-      'User not found': 'Пользователь не найден.',
+      'bad request': 'Ошибка.',
+      'unknown error': 'Что-то пошло не так.',
+      'unauthorized': 'Ошибка авторизации.',
+      'user not found': 'Пользователь не найден.',
+      'username must be an email': 'Вы некорректно указали электронную почту.',
+      'invalid confirm code': 'Неверный код подтверждения.',
     };
-    return `${errors[error] || error} ${errors[message] || message}`;
+    return `${errors[`${error}`.toLowerCase()] || error} ${errors[`${message}`.toLowerCase()] || message}`;
   }
 
 }

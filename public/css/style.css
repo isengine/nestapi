@@ -40,6 +40,11 @@ p {
   text-align: center;
 }
 
+.form .form-message {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
 .form .form-group {
   border-bottom: 1px solid #555;
   margin-bottom: 10px;
@@ -67,16 +72,29 @@ p {
   margin-top: 20px;
   padding: 10px;
   width: 100%;
+  text-decoration: none;
 }
 
 .form .btn:hover {
   background-color: #7b40d4;
 }
 
+.form .form-footer {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.form .btn-link {
+  margin: 0;
+  padding: 10px 30px;
+  display: inline-block;
+  width: auto;
+}
+
 .oauth {
   display: block;
   font-size: 12px;
-  padding: 20px 0;
+  padding: 20px 0 0 0;
   text-align: center;
 }
 

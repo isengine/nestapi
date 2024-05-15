@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import redoc from 'redoc-express';
 import { join } from 'path';
 import { AppModule } from '@src/app.module';
+import * as hbs from 'hbs';
 import * as cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 import * as session from 'express-session';
@@ -83,6 +84,7 @@ async function bootstrap() {
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  hbs.registerPartials(join(__dirname, '..', 'views/partials'));
   app.setViewEngine('hbs');
 
   const port = process.env.PORT || 5000;

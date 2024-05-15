@@ -1,17 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Вход</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <meta name="robots" content="noindex, nofollow">
-</head>
+{{> head}}
 <body>
     <div class="form">
         <form action="/forms/auth" method="post">
-            <h3>Вход</h3>
+            <h3>{{ title }}</h3>
             <div>
                 <input
                     name="client_id"
@@ -27,6 +20,11 @@
                     name="response_type"
                     type="hidden"
                     value="{{ query.response_type }}"
+                >
+                <input
+                    name="grant_type"
+                    type="hidden"
+                    value="password"
                 >
             </div>
             <div class="form-group">
@@ -52,30 +50,18 @@
                     value="{{ query.password }}"
                 >
             </div>
-            {{#if query.message}}
-            <div class="form-error">
-                {{ query.message }}
-            </div>
-            {{/if}}
-            <div class="form-button">
-                <button class="btn" type="submit">Войти</button>
-            </div>
+            {{> errors}}
+            {{> button button='Войти'}}
         </form>
-        <div class="oauth">
-            <p>Войти с помощью</p>
-            <div class="link-group">
-                <a class="link" href="/strategies/leader/login"><img src="/img/leader_logo.svg"></a>
-                <a class="link" href="/strategies/google/login"><img src="/img/google_logo.svg"></a>
-            </div>
-        </div>
+        {{> strategies}}
         <div class="bottom">
             <p>
-            Нет аккаунта?
-            <a class="link" href="/forms/register.html">Зарегистрироваться</a>
+                Нет аккаунта?
+                <a class="link" href="/forms/register.html">Зарегистрироваться</a>
             </p>
             <p>
-            Забыли пароль?
-            <a class="link" href="/forms/restore.html">Восстановить</a>
+                Забыли пароль?
+                <a class="link" href="/forms/restore.html">Восстановить</a>
             </p>
         </div>
     </div>

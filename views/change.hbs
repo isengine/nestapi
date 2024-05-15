@@ -3,8 +3,15 @@
 {{> head}}
 <body>
     <div class="form">
-        <form action="/forms/register" method="post">
+        <form action="/forms/change" method="post">
             <h3>{{ title }}</h3>
+            <div>
+                <input
+                    name="code"
+                    type="hidden"
+                    value="{{ query.code }}"
+                >
+            </div>
             <div class="form-group">
                 <input
                     class="form-control item"
@@ -22,17 +29,17 @@
                     id="password"
                     minlength="8"
                     name="password"
-                    placeholder="Пароль"
+                    placeholder="Новый пароль"
                     required
                     type="password"
                     value="{{ query.password }}"
                 >
             </div>
             {{> errors}}
-            {{> button button='Зарегистрироваться'}}
+            {{> button button='Сменить пароль'}}
         </form>
         <div class="bottom">
-            Уже есть аккаунт?
+            Вспомнили пароль?
             {{> auth}}
         </div>
     </div>

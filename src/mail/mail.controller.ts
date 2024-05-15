@@ -21,9 +21,6 @@ export class MailController {
     @Body('options') options: MailDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    // in form as options[...] = ...
-    // file in form as file[] = ...
-    const result = this.mailService.mailSend(options, files);
-    return result;
+    return await this.mailService.mailSend(options, files);
   }
 }

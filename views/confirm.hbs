@@ -1,56 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Подтверждение регистрации</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <meta name="robots" content="noindex, nofollow">
-</head>
+{{> head}}
 <body>
     <div class="form">
-        <form action="/forms/auth" method="post">
-            <h3>Подтверждение регистрации</h3>
-            <!--
-            <p>
-                {{#each query}}
-                    {{@key}}: {{this}}
-                {{/each}}
-            </p>
-            -->
+        <form action="/forms/confirm" method="post">
+            <h3>{{ title }}</h3>
             <div class="form-group">
                 <input
                     class="form-control item"
-                    id="username"
-                    name="username"
-                    placeholder="Email"
+                    id="code"
+                    name="code"
+                    placeholder="Код подтверждения"
                     required
-                    type="email"
-                    value="{{ query.username }}"
+                    type="text"
+                    value="{{ query.code }}"
                 >
             </div>
-            <div class="form-group">
-                <input
-                    class="form-control item"
-                    id="password"
-                    minlength="8"
-                    name="password"
-                    placeholder="Пароль"
-                    required
-                    type="password"
-                    value="{{ query.password }}"
-                >
-            </div>
-            <div class="form-button">
-                <button class="btn" type="submit">Подтвердить регистрацию</button>
-            </div>
+            {{> errors}}
+            {{> button button='Подтвердить регистрацию'}}
         </form>
-        <div class="oauth">
-        </div>
         <div class="bottom">
             Уже подтвержден?
-            <a class="link" href="/forms/auth.html?data={{ query.data }}">Войти</a>
+            {{> auth}}
         </div>
     </div>
 </body>
