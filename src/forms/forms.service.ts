@@ -1,13 +1,15 @@
 import { BadRequestException, UnauthorizedException, Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { AuthService } from '@src/auth/auth.service';
-import { TokenService } from '@src/token/token.service';
 import { AuthEntity } from '@src/auth/auth.entity';
+import { AuthService } from '@src/auth/auth.service';
+import { MailService } from '@src/mail/mail.service';
+import { TokenService } from '@src/token/token.service';
 
 @Injectable()
 export class FormsService {
   constructor(
     private readonly authService: AuthService,
+    private readonly mailService: MailService,
     private readonly tokenService: TokenService,
   ) {}
 
@@ -144,6 +146,25 @@ export class FormsService {
       const back = this.helperBack(req, response);
       return await res.redirect(back);
     }
+
+    this.mailService.sendTemplate(
+      {
+        to: body.username,
+        subject: 'Регистрация на сайте',
+        template: 'default',
+      },
+      {
+        title: 'Поздравляем!',
+        description: `
+          <p>Вы успешно зарегистрировались на нашем сайте.</p>
+          <p>Вам нужно подтвердить вашу учетную запись по ссылке ниже.</p>
+        `,
+        button: 'Активировать',
+      },
+      {
+        url: `/forms/confirm.html?code=${result.confirm[0].code}`,
+      },
+    );
 
     return result;
   }

@@ -23,4 +23,8 @@ export class MailDto extends CommonDto {
   @Field({ nullable: true })
   @IsString()
   html?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  template?: string;
 }

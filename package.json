@@ -51,6 +51,7 @@
     "graphql-type-json": "^0.3.2",
     "hbs": "^4.2.0",
     "js-yaml": "^4.1.0",
+    "mime-types": "^2.1.35",
     "moment": "^2.29.4",
     "mysql2": "^3.6.1",
     "passport": "^0.6.0",

@@ -17,10 +17,26 @@ export class MailController {
 
   @Post('send')
   @UseInterceptors(FilesInterceptor('file'))
-  async mailSend(
+  async send(
     @Body('options') options: MailDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return await this.mailService.mailSend(options, files);
+    return await this.mailService.send(options, files);
+  }
+
+  @Post('sendtemplate')
+  @UseInterceptors(FilesInterceptor('file'))
+  async sendTemplate(
+    @Body('options') options: MailDto,
+    @Body('data') data: object,
+    @Body('links') links: object,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return await this.mailService.sendTemplate(
+      options,
+      data,
+      links,
+      files,
+    );
   }
 }

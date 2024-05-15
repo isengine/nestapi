@@ -83,8 +83,8 @@ async function bootstrap() {
   app.use(passport.session());
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  hbs.registerPartials(join(__dirname, '..', 'views/partials'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views/static'));
+  hbs.registerPartials(join(__dirname, '..', 'views/static/partials'));
   app.setViewEngine('hbs');
 
   const port = process.env.PORT || 5000;
