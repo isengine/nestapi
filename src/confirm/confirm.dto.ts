@@ -10,4 +10,11 @@ export class ConfirmDto extends ProtectedDto {
   })
   @Field({ nullable: true })
   code: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Тип кода: confirm - подтверждение регистрации, restore - сброс пароля',
+  })
+  @Field({ nullable: true })
+  type: string;
 }

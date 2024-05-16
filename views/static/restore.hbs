@@ -5,6 +5,13 @@
     <div class="form">
         <form action="/forms/restore" method="post">
             <h3>{{ title }}</h3>
+            <div>
+                <input
+                    name="subject"
+                    type="hidden"
+                    value="Сброс пароля в My App"
+                >
+            </div>
             <div class="form-group">
                 <input
                     class="form-control item"
@@ -17,7 +24,7 @@
                 >
             </div>
             {{> errors}}
-            {{> button button='Восстановить пароль'}}
+            {{> button button='Сбросить пароль'}}
         </form>
         <div class="bottom">
             Вспомнили пароль?

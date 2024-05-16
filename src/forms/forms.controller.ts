@@ -34,7 +34,6 @@ export class FormsController {
     return await this.formsService.change(req, res);
   }
 
-
   @Get('change.html')
   @Render('change')
   changeRender(@Req() req: any) {

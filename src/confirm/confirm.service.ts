@@ -23,10 +23,27 @@ export class ConfirmService {
     });
   }
 
-  async confirmFindByCode(
-    code: string
+  async confirmFindByUsername(
+    username: string,
+    type: string = 'code',
   ): Promise<ConfirmEntity> {
-    const where: FindOptionsWhere<any> = { code };
+    const where: FindOptionsWhere<any> = {
+      auth: {
+        username,
+      },
+      type,
+    };
+    return await this.repository.findOne({
+      where,
+      relations: ['auth'],
+    });
+  }
+
+  async confirmFindByCode(
+    code: string,
+    type: string = 'code',
+  ): Promise<ConfirmEntity> {
+    const where: FindOptionsWhere<any> = { code, type };
     return await this.repository.findOne({
       where,
       relations: ['auth'],
@@ -38,18 +55,19 @@ export class ConfirmService {
     return !!result?.affected;
   }
 
-  async confirmCreate(auth) {
+  async confirmCreate(auth, type = 'code') {
     const entry = {
       auth: {
         id: auth.id,
       },
+      type,
       code: v4(),
     };
     const created = await this.repository.save(entry);
     return await this.confirmFindById(created.id);
   }
 
-  async confirmGenerate(auth) {
+  async confirmGenerate(auth, type = 'code') {
     const code = this.randomService.randomNum(6);
     const exists = await this.confirmFindByCode(code);
     if (exists) {
@@ -59,14 +77,15 @@ export class ConfirmService {
       auth: {
         id: auth.id,
       },
+      type,
       code,
     };
     const created = await this.repository.save(entry);
     return await this.confirmFindById(created.id);
   }
 
-  async confirmValidate(code) {
-    const entry = await this.confirmFindByCode(code);
+  async confirmValidate(code, type = 'code') {
+    const entry = await this.confirmFindByCode(code, type);
     if (entry) {
       await this.confirmRemove(entry.id);
     }

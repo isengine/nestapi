@@ -12,4 +12,12 @@ export class ConfirmEntity extends ProtectedEntity {
     nullable: true,
   })
   code: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'varchar',
+    length: 32,
+    nullable: true,
+  })
+  type: string;
 }

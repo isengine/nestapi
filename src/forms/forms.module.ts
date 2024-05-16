@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { FormsController } from '@src/forms/forms.controller';
 import { FormsService } from '@src/forms/forms.service';
 import { AuthModule } from '@src/auth/auth.module';
+import { ConfirmModule } from '@src/confirm/confirm.module';
 import { MailModule } from '@src/mail/mail.module';
 import { TokenModule } from '@src/token/token.module';
 
@@ -9,6 +10,7 @@ import { TokenModule } from '@src/token/token.module';
   controllers: [FormsController],
   imports: [
     forwardRef(() => AuthModule),
+    forwardRef(() => ConfirmModule),
     forwardRef(() => MailModule),
     forwardRef(() => TokenModule),
   ],

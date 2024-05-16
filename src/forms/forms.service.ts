@@ -2,6 +2,7 @@ import { BadRequestException, UnauthorizedException, Injectable } from '@nestjs/
 import axios from 'axios';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
+import { ConfirmService } from '@src/confirm/confirm.service';
 import { MailService } from '@src/mail/mail.service';
 import { TokenService } from '@src/token/token.service';
 
@@ -9,6 +10,7 @@ import { TokenService } from '@src/token/token.service';
 export class FormsService {
   constructor(
     private readonly authService: AuthService,
+    private readonly confirmService: ConfirmService,
     private readonly mailService: MailService,
     private readonly tokenService: TokenService,
   ) {}
@@ -147,19 +149,13 @@ export class FormsService {
       return await res.redirect(back);
     }
 
-    this.mailService.sendTemplate(
+    await this.mailService.sendTemplate(
       {
         to: body.username,
-        subject: 'Регистрация на сайте',
-        template: 'default',
+        subject: body.subject,
+        template: 'register',
       },
       {
-        title: 'Поздравляем!',
-        description: `
-          <p>Вы успешно зарегистрировались на нашем сайте.</p>
-          <p>Вам нужно подтвердить вашу учетную запись по ссылке ниже.</p>
-        `,
-        button: 'Активировать',
       },
       {
         url: `/forms/confirm.html?code=${result.confirm[0].code}`,
@@ -169,7 +165,7 @@ export class FormsService {
     return result;
   }
 
-  async restore(req, res): Promise<AuthEntity> {
+  async restore(req, res): Promise<any> {
     const { body, headers, protocol } = req;
     const base = `${protocol}://${headers.host}`;
     const url = `${base}/auth/restore`;
@@ -197,6 +193,35 @@ export class FormsService {
       const back = this.helperBack(req, response);
       return await res.redirect(back);
     }
+
+    const { code = undefined } = await this.confirmService.confirmFindByUsername(
+      body.username,
+      'restore',
+    );
+
+    if (!code) {
+      const response = {
+        data: {
+          error: 'Bad request',
+          message: 'Unknown error',
+        }
+      };
+      const back = this.helperBack(req, response);
+      return await res.redirect(back);
+    }
+
+    await this.mailService.sendTemplate(
+      {
+        to: body.username,
+        subject: body.subject,
+        template: 'restore',
+      },
+      {
+      },
+      {
+        url: `/forms/change.html?code=${code}`,
+      },
+    );
 
     return await res.redirect(`${base}/forms/restore_complete.html`);
   }

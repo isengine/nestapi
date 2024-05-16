@@ -104,7 +104,7 @@ export class AuthService extends CommonService<
   }
 
   async restore(authDto: AuthDto, code: string): Promise<boolean> {
-    const confirm = await this.confirmService.confirmValidate(code);
+    const confirm = await this.confirmService.confirmValidate(code, 'restore');
     if (!confirm) {
       throw new BadRequestException('Restore code is not valid');
     }
@@ -125,7 +125,7 @@ export class AuthService extends CommonService<
     if (!auth) {
       throw new UnauthorizedException('User not found');
     }
-    const confirm = await this.confirmService.confirmCreate(auth);
+    const confirm = await this.confirmService.confirmCreate(auth, 'restore');
     return !!confirm;
   }
 
