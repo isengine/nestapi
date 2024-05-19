@@ -39,15 +39,22 @@ export class TokenController {
     // /token
     // grant_type=refresh_token
     // refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
-    // client_id=s6BhdRkqt3
-    // client_secret=7Fjfp0ZBr1KtDRbnfVdmIw
     if (grantsTokenDto.grant_type === 'refresh_token') {
       return await this.grantsTokenService.grantsTokenRefreshToken(grantsTokenDto);
     }
     // /token
     // grant_type=client_credentials
+    // client_id=s6BhdRkqt3
+    // client_secret=7Fjfp0ZBr1KtDRbnfVdmIw
     if (grantsTokenDto.grant_type === 'client_credentials') {
       return await this.grantsTokenService.grantsTokenClientCredentials(grantsTokenDto);
+    }
+    // /token
+    // grant_type=person_credentials
+    // username=johndoe
+    // password=A3ddj3w
+    if (grantsTokenDto.grant_type === 'person_credentials') {
+      return await this.grantsTokenService.grantsTokenPersonCredentials(grantsTokenDto);
     }
     // /token
     // grant_type=authorization_code

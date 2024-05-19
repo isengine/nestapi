@@ -68,15 +68,21 @@ export class TokenService {
     console.log('-- tokenVerify', result);
     if (callback) {
       const matched = callback(result);
+      console.log('-- callback matched', matched);
       if (!matched) {
         throw new UnauthorizedException('Refresh token is not valid!');
       }
     }
-    const token = await this.tokenCreatePair(
-      result.client_id
-        ? { client_id: result.client_id }
-        : { id: result.id }
-    );
-    return token;
+    const data: any = {};
+    if (result.client_id) {
+      data.client_id = result.client_id;
+    }
+    if (result.person_id) {
+      data.person_id = result.person_id;
+    }
+    if (result.id) {
+      data.id = result.id;
+    }
+    return await this.tokenCreatePair(data);
   }
 }

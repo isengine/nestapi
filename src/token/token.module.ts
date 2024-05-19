@@ -8,6 +8,7 @@ import { getJwtConfig } from '@src/config/jwt.config';
 import { AuthModule } from '@src/auth/auth.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { GrantsTokenService } from '@src/token/service/grants.service';
+import { PersonsModule } from '@src/persons/persons.module';
 
 @Module({
   controllers: [TokenController],
@@ -20,6 +21,7 @@ import { GrantsTokenService } from '@src/token/service/grants.service';
     }),
     forwardRef(() => AuthModule),
     forwardRef(() => ClientsModule),
+    forwardRef(() => PersonsModule),
   ],
   providers: [
     TokenService,

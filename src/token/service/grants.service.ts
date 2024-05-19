@@ -5,6 +5,7 @@ import { AuthService } from '@src/auth/auth.service';
 import { TokenDto } from '@src/token/token.dto';
 import { ClientsService } from '@src/clients/clients.service';
 import { OAuthService } from '@src/auth/service/oauth.service';
+import { PersonsService } from '@src/persons/persons.service';
 
 @Injectable()
 export class GrantsTokenService {
@@ -12,6 +13,7 @@ export class GrantsTokenService {
     private readonly authService: AuthService,
     private readonly oauthService: OAuthService,
     private readonly clientsService: ClientsService,
+    private readonly personsService: PersonsService,
     private readonly tokenService: TokenService,
   ) {}
 
@@ -56,6 +58,7 @@ export class GrantsTokenService {
   }
 
   async grantsTokenAuth(grantsTokenDto: GrantsTokenDto): Promise<any> {
+    console.log('-- grantsTokenAuth', grantsTokenDto);
     const { refresh_token } = grantsTokenDto;
     const token = await this.tokenService.tokenRefresh(
       refresh_token,
@@ -109,6 +112,28 @@ export class GrantsTokenService {
     const token = await this.tokenService.tokenCreatePair({ client_id });
     if (!token) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+    }
+    return await this.grantsTokenPrepare(token, grantsTokenDto.state);
+  }
+
+  async grantsTokenPersonCredentials(grantsTokenDto: GrantsTokenDto): Promise<any> {
+    if (grantsTokenDto.grant_type !== 'person_credentials') {
+      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
+    }
+    if (
+      !grantsTokenDto.username
+      || !grantsTokenDto.password
+    ) {
+      throw new BadRequestException('Not specified username or password in this request', 'invalid_grant');
+    }
+    const { username, password } = grantsTokenDto;
+    const person = await this.personsService.login({ username, password });
+    if (!person) {
+      throw new BadRequestException('Person authentication failed. Unknown person', 'invalid_person');
+    }
+    const token = await this.tokenService.tokenCreatePair({ person_id: person.id });
+    if (!token) {
+      throw new BadRequestException('Person authentication failed. Unknown person', 'invalid_person');
     }
     return await this.grantsTokenPrepare(token, grantsTokenDto.state);
   }

@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDbConfig } from '@config/db.config';
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
+import { NogqlModule } from '@src/typeorm/module/nogql.module';
 import { AuthModule } from '@src/auth/auth.module';
 import { CategoriesModule } from '@src/categories/categories.module';
 import { ClientsModule } from '@src/clients/clients.module';
@@ -14,6 +15,7 @@ import { ConfirmModule } from '@src/confirm/confirm.module';
 import { FilesModule } from '@src/files/files.module';
 import { FormsModule } from '@src/forms/forms.module';
 import { MailModule } from '@src/mail/mail.module';
+import { PersonsModule } from '@src/persons/persons.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { RandomModule } from '@src/random/random.module';
 import { RedirectsModule } from '@src/redirects/redirects.module';
@@ -23,9 +25,8 @@ import { SessionsModule } from '@src/sessions/sessions.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
 import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TagsModule } from '@src/tags/tags.module';
-import { UsersModule } from '@src/users/users.module';
-import { NogqlModule } from '@src/typeorm/module/nogql.module';
 import { TokenModule } from '@src/token/token.module';
+import { UsersModule } from '@src/users/users.module';
 
 @Module({
   controllers: [AppController],
@@ -52,6 +53,7 @@ import { TokenModule } from '@src/token/token.module';
     FilesModule,
     FormsModule,
     MailModule,
+    PersonsModule,
     PostsModule,
     RandomModule,
     RedirectsModule,
