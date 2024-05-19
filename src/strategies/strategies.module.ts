@@ -10,7 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '@src/users/users.module';
 import { SessionSerializer } from '@src/strategies/serializer/session.serializer';
 import { GoogleStrategy } from '@src/strategies/strategy/google.strategy';
-import { Id1tStrategy } from '@src/strategies/strategy/id1t.strategy';
+import { OauthStrategy } from '@src/strategies/strategy/oauth.strategy';
 import { LeaderStrategy } from '@src/strategies/strategy/leader.strategy';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 
@@ -28,9 +28,9 @@ import { LeaderProvider } from '@src/strategies/provider/leader.provider';
     SessionSerializer,
     StrategiesService,
     GoogleStrategy,
-    Id1tStrategy,
     LeaderProvider,
     LeaderStrategy,
+    OauthStrategy,
   ],
   exports: [StrategiesService],
 })

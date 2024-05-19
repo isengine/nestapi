@@ -5,13 +5,13 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Id1tStrategiesGuard } from '@src/strategies/guard/id1t.guard';
+import { OauthStrategiesGuard } from '@src/strategies/guard/oauth.guard';
 import { GoogleStrategiesGuard } from '@src/strategies/guard/google.guard';
 import { LeaderStrategiesGuard } from '@src/strategies/guard/leader.guard';
 import { LeaderProvider } from '@src/strategies/provider/leader.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokenService } from '@src/token/token.service';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Стратегии авторизации')
 @Controller('strategies')
@@ -22,16 +22,16 @@ export class StrategiesController {
     private readonly leaderProvider: LeaderProvider,
   ) {}
 
-  @Get('id1t/login')
-  @UseGuards(Id1tStrategiesGuard)
-  async id1tLogin() {
+  @Get('oauth/login')
+  @UseGuards(OauthStrategiesGuard)
+  async oauthLogin() {
     return;
   }
 
-  @Get('id1t/redirect')
+  @Get('oauth/redirect')
   @Header('content-type', 'application/json')
-  @UseGuards(Id1tStrategiesGuard)
-  async id1tRedirect(@Req() req: any) {
+  @UseGuards(OauthStrategiesGuard)
+  async oauthRedirect(@Req() req: any) {
     const { user: auth } = req;
     const tokens = await this.tokenService.tokenCreatePair({ id: auth.id });
     await this.sessionsService.createSession(auth, tokens, req);

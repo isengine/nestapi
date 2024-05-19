@@ -10,21 +10,21 @@ import { StrategiesService } from '@src/strategies/strategies.service';
 import axios from 'axios';
 
 @Injectable()
-export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
+export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
   constructor(
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
     private readonly strategiesService: StrategiesService,
     private readonly userService: UsersService,
   ) {
-    const clientID = configService.get('ID1T_CLIENT_ID');
-    const clientSecret = configService.get('ID1T_CLIENT_SECRET');
-    const callbackURL = configService.get('ID1T_CLIENT_CALLBACK');
-    const customAuthServer = configService.get('ID1T_SERVER');
+    const clientID = configService.get('OAUTH_CLIENT_ID');
+    const clientSecret = configService.get('OAUTH_CLIENT_SECRET');
+    const callbackURL = configService.get('OAUTH_CLIENT_CALLBACK');
+    const customAuthServer = configService.get('OAUTH_SERVER');
     const authorizationURL = `${customAuthServer}/auth/?client_id=${clientID}&redirect_uri=${callbackURL}&response_type=code`;
     const tokenURL = `${customAuthServer}/token`;
 
-    console.log('-- id1t constructor...');
+    console.log('-- oauth constructor...');
     console.log('-- clientID', clientID);
     console.log('-- clientSecret', clientSecret);
     console.log('-- callbackURL', callbackURL);
@@ -48,9 +48,9 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
     // скорее всего он берет id учетки, на которую зарегаен клиент
     // нужно, чтобы сервер авторизации запрашивал токен у браузера пользователя
     // и если его нет, то чтобы давал форму входа
-    const customAuthServer = this.configService.get('ID1T_SERVER');
+    const customAuthServer = this.configService.get('OAUTH_SERVER');
 
-    console.log('-- id1t validate...');
+    console.log('-- oauth validate...');
     console.log('-- customAuthServer', customAuthServer);
     console.log('-- accessToken', accessToken);
 
@@ -87,7 +87,7 @@ export class Id1tStrategy extends PassportStrategy(Strategy, 'id1t') {
   async prepareResult(auth, uid, profile): Promise<AuthDto> {
     await this.strategiesService.updateBy({
       auth: { id: auth.id },
-      name: 'id1t',
+      name: 'oauth',
       uid,
       json: profile,
       // json: JSON.stringify(profile),
