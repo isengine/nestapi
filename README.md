@@ -3227,9 +3227,37 @@ RestAPI:
 
 ## Регистрация персонажа
 
+Только аутентифицированным пользователем.
+
+    /persons/create
+
+    header bearer token ...
+
+    {
+        "create": {
+            "username": "person1@mail.com",
+            "password": "123456"
+        }
+    }
+
 [^ к оглавлению](#оглавление)
 
 ## Авторизация персонажа
+
+Авторизация персонажа проходит посредством токенов.
+
+    {
+        "grant_type": "person_credentials",
+        "username": "person1@mail.com",
+        "password": "123456"
+    }
+
+refresh
+
+    {
+        "grant_type": "refresh_token",
+        "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwZXJzb25faWQiOiIxIiwidHlwZSI6InJlZnJlc2giLCJpYXQiOjE3MTYxNTU4NTIsImV4cCI6MTcxODc0Nzg1Mn0.aIEZAKjlSiPNABkHrRX9nCjEogQ0lKsZos8iXJBeP6M"
+    }
 
 [^ к оглавлению](#оглавление)
 
