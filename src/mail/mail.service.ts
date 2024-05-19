@@ -4,9 +4,6 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { FilesInterface } from '@src/files/files.interface';
 import { mailAttachmentsInterface } from '@src/mail/interface/mail.attachments.interface';
 import { ConfigService } from '@nestjs/config';
-import { readFileSync} from 'fs';
-import { join } from 'path';
-import { lookup } from 'mime-types';
 
 @Injectable()
 export class MailService {

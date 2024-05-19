@@ -2,7 +2,6 @@ import {
   Body,
   Delete,
   Get,
-  HttpStatus,
   NotFoundException,
   Param,
   ParseArrayPipe,
@@ -18,8 +17,9 @@ import { Data } from '@src/common/common.decorator';
 import { CommonService } from '@src/common/common.service';
 import { CommonDto } from '@src/common/common.dto';
 import { CommonEntity } from '@src/common/common.entity';
-import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthDto } from '@src/auth/auth.dto';
+import { Doc } from '@src/common/decorator/doc.decorator';
 
 export const CommonController = <T extends Type<unknown>>(
   name: string,
@@ -36,42 +36,7 @@ export const CommonController = <T extends Type<unknown>>(
     readonly service: Service;
 
     @Get('find')
-    @ApiOperation({ summary: 'Найти все записи' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiQuery({
-      name: 'order',
-      required: false,
-      description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
-      type: 'необязательный',
-      example: JSON.stringify({ id: 'DESC' }),
-    })
-    @ApiQuery({
-      name: 'where',
-      required: false,
-      description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
-      type: `${classDto.name}, необязательный`,
-      example: JSON.stringify({ id: 1 }),
-    })
-    @ApiExtraModels(classDto, RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(classDto) },
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({
-      status: HttpStatus.OK,
-      description: 'Выполнено',
-      type: [classDto],
-    })
-    @ApiResponse({
-      status: HttpStatus.BAD_REQUEST,
-      description: 'Ошибка',
-    })
+    @Doc('find', classDto)
     async find(
       @Data('where') where: object,
       @Data('order') order: object,
@@ -82,32 +47,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Get('find/:id')
-    @ApiOperation({ summary: 'Найти запись по ее id' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiParam({
-      name: 'id',
-      required: true,
-      description: 'Id номер записи',
-    })
-    @ApiExtraModels(RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({
-      status: HttpStatus.OK,
-      description: 'Выполнено',
-      type: classDto,
-    })
-    @ApiResponse({
-      status: HttpStatus.BAD_REQUEST,
-      description: 'Ошибка',
-    })
+    @Doc('findOne', classDto)
     async findOne(
       @Param('id', ParseIntPipe) id: number,
       @Data('relations') relationsDto: Array<RelationsDto>,
@@ -121,42 +61,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Get('first')
-    @ApiOperation({ summary: 'Найти одну запись по условиям' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiQuery({
-      name: 'order',
-      required: false,
-      description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
-      type: 'необязательный',
-      example: JSON.stringify({ id: 'DESC' }),
-    })
-    @ApiQuery({
-      name: 'where',
-      required: false,
-      description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
-      type: `${classDto.name}, необязательный`,
-      example: JSON.stringify({ id: 1 }),
-    })
-    @ApiExtraModels(classDto, RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(classDto) },
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({
-      status: HttpStatus.OK,
-      description: 'Выполнено',
-      type: classDto,
-    })
-    @ApiResponse({
-      status: HttpStatus.BAD_REQUEST,
-      description: 'Ошибка',
-    })
+    @Doc('first', classDto)
     async first(
       @Data('where') where: Object,
       @Data('order') order: object,
@@ -167,33 +72,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Get('many/:ids')
-    @ApiOperation({ summary: 'Найти записи по нескольким id' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiParam({
-      name: 'ids',
-      required: true,
-      description: 'Id номера записей через запятую',
-      example: '1,2,3'
-    })
-    @ApiExtraModels(RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({
-      status: HttpStatus.OK,
-      description: 'Выполнено',
-      type: [classDto],
-    })
-    @ApiResponse({
-      status: HttpStatus.BAD_REQUEST,
-      description: 'Ошибка',
-    })
+    @Doc('many', classDto)
     async many(
       @Param('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: Array<number>,
       @Data('relations') relationsDto: Array<RelationsDto>,
@@ -207,41 +86,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Get('filter')
-    @ApiOperation({ summary: 'Отфильтровать записи, которые имеют совпадения и соответствуют заданным условиям' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiQuery({
-      name: 'options',
-      required: false,
-      description: 'В опциях вы можете задать лимиты и группировку',
-      type: 'OptionsDto, необязательный',
-    })
-    @ApiQuery({
-      name: 'search',
-      required: false,
-      description: 'Объект с полями и текстом, согласно которым будет вестись поиск',
-      type: 'SearchDto',
-    })
-    @ApiQuery({
-      name: 'where',
-      required: false,
-      description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
-      type: classDto.name,
-    })
-    @ApiExtraModels(classDto, SearchDto, OptionsDto, RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(classDto) },
-      { $ref: getSchemaPath(SearchDto) },
-      { $ref: getSchemaPath(OptionsDto) },
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено' })
-    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
+    @Doc('filter', classDto)
     async filter(
       @Data('where') dto: Dto,
       @Data('search') searchDto: SearchDto,
@@ -262,27 +107,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Post('create')
-    @ApiOperation({ summary: 'Создать запись' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiQuery({
-      name: 'create',
-      required: false,
-      description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
-      type: classDto.name,
-    })
-    @ApiExtraModels(classDto, RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(classDto) },
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено', type: classDto })
-    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
+    @Doc('create', classDto)
     async create(
       @Body('create') dto: Dto,
       @Body('relations') relationsDto: Array<RelationsDto>,
@@ -292,27 +117,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Patch('update/:id')
-    @ApiOperation({ summary: 'Обновить запись по ее id' })
-    @ApiQuery({
-      name: 'relations',
-      required: false,
-      description: 'Массив объектов с нужными связями',
-      type: '[RelationsDto], необязательный',
-      example: JSON.stringify([{ name: 'table', order: 'id', desc: true }]),
-    })
-    @ApiQuery({
-      name: 'update',
-      required: false,
-      description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
-      type: classDto.name,
-    })
-    @ApiExtraModels(classDto, RelationsDto)
-    @ApiBody({ schema: { anyOf: [
-      { $ref: getSchemaPath(classDto) },
-      { $ref: getSchemaPath(RelationsDto) },
-    ] } })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено', type: classDto })
-    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
+    @Doc('update', classDto)
     async update(
       @Param('id', ParseIntPipe) id: number,
       @Body('update') dto: Dto,
@@ -327,10 +132,7 @@ export const CommonController = <T extends Type<unknown>>(
     }
 
     @Delete('remove/:id')
-    @ApiOperation({ summary: 'Удалить запись по ее id' })
-    @ApiParam({ name: 'id', required: true, description: 'Id номер записи' })
-    @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено', type: Boolean })
-    @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
+    @Doc('remove', undefined)
     async remove(
       @Param('id', ParseIntPipe) id: number,
       auth: AuthDto = undefined,
