@@ -1,0 +1,31 @@
+<% if (query.error || query.message) { %>
+    <div class="form-error">
+        <% if (query.error) { %>
+            <p>
+                <%= 
+                    {
+                        'bad request': 'Ошибка',
+                        'unauthorized': 'Ошибка авторизации',
+                    }[
+                        `${query.error}`.toLowerCase()
+                    ]
+                %>.
+            </p>
+        <% } %>
+        <% if (query.message) { %>
+            <p>
+                <%=
+                    {
+                        'invalid confirm code': 'Неверный код подтверждения',
+                        'invalid password': 'Неверный логин или пароль',
+                        'unknown error': 'Что-то пошло не так',
+                        'user not found': 'Пользователь не найден',
+                        'username must be an email': 'Вы некорректно указали электронную почту',
+                    }[
+                        `${query.message}`.toLowerCase()
+                    ]
+                %>.
+            </p>
+        <% } %>
+    </div>
+<% } %>

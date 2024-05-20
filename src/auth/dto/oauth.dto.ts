@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
 import { CommonDto } from '@src/common/common.dto';
-import { ResponseTypeClients } from '@src/clients/clients.enum';
+import { TypeResponses } from '@src/common/common.enum';
 
 @InputType()
 export class OAuthDto extends CommonDto {
@@ -9,8 +9,8 @@ export class OAuthDto extends CommonDto {
     required: true,
     description: 'Тип запроса. Один из token или code',
   })
-  @Field(() => ResponseTypeClients)
-  response_type: ResponseTypeClients;
+  @Field(() => TypeResponses)
+  response_type: TypeResponses;
 
   @ApiProperty({
     required: false,

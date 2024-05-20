@@ -75,7 +75,7 @@ export class MailService {
   }
 
   links(links: object): object {
-    const url = this.configService.get('DOMAIN');
+    const url = this.configService.get('SMTP_LINKS_DOMAIN');
     const result: object = {};
     Object.entries(links)?.map(
       ([key, path]): void => {

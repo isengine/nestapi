@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column } from 'typeorm';
 import { PrivateEntity } from '@src/common/entity/private.entity';
-import { GenderUsers } from '@src/users/users.enum';
+import { TypeGenders } from '@src/common/common.enum';
 
 @ObjectType()
 @Entity({ name: 'users' })
@@ -86,15 +86,15 @@ export class UsersEntity extends PrivateEntity {
   })
   timezone?: string;
 
-  @Field(() => GenderUsers, {
+  @Field(() => TypeGenders, {
     nullable: true,
-    defaultValue: GenderUsers.DEFAULT,
+    defaultValue: TypeGenders.DEFAULT,
   })
   @Column({
     type: 'enum',
-    enum: GenderUsers,
-    default: GenderUsers.DEFAULT,
+    enum: TypeGenders,
+    default: TypeGenders.DEFAULT,
     nullable: true,
   })
-  gender?: GenderUsers;
+  gender?: TypeGenders;
 }

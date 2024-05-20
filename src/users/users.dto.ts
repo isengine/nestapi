@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 // import { IsEnum, NotEquals } from 'class-validator';
 import { PrivateDto } from '@src/common/dto/private.dto';
-import { GenderUsers } from '@src/users/users.enum';
+import { TypeGenders } from '@src/common/common.enum';
 
 @InputType()
 export class UsersDto extends PrivateDto {
@@ -80,11 +80,11 @@ export class UsersDto extends PrivateDto {
     required: false,
     description: 'Пол',
   })
-  @Field(() => GenderUsers, {
+  @Field(() => TypeGenders, {
     nullable: true,
-    defaultValue: GenderUsers.DEFAULT,
+    defaultValue: TypeGenders.DEFAULT,
   })
-  // @IsEnum(GenderUsers)
-  // @NotEquals(GenderUsers[GenderUsers.DEFAULT])
-  gender?: GenderUsers;
+  // @IsEnum(TypeGenders)
+  // @NotEquals(TypeGenders[TypeGenders.DEFAULT])
+  gender?: TypeGenders;
 }

@@ -11,7 +11,6 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { SessionsService } from '@src/sessions/sessions.service';
-import { TokenService } from '@src/token/token.service';
 import { ConfirmService } from '@src/confirm/confirm.service';
 import { CommonService } from '@src/common/common.service';
 import { AuthFilter } from '@src/auth/auth.filter';
@@ -28,7 +27,6 @@ export class AuthService extends CommonService<
     protected readonly repository: Repository<AuthEntity>,
     protected readonly userService: UsersService,
     protected readonly sessionsService: SessionsService,
-    protected readonly tokenService: TokenService,
     protected readonly confirmService: ConfirmService,
   ) {
     super();
@@ -43,11 +41,6 @@ export class AuthService extends CommonService<
     if (!isValidPassword) {
       throw new UnauthorizedException('Invalid password');
     }
-    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
-    if (request) {
-      await this.sessionsService.createSession(auth, token, request);
-    }
-    auth.token = token;
     return auth;
   }
 
@@ -64,7 +57,7 @@ export class AuthService extends CommonService<
     return true;
   }
 
-  async register(authDto: AuthDto, request: any = null): Promise<AuthEntity> {
+  async register(authDto: AuthDto): Promise<AuthEntity> {
     const authExists = await this.findByUsername(authDto.username);
     if (authExists) {
       throw new BadRequestException(
@@ -77,19 +70,7 @@ export class AuthService extends CommonService<
     // используйте данную строку, если пользователь будет сразу же активирован
     // authDto.isActivated = true;
 
-    const auth = await this.create(authDto);
-    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
-    if (request) {
-      await this.sessionsService.createSession(auth, token, request);
-    }
-    auth.token = token;
-
-    // закомментируйте строки ниже, если пользователь будет сразу же активирован
-    // используйте confirmGenerate чтобы генерировать код из цифр
-    const confirm = await this.confirmService.confirmCreate(auth);
-    auth.confirm = [confirm];
-
-    return auth;
+    return await this.create(authDto);
   }
 
   async confirm(code: string): Promise<boolean> {

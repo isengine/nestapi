@@ -39,9 +39,16 @@ export class GrantsTokenService {
       throw new BadRequestException('Not specified username or password in this request', 'invalid_grant');
     }
     const { username, password } = grantsTokenDto;
-    const login = await this.authService.login({ username, password });
-    console.log('-- login', login);
-    return await this.grantsTokenPrepare(login.token, grantsTokenDto.state);
+    const auth = await this.authService.login({ username, password });
+    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
+    if (!token) {
+      throw new BadRequestException('User authentication failed. Unknown user', 'invalid_user');
+    }
+    // if (request) {
+    //   await this.sessionsService.createSession(auth, token, request);
+    // }
+    console.log('-- auth', auth);
+    return await this.grantsTokenPrepare(token, grantsTokenDto.state);
   }
 
   async grantsTokenRefreshToken(grantsTokenDto: GrantsTokenDto): Promise<any> {
@@ -128,9 +135,6 @@ export class GrantsTokenService {
     }
     const { username, password } = grantsTokenDto;
     const person = await this.personsService.login({ username, password });
-    if (!person) {
-      throw new BadRequestException('Person authentication failed. Unknown person', 'invalid_person');
-    }
     const token = await this.tokenService.tokenCreatePair({ person_id: person.id });
     if (!token) {
       throw new BadRequestException('Person authentication failed. Unknown person', 'invalid_person');

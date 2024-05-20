@@ -1,12 +1,10 @@
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 
 export const getMailConfig = async (
   configService: ConfigService,
 ): Promise<any> => {
-  const domain = configService.get<string>('DOMAIN');
-
   const host = configService.get<string>('SMTP_HOST');
   const port = configService.get<string>('SMTP_PORT');
   const user = configService.get<string>('SMTP_USER');
@@ -26,19 +24,13 @@ export const getMailConfig = async (
     defaults: {
       from,
     },
+    // preview: true,
     template: {
       dir: join(__dirname, '..', '..', 'views/mail'),
-      adapter: new HandlebarsAdapter(),
+      adapter: new EjsAdapter(),
       options: {
-        strict: true,
-      },
-    },
-    options: {
-      partials: {
-        dir: join(__dirname, '..', '..', 'views/mail/partials'),
-        options: {
-          strict: true,
-        },
+        // strict: true,
+        strict: false,
       },
     },
   };

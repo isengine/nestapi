@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
 import { ProtectedDto } from '@src/common/dto/protected.dto';
-import { TypeClients } from '@src/clients/clients.enum';
+import { TypeClients } from '@src/common/common.enum';
 import { RedirectsDto } from '@src/redirects/redirects.dto';
 
 @InputType()

@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Render, Res, Req } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { ConfirmService } from '@src/confirm/confirm.service';
 import { FormsService } from '@src/forms/forms.service';
 
 @ApiExcludeController()
@@ -7,6 +8,7 @@ import { FormsService } from '@src/forms/forms.service';
 export class FormsController {
   constructor(
     private readonly formsService: FormsService,
+    private readonly confirmService: ConfirmService,
   ) {}
 
   @Post('auth')

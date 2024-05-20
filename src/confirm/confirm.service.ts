@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, MoreThan, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfirmEntity } from '@src/confirm/confirm.entity';
@@ -33,9 +33,15 @@ export class ConfirmService {
       },
       type,
     };
+    if (type === 'restore') {
+      const now = new Date();
+      now.setHours(now.getHours() - 1);
+      where.createdAt = MoreThan(now);
+    }
     return await this.repository.findOne({
       where,
       relations: ['auth'],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -44,9 +50,15 @@ export class ConfirmService {
     type: string = 'code',
   ): Promise<ConfirmEntity> {
     const where: FindOptionsWhere<any> = { code, type };
+    if (type === 'restore') {
+      const now = new Date();
+      now.setHours(now.getHours() - 1);
+      where.createdAt = MoreThan(now);
+    }
     return await this.repository.findOne({
       where,
       relations: ['auth'],
+      order: { createdAt: 'DESC' },
     });
   }
 

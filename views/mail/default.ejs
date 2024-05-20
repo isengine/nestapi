@@ -16,14 +16,14 @@
         width: 50%;
         min-width: 250px;
     ">
-        <h3>{{ data.title }}</h3>
+        <h3><%= data.title %></h3>
         <div>
-            {{ data.description }}
+            <%= data.description %>
         </div>
         <div style="
             padding-top: 20px;
         ">
-            {{> button}}
+            <%- include('partials/button.ejs', {button: ''}) %>
         </div>
     </div>
 </div>

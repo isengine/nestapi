@@ -19,11 +19,12 @@
         <h3>Сброс пароля</h3>
         <div>
             <p>Вами отправлена заявка на сброс пароля в My App.</p>
+            <p>Ссылка действует в течение часа.</p>
         </div>
         <div style="
             padding-top: 20px;
         ">
-            {{> button button='Задать новый пароль'}}
+            <%- include('partials/button.ejs', { button: 'Задать новый пароль' }) %>
         </div>
     </div>
 </div>

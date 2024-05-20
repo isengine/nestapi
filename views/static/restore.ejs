@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-{{> head}}
+<%- include('partials/head.ejs') %>
 <body>
     <div class="form">
         <form action="/forms/restore" method="post">
-            <h3>{{ title }}</h3>
+            <h3><%= title %></h3>
             <div>
                 <input
                     name="subject"
@@ -20,15 +20,15 @@
                     placeholder="Email"
                     required
                     type="email"
-                    value="{{ query.username }}"
+                    value="<%= query.username %>"
                 >
             </div>
-            {{> errors}}
-            {{> button button='Сбросить пароль'}}
+            <%- include('partials/errors.ejs') %>
+            <%- include('partials/button.ejs', {button: 'Сбросить пароль'}) %>
         </form>
         <div class="bottom">
             Вспомнили пароль?
-            {{> auth}}
+            <%- include('partials/auth.ejs') %>
         </div>
     </div>
 </body>

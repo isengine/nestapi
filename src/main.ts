@@ -4,13 +4,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import redoc from 'redoc-express';
 import { join } from 'path';
 import { AppModule } from '@src/app.module';
-import * as hbs from 'hbs';
 import * as cookieParser from 'cookie-parser';
+import * as fileStore from 'session-file-store';
 import * as passport from 'passport';
 import * as session from 'express-session';
-import * as FileStore from 'session-file-store';
 
-const FileStoreSession = FileStore(session);
+const FileStoreSession = fileStore(session);
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -84,8 +83,7 @@ async function bootstrap() {
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views/static'));
-  hbs.registerPartials(join(__dirname, '..', 'views/static/partials'));
-  app.setViewEngine('hbs');
+  app.setViewEngine('ejs');
 
   const port = process.env.PORT || 5000;
   const message = `Server running \n in ${process.env.NODE_ENV} mode on ${port} port \n at http://localhost:${port}`;

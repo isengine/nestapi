@@ -112,8 +112,8 @@ export class AuthController {
   ] } })
   @ApiResponse({ status: HttpStatus.OK, description: 'Выполнено' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Ошибка' })
-  async register(@Body() authDto: AuthDto, @Req() req: any) {
-    return this.authService.register(authDto, req);
+  async register(@Body() authDto: AuthDto) {
+    return this.authService.register(authDto);
   }
 
   @Get('confirm/:code')

@@ -6,7 +6,7 @@ import {
   // Generated,
 } from 'typeorm';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
-import { TypeClients } from '@src/clients/clients.enum';
+import { TypeClients } from '@src/common/common.enum';
 import { RedirectsEntity } from '@src/redirects/redirects.entity';
 
 @ObjectType()

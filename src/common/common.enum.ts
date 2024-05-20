@@ -1,5 +1,15 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+export enum TypeGenders {
+  DEFAULT = '',
+  MAN = 'm',
+  WOMAN = 'w',
+}
+
+registerEnumType(TypeGenders, {
+  name: 'TypeGenders',
+});
+
 export enum TypeClients {
   DEFAULT = 'public',
   CONFIDENTIAL = 'confidential',
@@ -9,12 +19,12 @@ registerEnumType(TypeClients, {
   name: 'TypeClients',
 });
 
-export enum ResponseTypeClients {
+export enum TypeResponses {
   TOKEN = 'token',
   CODE = 'code',
 }
 
-export enum GrantTypeClients {
+export enum TypeGrants {
   PASSWORD = 'password',
   REFRESH_TOKEN = 'refresh_token',
   AUTHORIZATION_CODE = 'authorization_code',

@@ -16,18 +16,20 @@ export class AuthResolver {
   async login(
     @Args('login')
     authDto: AuthDto,
-    @Context() context,
+    // @Context() context,
   ): Promise<AuthEntity> {
-    return await this.authService.login(authDto, context.req);
+    // return await this.authService.login(authDto, context.req);
+    return await this.authService.login(authDto);
   }
 
   @Mutation(() => AuthEntity)
   async register(
     @Args('register')
     authDto: AuthDto,
-    @Context() context,
+    // @Context() context,
   ): Promise<AuthEntity> {
-    return await this.authService.register(authDto, context.req);
+    // return await this.authService.register(authDto, context.req);
+    return await this.authService.register(authDto);
   }
 
   // @Mutation(() => AuthEntity)

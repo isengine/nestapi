@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-{{> head}}
+<html>
+<%- include('partials/head.ejs') %>
 <body>
     <div class="form">
-        <form action="/forms/change" method="post">
-            <h3>{{ title }}</h3>
+        <form action="/forms/register" method="post">
+            <h3><%= title %></h3>
             <div>
                 <input
-                    name="code"
+                    name="subject"
                     type="hidden"
-                    value="{{ query.code }}"
+                    value="Вы зарегистрировались в My App"
                 >
             </div>
             <div class="form-group">
@@ -19,27 +20,27 @@
                     placeholder="Email"
                     required
                     type="email"
-                    value="{{ query.username }}"
+                    value="<%= query.username %>"
                 >
             </div>
             <div class="form-group">
                 <input
                     class="form-control item"
                     id="password"
-                    minlength="8"
+                    minlength="6"
                     name="password"
-                    placeholder="Новый пароль"
+                    placeholder="Пароль"
                     required
                     type="password"
-                    value="{{ query.password }}"
+                    value="<%= query.password %>"
                 >
             </div>
-            {{> errors}}
-            {{> button button='Сменить пароль'}}
+            <%- include('partials/errors.ejs') %>
+            <%- include('partials/button.ejs', {button: 'Зарегистрироваться'}) %>
         </form>
         <div class="bottom">
-            Вспомнили пароль?
-            {{> auth}}
+            Уже есть аккаунт?
+            <%- include('partials/auth.ejs') %>
         </div>
     </div>
 </body>

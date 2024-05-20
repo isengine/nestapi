@@ -29,7 +29,7 @@ export class PersonsService extends CommonService<
       username: personsDto.username,
     });
     if (!person) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException('Person not found');
     }
     const isValidPassword = await compare(personsDto.password, person.password);
     if (!isValidPassword) {

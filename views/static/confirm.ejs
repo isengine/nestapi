@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-{{> head}}
+<%- include('partials/head.ejs') %>
 <body>
     <div class="form">
         <form action="/forms/confirm" method="post">
-            <h3>{{ title }}</h3>
+            <h3><%= title %></h3>
             <div class="form-group">
                 <input
                     class="form-control item"
@@ -13,15 +13,15 @@
                     placeholder="Код подтверждения"
                     required
                     type="text"
-                    value="{{ query.code }}"
+                    value="<%= query.code %>"
                 >
             </div>
-            {{> errors}}
-            {{> button button='Подтвердить регистрацию'}}
+            <%- include('partials/errors.ejs') %>
+            <%- include('partials/button.ejs', {button: 'Подтвердить регистрацию'}) %>
         </form>
         <div class="bottom">
             Уже подтвержден?
-            {{> auth}}
+            <%- include('partials/auth.ejs') %>
         </div>
     </div>
 </body>

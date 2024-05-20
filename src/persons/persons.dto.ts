@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 // import { IsEnum, NotEquals } from 'class-validator';
 import { PrivateDto } from '@src/common/dto/private.dto';
-import { GenderPersons } from '@src/persons/persons.enum';
+import { TypeGenders } from '@src/common/common.enum';
 
 @InputType()
 export class PersonsDto extends PrivateDto {
@@ -100,11 +100,11 @@ export class PersonsDto extends PrivateDto {
     required: false,
     description: 'Пол',
   })
-  @Field(() => GenderPersons, {
+  @Field(() => TypeGenders, {
     nullable: true,
-    defaultValue: GenderPersons.DEFAULT,
+    defaultValue: TypeGenders.DEFAULT,
   })
-  // @IsEnum(GenderPersons)
-  // @NotEquals(GenderPersons[GenderPersons.DEFAULT])
-  gender?: GenderPersons;
+  // @IsEnum(TypeGenders)
+  // @NotEquals(TypeGenders[TypeGenders.DEFAULT])
+  gender?: TypeGenders;
 }
