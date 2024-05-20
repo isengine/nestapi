@@ -17,8 +17,8 @@ import { RedirectsModule } from '@src/redirects/redirects.module';
   imports: [
     TypeOrmModule.forFeature([ClientsEntity]),
     // forwardRef(() => AuthModule),
-    forwardRef(() => TokenModule),
     forwardRef(() => RedirectsModule),
+    forwardRef(() => TokenModule),
     ConfigModule,
   ],
   providers: [

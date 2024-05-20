@@ -15,8 +15,7 @@ import { SearchDto } from '@src/common/dto/search.dto';
 import { ProtectedController } from '@src/common/controller/protected.controller';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { Data } from '@src/common/common.decorator';
-import { Doc } from '@src/common/decorator/doc.decorator';
+import { Data, Doc } from '@src/common/common.decorator';
 
 export const PrivateController = <T extends Type<unknown>>(
   name: string,

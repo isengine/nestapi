@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TokenService } from '@src/token/token.service';
 import { HelpersFormsService } from '@src/forms/service/helpers.forms.service';
-import { GrantsTokenService } from '@src/token/service/grants.service';
 import { TypeGrants } from '@src/common/common.enum';
+import { GrantsService } from '@src/grants/grants.service';
 
 @Injectable()
 export class AuthFormsService {
@@ -15,7 +15,7 @@ export class AuthFormsService {
 
   constructor(
     private readonly tokenService: TokenService,
-    private readonly grantsTokenService: GrantsTokenService,
+    private readonly grantsService: GrantsService,
     private readonly helpersService: HelpersFormsService,
   ) {}
 
@@ -50,7 +50,7 @@ export class AuthFormsService {
     if (!access_token) {
       throw new BadRequestException('Specified datas is not valid for generate token', 'do not issue token');
     }
-    const tokenParse = await this.tokenService.tokenVerify(access_token, 'access');
+    const tokenParse = await this.tokenService.verify(access_token, 'access');
     res.cookie(
       'id',
       tokenParse.id,
@@ -63,7 +63,7 @@ export class AuthFormsService {
   }
 
   async setToken(username, password): Promise<void> {
-    this.token = await this.grantsTokenService.grantsTokenPassword({
+    this.token = await this.grantsService.password({
       grant_type: TypeGrants.PASSWORD,
       username,
       password,

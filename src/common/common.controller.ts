@@ -13,13 +13,12 @@ import {
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
-import { Data } from '@src/common/common.decorator';
+import { Data, Doc } from '@src/common/common.decorator';
 import { CommonService } from '@src/common/common.service';
 import { CommonDto } from '@src/common/common.dto';
 import { CommonEntity } from '@src/common/common.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthDto } from '@src/auth/auth.dto';
-import { Doc } from '@src/common/decorator/doc.decorator';
 
 export const CommonController = <T extends Type<unknown>>(
   name: string,

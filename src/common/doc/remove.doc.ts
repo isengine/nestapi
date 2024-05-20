@@ -1,7 +1,7 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 
-export const DocRemoveDecorator = () => {
+export const RemoveDoc = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'Удалить запись по ее id',

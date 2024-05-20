@@ -1,23 +1,18 @@
 import { applyDecorators } from '@nestjs/common';
-import { DocBaseDecorator } from '@src/common/decorator/doc/base.decorator';
+import { CommonDoc } from '@src/common/common.doc';
 
-export const DocFindDecorator = (classDto) => {
+export const CreateDoc = (classDto) => {
   return applyDecorators(
-    DocBaseDecorator({
-      title: 'Найти все записи',
+    CommonDoc({
+      title: 'Создать запись',
       models: [classDto],
-      success: [classDto],
+      success: classDto,
+      relations: true,
       queries: [
         {
-          name: 'where',
+          name: 'create',
           description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
           type: classDto.name,
-          example: { id: 1 },
-        },
-        {
-          name: 'order',
-          description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
-          example: { id: 'DESC' },
         },
         {
           name: 'relations',

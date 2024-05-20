@@ -5,32 +5,37 @@ import { TokenResolver } from '@src/token/token.resolver';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getJwtConfig } from '@src/config/jwt.config';
-import { AuthModule } from '@src/auth/auth.module';
 import { ClientsModule } from '@src/clients/clients.module';
-import { GrantsTokenService } from '@src/token/service/grants.service';
-import { PersonsModule } from '@src/persons/persons.module';
+import { GrantsModule } from '@src/grants/grants.module';
+import { OneTokenService } from '@src/token/service/one.token.service';
+import { PairTokenService } from '@src/token/service/pair.token.service';
+import { PrepareTokenService } from '@src/token/service/prepare.token.service';
+import { RefreshTokenService } from '@src/token/service/refresh.token.service';
+import { VerifyTokenService } from '@src/token/service/verify.token.service';
 
 @Module({
   controllers: [TokenController],
   imports: [
-    ConfigModule,
+    forwardRef(() => ConfigModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: getJwtConfig,
     }),
-    forwardRef(() => AuthModule),
     forwardRef(() => ClientsModule),
-    forwardRef(() => PersonsModule),
+    forwardRef(() => GrantsModule),
   ],
   providers: [
     TokenService,
-    GrantsTokenService,
     TokenResolver,
+    OneTokenService,
+    PairTokenService,
+    PrepareTokenService,
+    RefreshTokenService,
+    VerifyTokenService,
   ],
   exports: [
     TokenService,
-    GrantsTokenService,
   ],
 })
 export class TokenModule {}

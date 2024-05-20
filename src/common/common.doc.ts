@@ -2,10 +2,11 @@ import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 
-export const DocBaseDecorator = ({
+export const CommonDoc = ({
   title,
   models = undefined,
   success = undefined,
+  relations = false,
   queries = undefined,
   params = undefined,
 }) => {
@@ -49,22 +50,24 @@ export const DocBaseDecorator = ({
     });
   }
 
-  decorators.push(
-    models
-      ? ApiExtraModels(...models, RelationsDto)
-      : ApiExtraModels(RelationsDto)
-  );
+  if (relations) {
+    if (!models?.length) {
+      models = [];
+    }
+    models.push(RelationsDto);
+  }
 
-  const anyOf = [];
-  if (models) {
+  if (models?.length) {
+    decorators.push(ApiExtraModels(...models));
+
+    const anyOf = [];
     models.forEach((model) => {
       anyOf.push({ $ref: getSchemaPath(model) });
     });
+    decorators.push(
+      ApiBody({ schema: { anyOf } })
+    );
   }
-  anyOf.push({ $ref: getSchemaPath(RelationsDto) });
-  decorators.push(
-    ApiBody({ schema: { anyOf } })
-  );
 
   decorators.push(
     ApiResponse({

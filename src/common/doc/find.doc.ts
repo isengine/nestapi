@@ -1,16 +1,17 @@
 import { applyDecorators } from '@nestjs/common';
-import { DocBaseDecorator } from '@src/common/decorator/doc/base.decorator';
+import { CommonDoc } from '@src/common/common.doc';
 
-export const DocSelfDecorator = (classDto) => {
+export const FindDoc = (classDto) => {
   return applyDecorators(
-    DocBaseDecorator({
-      title: 'Найти записи, принадлежащие учетной записи пользователя',
+    CommonDoc({
+      title: 'Найти все записи',
       models: [classDto],
       success: [classDto],
+      relations: true,
       queries: [
         {
           name: 'where',
-          description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
+          description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
           type: classDto.name,
           example: { id: 1 },
         },

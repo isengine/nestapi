@@ -33,7 +33,7 @@ export class StrategiesController {
   @UseGuards(OauthStrategiesGuard)
   async oauthRedirect(@Req() req: any) {
     const { user: auth } = req;
-    const tokens = await this.tokenService.tokenCreatePair({ id: auth.id });
+    const tokens = await this.tokenService.pair({ id: auth.id });
     await this.sessionsService.createSession(auth, tokens, req);
     return {
       ...auth,
@@ -51,7 +51,7 @@ export class StrategiesController {
   @UseGuards(GoogleStrategiesGuard)
   async googleRedirect(@Req() req: any) {
     const { user: auth } = req;
-    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
+    const token = await this.tokenService.pair({ id: auth.id });
     await this.sessionsService.createSession(auth, token, req);
     auth.token = token;
     return auth;
@@ -71,7 +71,7 @@ export class StrategiesController {
       return account;
     }
     const auth = await this.leaderStrategiesProvider.validate(account);
-    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
+    const token = await this.tokenService.pair({ id: auth.id });
     await this.sessionsService.createSession(auth, token, req);
     // auth.token = token;
     return { ...auth, token };

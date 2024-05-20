@@ -1,88 +1,38 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import * as moment from 'moment';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable } from '@nestjs/common';
 import { TokenDto } from '@src/token/token.dto';
+import { OneTokenService } from '@src/token/service/one.token.service';
+import { PairTokenService } from '@src/token/service/pair.token.service';
+import { PrepareTokenService } from '@src/token/service/prepare.token.service';
+import { RefreshTokenService } from '@src/token/service/refresh.token.service';
+import { VerifyTokenService } from '@src/token/service/verify.token.service';
 
 @Injectable()
 export class TokenService {
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly oneTokenService: OneTokenService,
+    private readonly pairTokenService: PairTokenService,
+    private readonly prepareTokenService: PrepareTokenService,
+    private readonly refreshTokenService: RefreshTokenService,
+    private readonly verifyTokenService: VerifyTokenService,
   ) {}
 
-  async tokenGenerateOne(data, configKey) {
-    const expires = this.configService.get(configKey) || '';
-    const token = await this.jwtService.signAsync(
-      data,
-      expires
-        ? { expiresIn: expires }
-        : {},
-    );
-
-    const date = {};
-    expires?.match(/\d+[A-Za-z]*/igu)?.forEach(i => {
-      const match = [
-        i?.match(/\d+/igu)?.[0],
-        i?.match(/[A-Za-z]+/igu)?.[0],
-      ];
-      date[match[1] || 's'] = Number(match[0]) || 0;
-    });
-    const expiresIn = moment.duration(date).asSeconds();
-
-    return { token, expiresIn };
+  async one(data, configKey): Promise<any> {
+    return await this.oneTokenService.one(data, configKey);
   }
 
-  async tokenCreatePair(data) {
-    const accessTokenData = await this.tokenGenerateOne({ ...data, type: 'access' }, 'JWT_ACCESS_EXPIRES');
-    const refreshTokenData = await this.tokenGenerateOne({ ...data, type: 'refresh' }, 'JWT_REFRESH_EXPIRES');
-    return {
-      access_token: accessTokenData.token,
-      expires_in: accessTokenData.expiresIn,
-      refresh_token: refreshTokenData.token,
-    };
+  async pair(data): Promise<any> {
+    return await this.pairTokenService.pair(data);
   }
 
-  async tokenVerify(token: string, type: string): Promise<any> {
-    let result;
-    try {
-      result = await this.jwtService.verifyAsync(token);
-    } catch {
-      throw new UnauthorizedException('Invalid token or expired!');
-    }
-    if (!result || !result.type || result.type !== type) {
-      throw new UnauthorizedException('Invalid token or expired!');
-    }
-    return result;
+  async prepare(token: TokenDto, state: any): Promise<any> {
+    return await this.prepareTokenService.prepare(token, state);
+  }
+  
+  async refresh(refresh_token: string, callback = null): Promise<any> {
+    return await this.refreshTokenService.refresh(refresh_token, callback);
   }
 
-  async tokenRefresh(refresh_token: string, callback = null): Promise<any> {
-    console.log('-- refresh_token', refresh_token);
-    if (!refresh_token) {
-      throw new UnauthorizedException('Please sign in!');
-    }
-    const result = await this.tokenVerify(refresh_token, 'refresh');
-    console.log('-- tokenVerify', result);
-    if (callback) {
-      const matched = callback(result);
-      console.log('-- callback matched', matched);
-      if (!matched) {
-        throw new UnauthorizedException('Refresh token is not valid!');
-      }
-    }
-    const data: any = {};
-    if (result.client_id) {
-      data.client_id = result.client_id;
-    }
-    if (result.person_id) {
-      data.person_id = result.person_id;
-    }
-    if (result.id) {
-      data.id = result.id;
-    }
-    return await this.tokenCreatePair(data);
+  async verify(token: string, type: string): Promise<any> {
+    return await this.verifyTokenService.verify(token, type);
   }
 }

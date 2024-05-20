@@ -4,7 +4,7 @@ import { CommonDto } from '@src/common/common.dto';
 import { TypeGrants } from '@src/common/common.enum';
 
 @InputType()
-export class GrantsTokenDto extends CommonDto {
+export class GrantsDto extends CommonDto {
   @ApiProperty({
     required: true,
     description: 'Тип гранта. Один из password, refresh_token, authorization_code, client_credentials, person_credentials',

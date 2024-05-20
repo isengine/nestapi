@@ -16,7 +16,7 @@ import { ClosedEntity } from '@src/common/entity/closed.entity';
 import { CommonController } from '@src/common/common.controller';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
-import { Doc } from '@src/common/decorator/doc.decorator';
+import { Doc } from '@src/common/common.decorator';
 
 export const ClosedController = <T extends Type<unknown>>(
   name: string,

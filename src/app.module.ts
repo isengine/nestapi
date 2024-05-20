@@ -14,6 +14,7 @@ import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
 import { FilesModule } from '@src/files/files.module';
 import { FormsModule } from '@src/forms/forms.module';
+import { GrantsModule } from '@src/grants/grants.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PersonsModule } from '@src/persons/persons.module';
 import { PostsModule } from '@src/posts/posts.module';
@@ -52,6 +53,7 @@ import { UsersModule } from '@src/users/users.module';
     ConfirmModule,
     FilesModule,
     FormsModule,
+    GrantsModule,
     MailModule,
     PersonsModule,
     PostsModule,

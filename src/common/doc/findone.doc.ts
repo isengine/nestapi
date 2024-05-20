@@ -1,11 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { DocBaseDecorator } from '@src/common/decorator/doc/base.decorator';
+import { CommonDoc } from '@src/common/common.doc';
 
-export const DocFindOneDecorator = (classDto) => {
+export const FindOneDoc = (classDto) => {
   return applyDecorators(
-    DocBaseDecorator({
+    CommonDoc({
       title: 'Найти запись по ее id',
       success: classDto,
+      relations: true,
       params: [
         {
           name: 'id',

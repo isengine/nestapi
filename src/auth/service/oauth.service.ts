@@ -85,7 +85,7 @@ export class OAuthService {
     const [{ uri }] = clientsDto.redirects;
     delete clientsDto.auth;
     delete clientsDto.redirects;
-    const token = await this.tokenService.tokenCreatePair({ id });
+    const token = await this.tokenService.pair({ id });
     if (!token) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }

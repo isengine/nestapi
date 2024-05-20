@@ -1,12 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { DocBaseDecorator } from '@src/common/decorator/doc/base.decorator';
+import { CommonDoc } from '@src/common/common.doc';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { OptionsDto } from '@src/common/dto/options.dto';
 import { SearchDto } from '@src/common/dto/search.dto';
 
-export const DocFilterDecorator = (classDto) => {
+export const FilterDoc = (classDto) => {
   return applyDecorators(
-    DocBaseDecorator({
+    CommonDoc({
       title: 'Отфильтровать записи, которые имеют совпадения и соответствуют заданным условиям',
       models: [classDto, SearchDto, OptionsDto, RelationsDto],
       success: [classDto],
@@ -18,6 +18,7 @@ export const DocFilterDecorator = (classDto) => {
       //     classDto,
       //   ],
       // ],
+      relations: true,
       queries: [
         {
           name: 'where',

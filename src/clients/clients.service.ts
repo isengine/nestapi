@@ -17,6 +17,7 @@ export class ClientsService extends CommonService<
   ClientsDto,
   ClientsFilter
 > {
+  
   constructor(
     @InjectRepository(ClientsEntity)
     protected readonly repository: Repository<ClientsEntity>,
@@ -58,7 +59,7 @@ export class ClientsService extends CommonService<
         uri: clientsDto.redirect_uri,
       });
     }
-    const clientSecretData = await this.tokenService.tokenGenerateOne({
+    const clientSecretData = await this.tokenService.one({
       client_id: client.client_id,
     }, 'JWT_CLIENTS_EXPIRES');
     client.client_secret = clientSecretData.token;

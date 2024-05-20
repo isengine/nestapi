@@ -1,11 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
-import { DocBaseDecorator } from '@src/common/decorator/doc/base.decorator';
+import { CommonDoc } from '@src/common/common.doc';
 
-export const DocManyDecorator = (classDto) => {
+export const ManyDoc = (classDto) => {
   return applyDecorators(
-    DocBaseDecorator({
+    CommonDoc({
       title: 'Найти записи по нескольким id',
       success: [classDto],
+      relations: true,
       params: [
         {
           name: 'ids',

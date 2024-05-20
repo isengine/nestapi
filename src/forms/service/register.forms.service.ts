@@ -37,7 +37,7 @@ export class RegisterFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const token = await this.tokenService.tokenCreatePair({ id: auth.id });
+    const token = await this.tokenService.pair({ id: auth.id });
     // if (request) {
     //   await this.sessionsService.createSession(auth, token, request);
     // }

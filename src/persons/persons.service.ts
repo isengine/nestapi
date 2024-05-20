@@ -8,7 +8,6 @@ import { PersonsEntity } from '@src/persons/persons.entity';
 import { PersonsFilter } from '@src/persons/persons.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 import { CommonService } from '@src/common/common.service';
-import { TokenService } from '@src/token/token.service';
 
 @Injectable()
 export class PersonsService extends CommonService<
@@ -19,7 +18,6 @@ export class PersonsService extends CommonService<
   constructor(
     @InjectRepository(PersonsEntity)
     protected readonly repository: Repository<PersonsEntity>,
-    protected readonly tokenService: TokenService,
   ) {
     super();
   }
