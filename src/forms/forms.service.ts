@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { AuthFormsService } from '@src/forms/service/auth.service';
-import { ChangeFormsService } from '@src/forms/service/change.service';
-import { ConfirmFormsService } from '@src/forms/service/confirm.service';
-import { RegisterFormsService } from '@src/forms/service/register.service';
-import { RestoreFormsService } from '@src/forms/service/restore.service';
+import { AuthFormsService } from '@src/forms/service/auth.forms.service';
+import { ChangeFormsService } from '@src/forms/service/change.forms.service';
+import { ConfirmFormsService } from '@src/forms/service/confirm.forms.service';
+import { RegisterFormsService } from '@src/forms/service/register.forms.service';
+import { RestoreFormsService } from '@src/forms/service/restore.forms.service';
 
 @Injectable()
 export class FormsService {

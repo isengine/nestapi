@@ -12,7 +12,7 @@ import { SessionSerializer } from '@src/strategies/serializer/session.serializer
 import { GoogleStrategy } from '@src/strategies/strategy/google.strategy';
 import { OauthStrategy } from '@src/strategies/strategy/oauth.strategy';
 import { LeaderStrategy } from '@src/strategies/strategy/leader.strategy';
-import { LeaderProvider } from '@src/strategies/provider/leader.provider';
+import { LeaderStrategiesProvider } from '@src/strategies/provider/leader.strategies.provider';
 
 @Module({
   controllers: [StrategiesController],
@@ -28,7 +28,7 @@ import { LeaderProvider } from '@src/strategies/provider/leader.provider';
     SessionSerializer,
     StrategiesService,
     GoogleStrategy,
-    LeaderProvider,
+    LeaderStrategiesProvider,
     LeaderStrategy,
     OauthStrategy,
   ],

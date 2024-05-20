@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MailDto } from '@src/mail/mail.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { FilesInterface } from '@src/files/files.interface';
-import { mailAttachmentsInterface } from '@src/mail/interface/mail.attachments.interface';
+import { AttachmentsMailInterface } from '@src/mail/interface/attachments.mail.interface';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -58,11 +58,11 @@ export class MailService {
     return result;
   }
 
-  async attachments(files: FilesInterface[]): Promise<mailAttachmentsInterface[]> {
-    const attachments: mailAttachmentsInterface[] = await Promise.all(
+  async attachments(files: FilesInterface[]): Promise<AttachmentsMailInterface[]> {
+    const attachments: AttachmentsMailInterface[] = await Promise.all(
       files && files.length
         ? files?.map(
-            async (file): Promise<mailAttachmentsInterface> => ({
+            async (file): Promise<AttachmentsMailInterface> => ({
               filename: file.originalname,
               content: file.buffer.toString('base64'),
               encoding: 'base64',

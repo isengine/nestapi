@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
 import { ConfirmService } from '@src/confirm/confirm.service';
 import { MailService } from '@src/mail/mail.service';
-import { HelpersFormsService } from '@src/forms/service/helpers.service';
+import { HelpersFormsService } from '@src/forms/service/helpers.forms.service';
 
 @Injectable()
 export class RestoreFormsService {

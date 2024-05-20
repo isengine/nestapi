@@ -7,7 +7,7 @@ import { responseServer } from '@src/common/service/response.service';
 import { StrategiesService } from '@src/strategies/strategies.service';
 
 @Injectable()
-export class LeaderProvider {
+export class LeaderStrategiesProvider {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,

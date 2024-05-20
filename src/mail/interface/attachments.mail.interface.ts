@@ -1,4 +1,4 @@
-export class mailAttachmentsInterface {
+export class AttachmentsMailInterface {
   filename: string;
   content?: string;
   encoding?: string;

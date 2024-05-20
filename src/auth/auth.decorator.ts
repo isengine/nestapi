@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { ApiType } from '@src/common/type/api.type';
-import { JwtAuthGuard } from '@src/auth/guard/jwt.guard';
-import { GqlAuthGuard } from '@src/auth/guard/gql.guard';
+import { JwtAuthGuard } from '@src/auth/guard/jwt.auth.guard';
+import { GqlAuthGuard } from '@src/auth/guard/gql.auth.guard';
 
 export const Auth = (apiType: ApiType = undefined) => {
   if (apiType === 'gql') {

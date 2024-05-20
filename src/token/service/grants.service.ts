@@ -185,6 +185,5 @@ export class GrantsTokenService {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
     return await this.grantsTokenPrepare(token, grantsTokenDto.state);
-
   }
 }

@@ -5,10 +5,10 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { OauthStrategiesGuard } from '@src/strategies/guard/oauth.guard';
-import { GoogleStrategiesGuard } from '@src/strategies/guard/google.guard';
-import { LeaderStrategiesGuard } from '@src/strategies/guard/leader.guard';
-import { LeaderProvider } from '@src/strategies/provider/leader.provider';
+import { OauthStrategiesGuard } from '@src/strategies/guard/oauth.strategies.guard';
+import { GoogleStrategiesGuard } from '@src/strategies/guard/google.strategies.guard';
+import { LeaderStrategiesGuard } from '@src/strategies/guard/leader.strategies.guard';
+import { LeaderStrategiesProvider } from '@src/strategies/provider/leader.strategies.provider';
 import { SessionsService } from '@src/sessions/sessions.service';
 import { TokenService } from '@src/token/token.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -19,7 +19,7 @@ export class StrategiesController {
   constructor(
     private readonly sessionsService: SessionsService,
     private readonly tokenService: TokenService,
-    private readonly leaderProvider: LeaderProvider,
+    private readonly leaderStrategiesProvider: LeaderStrategiesProvider,
   ) {}
 
   @Get('oauth/login')
@@ -66,11 +66,11 @@ export class StrategiesController {
   @Get('leader/redirect')
   // @UseGuards(LeaderStrategiesGuard)
   async leaderRedirect(@Req() req: any) {
-    const account = await this.leaderProvider.activate(req);
+    const account = await this.leaderStrategiesProvider.activate(req);
     if (!account) {
       return account;
     }
-    const auth = await this.leaderProvider.validate(account);
+    const auth = await this.leaderStrategiesProvider.validate(account);
     const token = await this.tokenService.tokenCreatePair({ id: auth.id });
     await this.sessionsService.createSession(auth, token, req);
     // auth.token = token;
