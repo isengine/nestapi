@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthFormsService } from '@src/forms/service/auth.forms.service';
 import { ChangeFormsService } from '@src/forms/service/change.forms.service';
 import { ConfirmFormsService } from '@src/forms/service/confirm.forms.service';
+import { LogoutFormsService } from '@src/forms/service/logout.forms.service';
 import { RegisterFormsService } from '@src/forms/service/register.forms.service';
 import { RestoreFormsService } from '@src/forms/service/restore.forms.service';
 
@@ -11,6 +12,7 @@ export class FormsService {
     private readonly authFormsService: AuthFormsService,
     private readonly changeFormsService: ChangeFormsService,
     private readonly confirmFormsService: ConfirmFormsService,
+    private readonly logoutFormsService: LogoutFormsService,
     private readonly registerFormsService: RegisterFormsService,
     private readonly restoreFormsService: RestoreFormsService,
   ) {}
@@ -25,6 +27,10 @@ export class FormsService {
 
   async confirm(req, res): Promise<void> {
     return await this.confirmFormsService.confirm(req, res);
+  }
+
+  async logout(req, res): Promise<void> {
+    return await this.logoutFormsService.logout(req, res);
   }
 
   async register(req, res): Promise<any> {

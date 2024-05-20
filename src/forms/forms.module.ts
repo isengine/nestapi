@@ -11,6 +11,7 @@ import { AuthFormsService } from '@src/forms/service/auth.forms.service';
 import { ChangeFormsService } from '@src/forms/service/change.forms.service';
 import { ConfirmFormsService } from '@src/forms/service/confirm.forms.service';
 import { HelpersFormsService } from '@src/forms/service/helpers.forms.service';
+import { LogoutFormsService } from '@src/forms/service/logout.forms.service';
 import { RegisterFormsService } from '@src/forms/service/register.forms.service';
 import { RestoreFormsService } from '@src/forms/service/restore.forms.service';
 
@@ -29,6 +30,7 @@ import { RestoreFormsService } from '@src/forms/service/restore.forms.service';
     ChangeFormsService,
     ConfirmFormsService,
     HelpersFormsService,
+    LogoutFormsService,
     RegisterFormsService,
     RestoreFormsService,
   ],

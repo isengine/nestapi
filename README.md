@@ -17,8 +17,9 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
 
 - auth в graphql
 - вход/логин через получение токенов
-- auth.oauth.service * часть функций используется в token
 - auth register -> create 
+- auth.service может перенести методы в формы?
+- auth.service пересмотреть методы и функции, нужны ли они все, не дублируются ли в токенах и формах?
 
 # Оглавление
 

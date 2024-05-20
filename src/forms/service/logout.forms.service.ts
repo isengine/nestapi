@@ -3,24 +3,16 @@ import { AuthService } from '@src/auth/auth.service';
 import { HelpersFormsService } from '@src/forms/service/helpers.forms.service';
 
 @Injectable()
-export class ConfirmFormsService {
+export class LogoutFormsService {
   constructor(
     private readonly authService: AuthService,
     private readonly helpersService: HelpersFormsService,
   ) {}
-  
-  async confirm(req, res): Promise<void> {
-    const { body } = req;
-    const {
-      code = '',
-    } = body;
 
-    let error = {
-      error: 'Bad request',
-      message: 'Invalid confirm code',
-    };
+  async logout(req, res): Promise<void> {
+    let error;
 
-    const result = await this.authService.confirm(code)
+    const result = await this.authService.logout(req)
       .catch((e) => {
         error = e?.response;
       });
@@ -29,7 +21,7 @@ export class ConfirmFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const uri = '/forms/confirm_complete.html';
+    const uri = '/forms/auth.html';
     return await this.helpersService.query(req, res, uri);
   }
 }
