@@ -27,12 +27,6 @@ import { RegisterAuthService } from '@src/auth/service/register.auth.service';
 import { RestoreAuthService } from '@src/auth/service/restore.auth.service';
 import { RestorePrepareAuthService } from '@src/auth/service/restorePrepare.auth.service';
 
-import { CodeAuthService } from '@src/auth/service/code.auth.service';
-import { CodeGenerateAuthService } from '@src/auth/service/codeGenerate.auth.service';
-import { CodeVerifyAuthService } from '@src/auth/service/codeVerify.auth.service';
-import { TokenAuthService } from '@src/auth/service/token.auth.service';
-import { VerifyAuthService } from '@src/auth/service/verify.auth.service';
-
 @Module({
   controllers: [AuthController],
   imports: [
@@ -61,12 +55,6 @@ import { VerifyAuthService } from '@src/auth/service/verify.auth.service';
     RegisterAuthService,
     RestoreAuthService,
     RestorePrepareAuthService,
-
-    CodeAuthService,
-    CodeGenerateAuthService,
-    CodeVerifyAuthService,
-    TokenAuthService,
-    VerifyAuthService,
   ],
   exports: [
     AuthService,

@@ -3,7 +3,7 @@ import { ClientsDto } from '@src/clients/clients.dto';
 import { TokenService } from '@src/token/token.service';
 
 @Injectable()
-export class TokenAuthService {
+export class TokenOAuthService {
   constructor(
     private readonly tokenService: TokenService,
   ) {}
@@ -18,7 +18,7 @@ export class TokenAuthService {
     delete clientsDto.redirects;
     const token = await this.tokenService.pair({ id });
     if (!token) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client oauthentication failed. Unknown client', 'invalid_client');
     }
     return `${uri}?token_type=Bearer&expires_in=${token.expires_in}${state ? `&state=${state}` : ''}#access_token=${token.access_token}`;
   }

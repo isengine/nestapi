@@ -2,6 +2,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { GrantsService } from '@src/grants/grants.service';
 import { AuthModule } from '@src/auth/auth.module';
 import { ClientsModule } from '@src/clients/clients.module';
+import { OAuthModule } from '@src/oauth/oauth.module';
 import { PersonsModule } from '@src/persons/persons.module';
 import { TokenModule } from '@src/token/token.module';
 import { AuthGrantsService } from '@src/grants/service/auth.grants.service';
@@ -17,8 +18,9 @@ import { RefreshTokenGrantsService } from '@src/grants/service/refreshToken.gran
   imports: [
     forwardRef(() => AuthModule),
     forwardRef(() => ClientsModule),
-    forwardRef(() => TokenModule),
+    forwardRef(() => OAuthModule),
     forwardRef(() => PersonsModule),
+    forwardRef(() => TokenModule),
   ],
   providers: [
     GrantsService,

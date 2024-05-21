@@ -4,7 +4,7 @@ import { ClientsService } from '@src/clients/clients.service';
 import { ClientsEntity } from '@src/clients/clients.entity';
 
 @Injectable()
-export class CodeGenerateAuthService {
+export class CodeGenerateOAuthService {
   constructor(
     private readonly clientsService: ClientsService,
   ) {}

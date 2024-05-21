@@ -1,10 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ClientsDto } from '@src/clients/clients.dto';
-import { OAuthDto } from '@src/auth/dto/oauth.dto';
+import { OAuthDto } from '@src/oauth/oauth.dto';
 import { ClientsService } from '@src/clients/clients.service';
 
 @Injectable()
-export class VerifyAuthService {
+export class VerifyOAuthService {
   constructor(
     private readonly clientsService: ClientsService,
   ) {}
@@ -22,11 +22,11 @@ export class VerifyAuthService {
         uri: oauthDto.redirect_uri,
       },
     }, [
-      { name: 'auth' },
+      { name: 'oauth' },
       { name: 'redirects' },
     ]);
     if (!result || !result.redirects.length) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client oauthentication failed. Unknown client', 'invalid_client');
     }
     return result;
   }

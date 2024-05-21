@@ -16,15 +16,6 @@ import { RegisterAuthService } from '@src/auth/service/register.auth.service';
 import { RestoreAuthService } from '@src/auth/service/restore.auth.service';
 import { RestorePrepareAuthService } from '@src/auth/service/restorePrepare.auth.service';
 
-import { OAuthDto } from '@src/auth/dto/oauth.dto';
-import { ClientsDto } from '@src/clients/clients.dto';
-import { ClientsEntity } from '@src/clients/clients.entity';
-import { CodeAuthService } from '@src/auth/service/code.auth.service';
-import { CodeGenerateAuthService } from '@src/auth/service/codeGenerate.auth.service';
-import { CodeVerifyAuthService } from '@src/auth/service/codeVerify.auth.service';
-import { TokenAuthService } from '@src/auth/service/token.auth.service';
-import { VerifyAuthService } from '@src/auth/service/verify.auth.service';
-
 @Injectable()
 export class AuthService extends CommonService<
   AuthEntity,
@@ -43,12 +34,6 @@ export class AuthService extends CommonService<
     protected readonly registerAuthService: RegisterAuthService,
     protected readonly restoreAuthService: RestoreAuthService,
     protected readonly restorePrepareAuthService: RestorePrepareAuthService,
-
-    private readonly codeAuthService: CodeAuthService,
-    private readonly codeGenerateAuthService: CodeGenerateAuthService,
-    private readonly codeVerifyAuthService: CodeVerifyAuthService,
-    private readonly tokenAuthService: TokenAuthService,
-    private readonly verifyAuthService: VerifyAuthService,
   ) {
     super();
   }
@@ -83,27 +68,5 @@ export class AuthService extends CommonService<
 
   async restorePrepare(authDto: AuthDto): Promise<boolean> {
     return await this.restorePrepareAuthService.restorePrepare(authDto);
-  }
-
-  // oauth
-
-  async code(clientsDto: ClientsDto, id: number, state: string): Promise<string> {
-    return await this.codeAuthService.code(clientsDto, id, state);
-  }
-
-  async codeGenerate(clientsDto: ClientsDto, id: number): Promise<ClientsEntity> {
-    return await this.codeGenerateAuthService.codeGenerate(clientsDto, id);
-  }
-
-  async codeVerify(code: string, clientsDto: ClientsDto): Promise<number> {
-    return await this.codeVerifyAuthService.codeVerify(code, clientsDto);
-  }
-
-  async token(clientsDto: ClientsDto, id: number, state: string): Promise<string> {
-    return await this.tokenAuthService.token(clientsDto, id, state);
-  }
-
-  async verify(oauthDto: OAuthDto): Promise<ClientsDto> {
-    return await this.verifyAuthService.verify(oauthDto);
   }
 }
