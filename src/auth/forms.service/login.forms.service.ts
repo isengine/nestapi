@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TokenService } from '@src/token/token.service';
-import { HelpersFormsService } from '@src/forms/service/helpers.forms.service';
+import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
 import { TypeGrants } from '@src/common/common.enum';
 import { GrantsService } from '@src/grants/grants.service';
 
 @Injectable()
-export class AuthFormsService {
+export class LoginFormsService {
   error = {
     error: 'Unauthorized',
     message: 'Unknown error',
@@ -19,7 +19,7 @@ export class AuthFormsService {
     private readonly helpersService: HelpersFormsService,
   ) {}
 
-  async auth(req, res): Promise<void> {
+  async login(req, res): Promise<void> {
     const { body } = req;
     const {
       username = '',

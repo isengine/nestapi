@@ -10,6 +10,8 @@ import { AuthResolver } from '@src/auth/auth.resolver';
 
 import { ClientsModule } from '@src/clients/clients.module';
 import { ConfirmModule } from '@src/confirm/confirm.module';
+import { GrantsModule } from '@src/grants/grants.module';
+import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { RolesModule } from '@src/roles/roles.module';
 import { SessionsModule } from '@src/sessions/sessions.module';
@@ -27,12 +29,23 @@ import { RegisterAuthService } from '@src/auth/service/register.auth.service';
 import { RestoreAuthService } from '@src/auth/service/restore.auth.service';
 import { RestorePrepareAuthService } from '@src/auth/service/restorePrepare.auth.service';
 
+import { AuthFormsService } from '@src/auth/forms.service';
+import { ChangeFormsService } from '@src/auth/forms.service/change.forms.service';
+import { ConfirmFormsService } from '@src/auth/forms.service/confirm.forms.service';
+import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
+import { LoginFormsService } from '@src/auth/forms.service/login.forms.service';
+import { LogoutFormsService } from '@src/auth/forms.service/logout.forms.service';
+import { RegisterFormsService } from '@src/auth/forms.service/register.forms.service';
+import { RestoreFormsService } from '@src/auth/forms.service/restore.forms.service';
+
 @Module({
   controllers: [AuthController],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => ClientsModule),
     forwardRef(() => ConfirmModule),
+    forwardRef(() => GrantsModule),
+    forwardRef(() => MailModule),
     forwardRef(() => PostsModule),
     forwardRef(() => RolesModule),
     forwardRef(() => SessionsModule),
@@ -55,6 +68,15 @@ import { RestorePrepareAuthService } from '@src/auth/service/restorePrepare.auth
     RegisterAuthService,
     RestoreAuthService,
     RestorePrepareAuthService,
+
+    AuthFormsService,
+    ChangeFormsService,
+    ConfirmFormsService,
+    HelpersFormsService,
+    LoginFormsService,
+    LogoutFormsService,
+    RegisterFormsService,
+    RestoreFormsService,
   ],
   exports: [
     AuthService,

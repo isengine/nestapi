@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
-import { HelpersFormsService } from '@src/forms/service/helpers.forms.service';
+import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
 
 @Injectable()
-export class LogoutFormsService {
+export class ConfirmFormsService {
   constructor(
     private readonly authService: AuthService,
     private readonly helpersService: HelpersFormsService,
   ) {}
+  
+  async confirm(req, res): Promise<void> {
+    const { body } = req;
+    const {
+      code = '',
+    } = body;
 
-  async logout(req, res): Promise<void> {
-    let error;
+    let error = {
+      error: 'Bad request',
+      message: 'Invalid confirm code',
+    };
 
-    const result = await this.authService.logout(req)
+    const result = await this.authService.confirm(code)
       .catch((e) => {
         error = e?.response;
       });
@@ -21,7 +29,7 @@ export class LogoutFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const uri = '/forms/auth.html';
+    const uri = '/forms/confirm_complete.html';
     return await this.helpersService.query(req, res, uri);
   }
 }
