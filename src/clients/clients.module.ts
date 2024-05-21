@@ -8,7 +8,7 @@ import { ClientsResolver } from '@src/clients/clients.resolver';
 import { ConfigModule } from '@nestjs/config';
 import { TokenModule } from '@src/token/token.module';
 // import { AuthModule } from '@src/auth/auth.module';
-import { RedirectsModule } from '@src/redirects/redirects.module';
+import { ClientsRedirectsModule } from '@src/clients_redirects/clients_redirects.module';
 
 @Module({
   controllers: [
@@ -17,7 +17,7 @@ import { RedirectsModule } from '@src/redirects/redirects.module';
   imports: [
     TypeOrmModule.forFeature([ClientsEntity]),
     // forwardRef(() => AuthModule),
-    forwardRef(() => RedirectsModule),
+    forwardRef(() => ClientsRedirectsModule),
     forwardRef(() => TokenModule),
     ConfigModule,
   ],

@@ -1,10 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '@src/auth/auth.module';
+import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
 import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { StrategiesService } from '@src/strategies/strategies.service';
 import { StrategiesController } from '@src/strategies/strategies.controller';
-import { SessionsModule } from '@src/sessions/sessions.module';
 import { TokenModule } from '@src/token/token.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '@src/users/users.module';
@@ -19,7 +19,7 @@ import { LeaderStrategiesProvider } from '@src/strategies/provider/leader.strate
   imports: [
     TypeOrmModule.forFeature([StrategiesEntity]),
     forwardRef(() => AuthModule),
-    forwardRef(() => SessionsModule),
+    forwardRef(() => AuthSessionsModule),
     forwardRef(() => TokenModule),
     forwardRef(() => UsersModule),
     ConfigModule,

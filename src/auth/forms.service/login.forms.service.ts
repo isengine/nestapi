@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { TokenService } from '@src/token/token.service';
 import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
 import { TypeGrants } from '@src/common/common.enum';
-import { GrantsService } from '@src/grants/grants.service';
+import { TokenGrantsService } from '@src/token_grants/token_grants.service';
 
 @Injectable()
 export class LoginFormsService {
@@ -15,7 +15,7 @@ export class LoginFormsService {
 
   constructor(
     private readonly tokenService: TokenService,
-    private readonly grantsService: GrantsService,
+    private readonly tokenGrantsService: TokenGrantsService,
     private readonly helpersService: HelpersFormsService,
   ) {}
 
@@ -63,7 +63,7 @@ export class LoginFormsService {
   }
 
   async setToken(username, password): Promise<void> {
-    this.token = await this.grantsService.password({
+    this.token = await this.tokenGrantsService.password({
       grant_type: TypeGrants.PASSWORD,
       username,
       password,

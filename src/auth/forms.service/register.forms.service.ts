@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
-import { ConfirmService } from '@src/confirm/confirm.service';
+import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { MailService } from '@src/mail/mail.service';
 import { TokenService } from '@src/token/token.service';
 import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
@@ -9,7 +9,7 @@ import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.servi
 export class RegisterFormsService {
   constructor(
     private readonly authService: AuthService,
-    private readonly confirmService: ConfirmService,
+    private readonly authConfirmService: AuthConfirmService,
     private readonly mailService: MailService,
     private readonly tokenService: TokenService,
     private readonly helpersService: HelpersFormsService,
@@ -39,12 +39,12 @@ export class RegisterFormsService {
 
     const token = await this.tokenService.pair({ id: auth.id });
     // if (request) {
-    //   await this.sessionsService.createSession(auth, token, request);
+    //   await this.authSessionsService.start(auth, token, request);
     // }
 
     // закомментируйте строки ниже, если пользователь будет сразу же активирован
-    // используйте confirmGenerate чтобы генерировать код из цифр
-    const confirm = await this.confirmService.confirmCreate(auth);
+    // используйте generate чтобы генерировать код из цифр
+    const confirm = await this.authConfirmService.create(auth);
 
     await this.mailService.sendTemplate(
       {

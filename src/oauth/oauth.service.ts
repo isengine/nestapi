@@ -3,8 +3,8 @@ import { OAuthDto } from '@src/oauth/oauth.dto';
 import { ClientsDto } from '@src/clients/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { CodeOAuthService } from '@src/oauth/service/code.oauth.service';
-import { CodeGenerateOAuthService } from '@src/oauth/service/codeGenerate.oauth.service';
-import { CodeVerifyOAuthService } from '@src/oauth/service/codeVerify.oauth.service';
+import { CodeGenerateOAuthService } from '@src/oauth/service/code_generate.oauth.service';
+import { CodeVerifyOAuthService } from '@src/oauth/service/code_verify.oauth.service';
 import { TokenOAuthService } from '@src/oauth/service/token.oauth.service';
 import { VerifyOAuthService } from '@src/oauth/service/verify.oauth.service';
 

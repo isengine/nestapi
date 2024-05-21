@@ -8,8 +8,8 @@ import {
   JoinTable,
 } from 'typeorm';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
-import { CategoriesEntity } from '@src/categories/categories.entity';
-import { TagsEntity } from '@src/tags/tags.entity';
+import { PostsCategoriesEntity } from '@src/posts_categories/posts_categories.entity';
+import { PostsTagsEntity } from '@src/posts_tags/posts_tags.entity';
 
 @ObjectType()
 @Entity({ name: 'posts' })
@@ -47,22 +47,22 @@ export class PostsEntity extends ProtectedEntity {
   })
   isPublished: boolean;
 
-  @Field(() => CategoriesEntity, { nullable: true })
-  @ManyToOne(() => CategoriesEntity, (category) => category.posts, {
+  @Field(() => PostsCategoriesEntity, { nullable: true })
+  @ManyToOne(() => PostsCategoriesEntity, (category) => category.posts, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
-  category: CategoriesEntity;
+  @JoinColumn({ name: 'posts_category_id', referencedColumnName: 'id' })
+  category: PostsCategoriesEntity;
 
-  @Field(() => [TagsEntity], { nullable: true })
-  @ManyToMany(() => TagsEntity, (tag) => tag.posts, {
+  @Field(() => [PostsTagsEntity], { nullable: true })
+  @ManyToMany(() => PostsTagsEntity, (tag) => tag.posts, {
     cascade: true,
     eager: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinTable({ name: 'posts_by_tags' })
-  tags: TagsEntity[];
+  @JoinTable({ name: 'posts_by_posts_tags' })
+  tags: PostsTagsEntity[];
 }

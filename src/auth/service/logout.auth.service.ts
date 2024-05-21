@@ -1,10 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { SessionsService } from '@src/sessions/sessions.service';
+import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
 
 @Injectable()
 export class LogoutAuthService {
   constructor(
-    protected readonly sessionsService: SessionsService,
+    protected readonly authSessionsService: AuthSessionsService,
   ) {}
 
   async logout(request: any = null): Promise<boolean> {
@@ -12,7 +12,7 @@ export class LogoutAuthService {
       return false;
     }
     try {
-      await this.sessionsService.destroySession(request?.user, request);
+      await this.authSessionsService.destroy(request?.user, request);
     } catch {
       throw new UnauthorizedException('Session does not exist!');
     }

@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { compare } from 'bcryptjs';
 import { AuthDto } from '@src/auth/auth.dto';
 import { AuthEntity } from '@src/auth/auth.entity';
-import { FindByUsernameAuthService } from '@src/auth/service/findByUsername.auth.service';
+import { FindByUsernameAuthService } from '@src/auth/service/find_by_username.auth.service';
 
 @Injectable()
 export class LoginAuthService {

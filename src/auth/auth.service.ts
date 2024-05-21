@@ -9,12 +9,12 @@ import { RelationsDto } from '@src/common/dto/relations.dto';
 
 import { ConfirmAuthService } from '@src/auth/service/confirm.auth.service';
 import { CreateAuthService } from '@src/auth/service/create.auth.service';
-import { FindByUsernameAuthService } from '@src/auth/service/findByUsername.auth.service';
+import { FindByUsernameAuthService } from '@src/auth/service/find_by_username.auth.service';
 import { LoginAuthService } from '@src/auth/service/login.auth.service';
 import { LogoutAuthService } from '@src/auth/service/logout.auth.service';
 import { RegisterAuthService } from '@src/auth/service/register.auth.service';
 import { RestoreAuthService } from '@src/auth/service/restore.auth.service';
-import { RestorePrepareAuthService } from '@src/auth/service/restorePrepare.auth.service';
+import { RestorePrepareAuthService } from '@src/auth/service/restore_prepare.auth.service';
 
 @Injectable()
 export class AuthService extends CommonService<

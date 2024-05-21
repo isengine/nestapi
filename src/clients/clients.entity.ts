@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { TypeClients } from '@src/common/common.enum';
-import { RedirectsEntity } from '@src/redirects/redirects.entity';
+import { ClientsRedirectsEntity } from '@src/clients_redirects/clients_redirects.entity';
 
 @ObjectType()
 @Entity({ name: 'clients' })
@@ -98,10 +98,10 @@ export class ClientsEntity extends ProtectedEntity {
   })
   isPublished: boolean;
 
-  @Field(() => [RedirectsEntity], { nullable: true })
-  @OneToMany(() => RedirectsEntity, (redirect) => redirect.client, {
+  @Field(() => [ClientsRedirectsEntity], { nullable: true })
+  @OneToMany(() => ClientsRedirectsEntity, (redirect) => redirect.client, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  redirects: RedirectsEntity[];
+  redirects: ClientsRedirectsEntity[];
 }

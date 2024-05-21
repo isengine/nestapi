@@ -1,8 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProtectedDto } from '@src/common/dto/protected.dto';
-import { TagsDto } from '@src/tags/tags.dto';
-import { CategoriesDto } from '@src/categories/categories.dto';
+import { PostsTagsDto } from '@src/posts_tags/posts_tags.dto';
+import { PostsCategoriesDto } from '@src/posts_categories/posts_categories.dto';
 
 @InputType()
 export class PostsDto extends ProtectedDto {
@@ -38,13 +38,13 @@ export class PostsDto extends ProtectedDto {
     required: false,
     description: 'Данные категории, связанной с данной записью',
   })
-  @Field(() => CategoriesDto, { nullable: true })
-  category?: CategoriesDto;
+  @Field(() => PostsCategoriesDto, { nullable: true })
+  category?: PostsCategoriesDto;
 
   @ApiProperty({
     required: false,
     description: 'Данные тегов, связанных с данной записью',
   })
-  @Field(() => [TagsDto], { nullable: true })
-  tags?: TagsDto[];
+  @Field(() => [PostsTagsDto], { nullable: true })
+  tags?: PostsTagsDto[];
 }

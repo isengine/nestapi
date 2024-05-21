@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { AuthDto } from '@src/auth/auth.dto';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthFilter } from '@src/auth/auth.filter';
-import { ConfirmService } from '@src/confirm/confirm.service';
+import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { CommonService } from '@src/common/common.service';
 
 @Injectable()
@@ -16,13 +16,13 @@ export class ConfirmAuthService extends CommonService<
   constructor(
     @InjectRepository(AuthEntity)
     protected readonly repository: Repository<AuthEntity>,
-    protected readonly confirmService: ConfirmService,
+    protected readonly authConfirmService: AuthConfirmService,
   ) {
     super();
   }
 
   async confirm(code: string): Promise<boolean> {
-    const confirm = await this.confirmService.confirmValidate(code);
+    const confirm = await this.authConfirmService.validate(code);
     if (confirm) {
       const { auth } = confirm;
       await super.update(auth.id, {

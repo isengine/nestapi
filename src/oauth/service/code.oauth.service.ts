@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ClientsDto } from '@src/clients/clients.dto';
-import { CodeGenerateOAuthService } from '@src/oauth/service/codeGenerate.oauth.service';
+import { CodeGenerateOAuthService } from '@src/oauth/service/code_generate.oauth.service';
 
 @Injectable()
 export class CodeOAuthService {

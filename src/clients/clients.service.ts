@@ -7,7 +7,7 @@ import { ClientsDto } from '@src/clients/clients.dto';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { ClientsFilter } from '@src/clients/clients.filter';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { RedirectsService } from '@src/redirects/redirects.service';
+import { ClientsRedirectsService } from '@src/clients_redirects/clients_redirects.service';
 import { TokenService } from '@src/token/token.service';
 import { CommonService } from '@src/common/common.service';
 
@@ -21,7 +21,7 @@ export class ClientsService extends CommonService<
   constructor(
     @InjectRepository(ClientsEntity)
     protected readonly repository: Repository<ClientsEntity>,
-    protected readonly redirectsService: RedirectsService,
+    protected readonly clientsRedirectsService: ClientsRedirectsService,
     protected readonly tokenService: TokenService,
   ) {
     super();
@@ -52,7 +52,7 @@ export class ClientsService extends CommonService<
       throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
     }
     if (clientsDto.redirect_uri) {
-      await this.redirectsService.create({
+      await this.clientsRedirectsService.create({
         client: {
           id: client.id,
         },

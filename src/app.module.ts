@@ -9,24 +9,26 @@ import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
 import { AuthModule } from '@src/auth/auth.module';
-import { CategoriesModule } from '@src/categories/categories.module';
+import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
+import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
 import { ClientsModule } from '@src/clients/clients.module';
-import { ConfirmModule } from '@src/confirm/confirm.module';
+import { ClientsRedirectsModule } from '@src/clients_redirects/clients_redirects.module';
 import { FilesModule } from '@src/files/files.module';
 import { FormsModule } from '@src/forms/forms.module';
-import { GrantsModule } from '@src/grants/grants.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PersonsModule } from '@src/persons/persons.module';
 import { PostsModule } from '@src/posts/posts.module';
+import { PostsCategoriesModule } from '@src/posts_categories/posts_categories.module';
+import { PostsTagsModule } from '@src/posts_tags/posts_tags.module';
 import { RandomModule } from '@src/random/random.module';
-import { RedirectsModule } from '@src/redirects/redirects.module';
 import { RolesModule } from '@src/roles/roles.module';
 import { RoomsModule } from '@src/rooms/rooms.module';
-import { SessionsModule } from '@src/sessions/sessions.module';
+import { SettingsModule } from '@src/settings/settings.module';
+import { SettingsGroupsModule } from '@src/settings_groups/settings_groups.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
 import { StrategiesModule } from '@src/strategies/strategies.module';
-import { TagsModule } from '@src/tags/tags.module';
 import { TokenModule } from '@src/token/token.module';
+import { TokenGrantsModule } from '@src/token_grants/token_grants.module';
 import { UsersModule } from '@src/users/users.module';
 
 @Module({
@@ -48,24 +50,26 @@ import { UsersModule } from '@src/users/users.module';
       : NogqlModule,
     PassportModule.register({ session: true }),
     AuthModule,
-    CategoriesModule,
+    AuthConfirmModule,
+    AuthSessionsModule,
     ClientsModule,
-    ConfirmModule,
+    ClientsRedirectsModule,
     FilesModule,
     FormsModule,
-    GrantsModule,
     MailModule,
     PersonsModule,
     PostsModule,
+    PostsCategoriesModule,
+    PostsTagsModule,
     RandomModule,
-    RedirectsModule,
     RolesModule,
     RoomsModule,
-    SessionsModule,
+    SettingsModule,
+    SettingsGroupsModule,
     SocketsModule,
     StrategiesModule,
-    TagsModule,
     TokenModule,
+    TokenGrantsModule,
     UsersModule,
   ],
   providers: [AppService],

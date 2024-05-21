@@ -1,5 +1,17 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+export enum TypeValues {
+  DEFAULT = '',
+  BOOLEAN = 'boolean',
+  JSON = 'json',
+  NUMBER = 'number',
+  STRING = 'string',
+}
+
+registerEnumType(TypeValues, {
+  name: 'TypeValues',
+});
+
 export enum TypeGenders {
   DEFAULT = '',
   MAN = 'm',

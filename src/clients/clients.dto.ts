@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from "@nestjs/swagger";
 import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { TypeClients } from '@src/common/common.enum';
-import { RedirectsDto } from '@src/redirects/redirects.dto';
+import { ClientsRedirectsDto } from '@src/clients_redirects/clients_redirects.dto';
 
 @InputType()
 export class ClientsDto extends ProtectedDto {
@@ -90,6 +90,6 @@ export class ClientsDto extends ProtectedDto {
     required: false,
     description: 'Данные редиректов, связанных с этим клиентским приложением',
   })
-  @Field(() => [RedirectsDto], { nullable: true })
-  redirects?: RedirectsDto[];
+  @Field(() => [ClientsRedirectsDto], { nullable: true })
+  redirects?: ClientsRedirectsDto[];
 }

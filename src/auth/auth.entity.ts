@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
 import { CommonEntity } from '@src/common/common.entity';
-import { SessionsEntity } from '@src/sessions/sessions.entity';
+import { AuthSessionsEntity } from '@src/auth_sessions/auth_sessions.entity';
 import { StrategiesEntity } from '@src/strategies/strategies.entity';
-import { ConfirmEntity } from '@src/confirm/confirm.entity';
+import { AuthConfirmEntity } from '@src/auth_confirm/auth_confirm.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { RolesEntity } from '@src/roles/roles.entity';
 import { SocketsEntity } from '@src/sockets/sockets.entity';
@@ -33,12 +33,12 @@ export class AuthEntity extends CommonEntity {
   @Column({ default: false, name: 'is_superuser' })
   isSuperuser: boolean;
 
-  @OneToMany(() => SessionsEntity, (session) => session.auth, {
+  @OneToMany(() => AuthSessionsEntity, (session) => session.auth, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  sessions: SessionsEntity[];
+  sessions: AuthSessionsEntity[];
 
   @OneToMany(() => StrategiesEntity, (strategy) => strategy.auth, {
     cascade: true,
@@ -47,12 +47,12 @@ export class AuthEntity extends CommonEntity {
   })
   strategies: StrategiesEntity[];
 
-  @OneToMany(() => ConfirmEntity, (confirm) => confirm.auth, {
+  @OneToMany(() => AuthConfirmEntity, (confirm) => confirm.auth, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  confirm: ConfirmEntity[];
+  confirm: AuthConfirmEntity[];
 
   @OneToMany(() => ClientsEntity, (clients) => clients.auth, {
     cascade: true,

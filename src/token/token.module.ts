@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getJwtConfig } from '@src/config/jwt.config';
 import { ClientsModule } from '@src/clients/clients.module';
-import { GrantsModule } from '@src/grants/grants.module';
+import { TokenGrantsModule } from '@src/token_grants/token_grants.module';
 import { OneTokenService } from '@src/token/service/one.token.service';
 import { PairTokenService } from '@src/token/service/pair.token.service';
 import { PrepareTokenService } from '@src/token/service/prepare.token.service';
@@ -23,7 +23,7 @@ import { VerifyTokenService } from '@src/token/service/verify.token.service';
       useFactory: getJwtConfig,
     }),
     forwardRef(() => ClientsModule),
-    forwardRef(() => GrantsModule),
+    forwardRef(() => TokenGrantsModule),
   ],
   providers: [
     TokenService,

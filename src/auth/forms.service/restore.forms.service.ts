@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
-import { ConfirmService } from '@src/confirm/confirm.service';
+import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { MailService } from '@src/mail/mail.service';
 import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
 
@@ -8,7 +8,7 @@ import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.servi
 export class RestoreFormsService {
   constructor(
     private readonly authService: AuthService,
-    private readonly confirmService: ConfirmService,
+    private readonly authConfirmService: AuthConfirmService,
     private readonly mailService: MailService,
     private readonly helpersService: HelpersFormsService,
   ) {}
@@ -36,7 +36,7 @@ export class RestoreFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const { code = undefined } = await this.confirmService.confirmFindByUsername(
+    const { code = undefined } = await this.authConfirmService.findByUsername(
       username,
       'restore',
     );
