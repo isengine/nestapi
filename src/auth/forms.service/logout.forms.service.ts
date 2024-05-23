@@ -21,7 +21,7 @@ export class LogoutFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const uri = '/forms/auth.html';
+    const uri = '/auth/auth.html';
     return await this.helpersService.query(req, res, uri);
   }
 }

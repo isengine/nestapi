@@ -7,7 +7,7 @@ import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
 import { AuthSessionsEntity } from '@src/auth_sessions/auth_sessions.entity';
 import { AuthSessionsFilter } from '@src/auth_sessions/auth_sessions.filter';
 
-@Controller('auth_sessions')
+@Controller('auth/sessions')
 export class AuthSessionsController extends CommonController(
   'Сессии',
   AuthSessionsEntity,

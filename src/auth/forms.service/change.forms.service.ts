@@ -31,7 +31,7 @@ export class ChangeFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const uri = '/forms/change_complete.html';
+    const uri = '/auth/change_complete.html';
     return await this.helpersService.query(req, res, uri);
   }
 }

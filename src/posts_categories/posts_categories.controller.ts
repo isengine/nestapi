@@ -5,7 +5,7 @@ import { ClosedController } from '@src/common/controller/closed.controller';
 import { PostsCategoriesEntity } from '@src/posts_categories/posts_categories.entity';
 import { PostsCategoriesFilter } from '@src/posts_categories/posts_categories.filter';
 
-@Controller('posts_categories')
+@Controller('posts/categories')
 export class PostsCategoriesController extends ClosedController(
   'Категории постов',
   PostsCategoriesEntity,

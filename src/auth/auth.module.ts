@@ -3,6 +3,8 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthController } from '@src/auth/auth.controller';
+import { FormsAuthController } from '@src/auth/controller/forms.auth.controller';
+
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthStrategy } from '@src/auth/auth.strategy';
@@ -39,7 +41,10 @@ import { RegisterFormsService } from '@src/auth/forms.service/register.forms.ser
 import { RestoreFormsService } from '@src/auth/forms.service/restore.forms.service';
 
 @Module({
-  controllers: [AuthController],
+  controllers: [
+    AuthController,
+    FormsAuthController,
+  ],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => AuthConfirmModule),

@@ -55,7 +55,7 @@ export class RegisterFormsService {
       {
       },
       {
-        url: `/forms/confirm.html?code=${confirm.code}`,
+        url: `/auth/confirm.html?code=${confirm.code}`,
       },
     );
 

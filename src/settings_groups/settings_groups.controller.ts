@@ -5,7 +5,7 @@ import { ClosedController } from '@src/common/controller/closed.controller';
 import { SettingsGroupsEntity } from '@src/settings_groups/settings_groups.entity';
 import { SettingsGroupsFilter } from '@src/settings_groups/settings_groups.filter';
 
-@Controller('settings_groups')
+@Controller('settings/groups')
 export class SettingsGroupsController extends ClosedController(
   'Группы настроек',
   SettingsGroupsEntity,

@@ -5,7 +5,7 @@ import { ClosedController } from '@src/common/controller/closed.controller';
 import { PostsTagsEntity } from '@src/posts_tags/posts_tags.entity';
 import { PostsTagsFilter } from '@src/posts_tags/posts_tags.filter';
 
-@Controller('posts_tags')
+@Controller('posts/tags')
 export class PostsTagsController extends ClosedController(
   'Теги постов',
   PostsTagsEntity,

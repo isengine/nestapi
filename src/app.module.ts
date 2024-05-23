@@ -10,7 +10,6 @@ import { AppService } from '@src/app.service';
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
 import { AuthModule } from '@src/auth/auth.module';
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
-import { AuthFormsModule } from '@src/auth_forms/auth_forms.module';
 import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
 import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
 import { ClientsModule } from '@src/clients/clients.module';
@@ -51,7 +50,6 @@ import { UsersModule } from '@src/users/users.module';
     PassportModule.register({ session: true }),
     AuthModule,
     AuthConfirmModule,
-    AuthFormsModule,
     AuthRolesModule,
     AuthSessionsModule,
     ClientsModule,

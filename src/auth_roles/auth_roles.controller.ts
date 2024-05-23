@@ -7,7 +7,7 @@ import { ProtectedController } from '@src/common/controller/protected.controller
 import { AuthRolesEntity } from '@src/auth_roles/auth_roles.entity';
 import { AuthRolesFilter } from '@src/auth_roles/auth_roles.filter';
 
-@Controller('auth_roles')
+@Controller('auth/roles')
 export class AuthRolesController extends ProtectedController(
   'Роли и права пользователей',
   AuthRolesEntity,

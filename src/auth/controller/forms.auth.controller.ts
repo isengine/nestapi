@@ -2,8 +2,8 @@ import { Controller, Get, Render, Req } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
 
 @ApiExcludeController()
-@Controller('auth_forms')
-export class AuthFormsController {
+@Controller('auth')
+export class FormsAuthController {
   constructor(
   ) {}
 

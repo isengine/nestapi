@@ -32,7 +32,7 @@ export class OAuthController {
     const client = await this.oauthService.verify(oauthDto);
     const idCookie = req.cookies['id'];
     if (!idCookie) {
-      const uri = '/auth_forms/auth.html';
+      const uri = '/auth/auth.html';
       const queries = Object.entries(oauthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');
       return await res.redirect(`${uri}?${queries}`);
     }

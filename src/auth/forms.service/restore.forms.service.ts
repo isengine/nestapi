@@ -54,11 +54,11 @@ export class RestoreFormsService {
       {
       },
       {
-        url: `/forms/change.html?code=${code}`,
+        url: `/auth/change.html?code=${code}`,
       },
     );
 
-    const uri = '/forms/restore_complete.html';
+    const uri = '/auth/restore_complete.html';
     return await this.helpersService.query(req, res, uri);
   }
 }

@@ -29,7 +29,7 @@ export class ConfirmFormsService {
       return await this.helpersService.redirect(req, res, error);
     }
 
-    const uri = '/forms/confirm_complete.html';
+    const uri = '/auth/confirm_complete.html';
     return await this.helpersService.query(req, res, uri);
   }
 }
