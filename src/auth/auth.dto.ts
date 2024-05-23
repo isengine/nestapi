@@ -5,7 +5,7 @@ import { IsEmail, IsString, MinLength } from 'class-validator';
 // import { AuthRolesDto } from '@src/auth_roles/auth_roles.dto';
 // import { ClientsDto } from '@src/clients/clients.dto';
 // import { TokenDto } from '@src/token/token.dto';
-// import { StrategiesDto } from '@src/strategies/strategies.dto';
+// import { AuthStrategiesDto } from '@src/auth_strategies/auth_strategies.dto';
 
 @InputType()
 export class AuthDto extends CommonDto {
@@ -62,5 +62,5 @@ export class AuthDto extends CommonDto {
   //   description: 'Данные записи strategies',
   // })
   // @Field({ nullable: true })
-  // strategies?: StrategiesDto;
+  // strategies?: AuthStrategiesDto;
 }

@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { CommonEntity } from '@src/common/common.entity';
-import { AuthSessionsEntity } from '@src/auth_sessions/auth_sessions.entity';
-import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { AuthConfirmEntity } from '@src/auth_confirm/auth_confirm.entity';
 import { AuthRolesEntity } from '@src/auth_roles/auth_roles.entity';
+import { AuthSessionsEntity } from '@src/auth_sessions/auth_sessions.entity';
+import { AuthStrategiesEntity } from '@src/auth_strategies/auth_strategies.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
 import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { PostsEntity } from '@src/posts/posts.entity';
@@ -40,12 +40,12 @@ export class AuthEntity extends CommonEntity {
   })
   sessions: AuthSessionsEntity[];
 
-  @OneToMany(() => StrategiesEntity, (strategy) => strategy.auth, {
+  @OneToMany(() => AuthStrategiesEntity, (strategy) => strategy.auth, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  strategies: StrategiesEntity[];
+  strategies: AuthStrategiesEntity[];
 
   @OneToMany(() => AuthConfirmEntity, (confirm) => confirm.auth, {
     cascade: true,

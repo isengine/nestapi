@@ -1,38 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { TokenDto } from '@src/token/token.dto';
-import { OneTokenService } from '@src/token/service/one.token.service';
-import { PairTokenService } from '@src/token/service/pair.token.service';
-import { PrepareTokenService } from '@src/token/service/prepare.token.service';
-import { RefreshTokenService } from '@src/token/service/refresh.token.service';
-import { VerifyTokenService } from '@src/token/service/verify.token.service';
+
+import { OneHandler } from '@src/token/handler/one.handler';
+import { PairHandler } from '@src/token/handler/pair.handler';
+import { PrepareHandler } from '@src/token/handler/prepare.handler';
+import { RefreshHandler } from '@src/token/handler/refresh.handler';
+import { VerifyHandler } from '@src/token/handler/verify.handler';
 
 @Injectable()
 export class TokenService {
   constructor(
-    private readonly oneTokenService: OneTokenService,
-    private readonly pairTokenService: PairTokenService,
-    private readonly prepareTokenService: PrepareTokenService,
-    private readonly refreshTokenService: RefreshTokenService,
-    private readonly verifyTokenService: VerifyTokenService,
+    private readonly oneHandler: OneHandler,
+    private readonly pairHandler: PairHandler,
+    private readonly prepareHandler: PrepareHandler,
+    private readonly refreshHandler: RefreshHandler,
+    private readonly verifyHandler: VerifyHandler,
   ) {}
 
   async one(data, configKey): Promise<any> {
-    return await this.oneTokenService.one(data, configKey);
+    return await this.oneHandler.one(data, configKey);
   }
 
   async pair(data): Promise<any> {
-    return await this.pairTokenService.pair(data);
+    return await this.pairHandler.pair(data);
   }
 
   async prepare(token: TokenDto, state: any): Promise<any> {
-    return await this.prepareTokenService.prepare(token, state);
+    return await this.prepareHandler.prepare(token, state);
   }
   
   async refresh(refresh_token: string, callback = null): Promise<any> {
-    return await this.refreshTokenService.refresh(refresh_token, callback);
+    return await this.refreshHandler.refresh(refresh_token, callback);
   }
 
   async verify(token: string, type: string): Promise<any> {
-    return await this.verifyTokenService.verify(token, type);
+    return await this.verifyHandler.verify(token, type);
   }
 }

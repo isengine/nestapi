@@ -9,8 +9,8 @@ import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
+import { AuthStrategiesModule } from '@src/auth_strategies/auth_strategies.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
-import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TokenModule } from '@src/token/token.module';
 import { UsersModule } from '@src/users/users.module';
 
@@ -25,9 +25,9 @@ import { VerifyOAuthService } from '@src/oauth/service/verify.oauth.service';
   imports: [
     forwardRef(() => AuthConfirmModule),
     forwardRef(() => AuthSessionsModule),
+    forwardRef(() => AuthStrategiesModule),
     forwardRef(() => ClientsModule),
     forwardRef(() => PostsModule),
-    forwardRef(() => StrategiesModule),
     forwardRef(() => SocketsModule),
     forwardRef(() => TokenModule),
     forwardRef(() => UsersModule),

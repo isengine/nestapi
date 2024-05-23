@@ -2,61 +2,64 @@ import { ConfigModule } from '@nestjs/config';
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthController } from '@src/auth/auth.controller';
-import { FormsAuthController } from '@src/auth/controller/forms.auth.controller';
-
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthStrategy } from '@src/auth/auth.strategy';
 import { AuthResolver } from '@src/auth/auth.resolver';
 
+import { AuthController } from '@src/auth/auth.controller';
+import { FormsAuthController } from '@src/auth/controller/forms.auth.controller';
+import { MethodsAuthController } from '@src/auth/controller/methods.auth.controller';
+import { RenderAuthController } from '@src/auth/controller/render.auth.controller';
+
+import { FormsAuthService } from '@src/auth/service/forms.auth.service';
+import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
+
+import { ChangeMethodsHandler } from '@src/auth/handler/methods/change.methods.handler';
+// ChangeMethodsHandler = бывший RestoreMethodsHandler
+import { ConfirmMethodsHandler } from '@src/auth/handler/methods/confirm.methods.handler';
+import { LoginMethodsHandler } from '@src/auth/handler/methods/login.methods.handler';
+import { LogoutMethodsHandler } from '@src/auth/handler/methods/logout.methods.handler';
+import { RegisterMethodsHandler } from '@src/auth/handler/methods/register.methods.handler';
+import { RestoreMethodsHandler } from '@src/auth/handler/methods/restore.methods.handler';
+// RestoreMethodsHandler = бывший RestorePrepareMethodsHandler
+
+import { ChangeFormsHandler } from '@src/auth/handler/forms/change.forms.handler';
+import { ConfirmFormsHandler } from '@src/auth/handler/forms/confirm.forms.handler';
+import { LoginFormsHandler } from '@src/auth/handler/forms/login.forms.handler';
+import { LogoutFormsHandler } from '@src/auth/handler/forms/logout.forms.handler';
+import { RegisterFormsHandler } from '@src/auth/handler/forms/register.forms.handler';
+import { RestoreFormsHandler } from '@src/auth/handler/forms/restore.forms.handler';
+
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
 import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
 import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
+import { AuthStrategiesModule } from '@src/auth_strategies/auth_strategies.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
-import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TokenModule } from '@src/token/token.module';
-import { TokenGrantsModule } from '@src/token_grants/token_grants.module';
 import { UsersModule } from '@src/users/users.module';
-
-import { ConfirmAuthService } from '@src/auth/service/confirm.auth.service';
-import { CreateAuthService } from '@src/auth/service/create.auth.service';
-import { FindByUsernameAuthService } from '@src/auth/service/find_by_username.auth.service';
-import { LoginAuthService } from '@src/auth/service/login.auth.service';
-import { LogoutAuthService } from '@src/auth/service/logout.auth.service';
-import { RegisterAuthService } from '@src/auth/service/register.auth.service';
-import { RestoreAuthService } from '@src/auth/service/restore.auth.service';
-import { RestorePrepareAuthService } from '@src/auth/service/restore_prepare.auth.service';
-
-import { AuthFormsService } from '@src/auth/forms.service';
-import { ChangeFormsService } from '@src/auth/forms.service/change.forms.service';
-import { ConfirmFormsService } from '@src/auth/forms.service/confirm.forms.service';
-import { HelpersFormsService } from '@src/auth/forms.service/helpers.forms.service';
-import { LoginFormsService } from '@src/auth/forms.service/login.forms.service';
-import { LogoutFormsService } from '@src/auth/forms.service/logout.forms.service';
-import { RegisterFormsService } from '@src/auth/forms.service/register.forms.service';
-import { RestoreFormsService } from '@src/auth/forms.service/restore.forms.service';
 
 @Module({
   controllers: [
     AuthController,
     FormsAuthController,
+    MethodsAuthController,
+    RenderAuthController,
   ],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => AuthConfirmModule),
     forwardRef(() => AuthRolesModule),
     forwardRef(() => AuthSessionsModule),
+    forwardRef(() => AuthStrategiesModule),
     forwardRef(() => ClientsModule),
     forwardRef(() => MailModule),
     forwardRef(() => PostsModule),
-    forwardRef(() => StrategiesModule),
     forwardRef(() => SocketsModule),
     forwardRef(() => TokenModule),
-    forwardRef(() => TokenGrantsModule),
     forwardRef(() => UsersModule),
     ConfigModule,
   ],
@@ -64,27 +67,27 @@ import { RestoreFormsService } from '@src/auth/forms.service/restore.forms.servi
     AuthService,
     AuthStrategy,
     AuthResolver,
+    FormsAuthService,
+    MethodsAuthService,
 
-    ConfirmAuthService,
-    CreateAuthService,
-    FindByUsernameAuthService,
-    LoginAuthService,
-    LogoutAuthService,
-    RegisterAuthService,
-    RestoreAuthService,
-    RestorePrepareAuthService,
+    ChangeMethodsHandler,
+    ConfirmMethodsHandler,
+    LoginMethodsHandler,
+    LogoutMethodsHandler,
+    RegisterMethodsHandler,
+    RestoreMethodsHandler,
 
-    AuthFormsService,
-    ChangeFormsService,
-    ConfirmFormsService,
-    HelpersFormsService,
-    LoginFormsService,
-    LogoutFormsService,
-    RegisterFormsService,
-    RestoreFormsService,
+    ChangeFormsHandler,
+    ConfirmFormsHandler,
+    LoginFormsHandler,
+    LogoutFormsHandler,
+    RegisterFormsHandler,
+    RestoreFormsHandler,
   ],
   exports: [
     AuthService,
+    FormsAuthService,
+    MethodsAuthService,
   ],
 })
 export class AuthModule {}

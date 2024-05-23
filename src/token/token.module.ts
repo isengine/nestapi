@@ -6,12 +6,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getJwtConfig } from '@src/config/jwt.config';
 import { ClientsModule } from '@src/clients/clients.module';
-import { TokenGrantsModule } from '@src/token_grants/token_grants.module';
-import { OneTokenService } from '@src/token/service/one.token.service';
-import { PairTokenService } from '@src/token/service/pair.token.service';
-import { PrepareTokenService } from '@src/token/service/prepare.token.service';
-import { RefreshTokenService } from '@src/token/service/refresh.token.service';
-import { VerifyTokenService } from '@src/token/service/verify.token.service';
+
+import { OneHandler } from '@src/token/handler/one.handler';
+import { PairHandler } from '@src/token/handler/pair.handler';
+import { PrepareHandler } from '@src/token/handler/prepare.handler';
+import { RefreshHandler } from '@src/token/handler/refresh.handler';
+import { VerifyHandler } from '@src/token/handler/verify.handler';
+import { OAuthModule } from '@src/oauth/oauth.module';
+import { GrantsTokenService } from '@src/token/service/grants.token.service';
+
+import { AuthorizationCodeGrant } from '@src/token/grant/authorization_code.grant';
+import { ClientCredentialsGrant } from '@src/token/grant/client_credentials.grant';
+import { PasswordGrant } from '@src/token/grant/password.grant';
+import { PersonCredentialsGrant } from '@src/token/grant/person_credentials.grant';
+import { RefreshTokenGrant } from '@src/token/grant/refresh_token.grant';
+import { AuthModule } from '@src/auth/auth.module';
+import { PersonsModule } from '@src/persons/persons.module';
 
 @Module({
   controllers: [TokenController],
@@ -23,19 +33,30 @@ import { VerifyTokenService } from '@src/token/service/verify.token.service';
       useFactory: getJwtConfig,
     }),
     forwardRef(() => ClientsModule),
-    forwardRef(() => TokenGrantsModule),
+    forwardRef(() => OAuthModule),
+    forwardRef(() => AuthModule),
+    forwardRef(() => PersonsModule),
   ],
   providers: [
     TokenService,
     TokenResolver,
-    OneTokenService,
-    PairTokenService,
-    PrepareTokenService,
-    RefreshTokenService,
-    VerifyTokenService,
+
+    GrantsTokenService,
+    AuthorizationCodeGrant,
+    ClientCredentialsGrant,
+    PasswordGrant,
+    PersonCredentialsGrant,
+    RefreshTokenGrant,
+
+    OneHandler,
+    PairHandler,
+    PrepareHandler,
+    RefreshHandler,
+    VerifyHandler,
   ],
   exports: [
     TokenService,
+    GrantsTokenService,
   ],
 })
 export class TokenModule {}
