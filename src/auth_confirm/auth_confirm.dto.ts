@@ -13,7 +13,7 @@ export class AuthConfirmDto extends ProtectedDto {
 
   @ApiProperty({
     required: false,
-    description: 'Тип кода: confirm - подтверждение регистрации, restore - сброс пароля',
+    description: 'Тип кода: confirm - подтверждение регистрации, reset - сброс пароля',
   })
   @Field({ nullable: true })
   type: string;

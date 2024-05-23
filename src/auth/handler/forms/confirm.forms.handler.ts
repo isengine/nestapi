@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { redirect, query } from '@src/auth/handler/forms/helpers.handler';
+import { redirect, query } from '@src/auth/handler/forms/helpers.forms.handler';
 import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
 
 @Injectable()

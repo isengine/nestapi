@@ -12,9 +12,9 @@ export class ChangeMethodsHandler {
   ) {}
 
   async change(authDto: AuthDto, code: string): Promise<boolean> {
-    const confirm = await this.authConfirmService.validate(code, 'restore');
+    const confirm = await this.authConfirmService.validate(code, 'reset');
     if (!confirm) {
-      throw new BadRequestException('Restore code is not valid');
+      throw new BadRequestException('Invalid reset code');
     }
     const { auth } = confirm;
     if (!auth || auth.username !== authDto.username) {

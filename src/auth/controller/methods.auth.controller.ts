@@ -16,123 +16,88 @@ import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { Data } from '@src/common/common.decorator';
 import { CommonDoc } from '@src/common/common.doc';
-import { FormsAuthService } from '../service/forms.auth.service';
+import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
 
 @ApiTags('Авторизация')
-@Controller('auth')
+@Controller('mauth')
 export class MethodsAuthController {
   constructor(
-    private readonly formsAuthService: FormsAuthService,
+    private readonly methodsAuthService: MethodsAuthService,
   ) {}
 
-  @Post('change')
-  @CommonDoc({
-    title: 'Смена пароля пользователя',
-    models: [],
-    params: [{
-      name: 'code',
-      required: true,
-      description: 'Код подтверждения',
-    }],
-      queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей регистрации',
-      type: '[AuthDto]',
-      example: [{ password: '...' }],
-    }],
-  })
-  async change(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
-  ) {
-    return await this.formsAuthService.change(req, res);
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('register')
+  async xregister(@Body() authDto: AuthDto) {
+    return this.methodsAuthService.register(authDto);
   }
 
-  @Post('confirm')
-  @CommonDoc({
-    title: 'Подтверждение регистрации и активация учетной записи',
-    models: [],
-    params: [{
-      name: 'code',
-      required: true,
-      description: 'Код подтверждения',
-    }],
-  })
+  @Get('confirm/:code')
   async confirm(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
+    @Param('code') code: string,
   ) {
-    return await this.formsAuthService.confirm(req, res);
-  }  
+    return this.methodsAuthService.confirm(code);
+  }
 
-  @Post('login')
-  @CommonDoc({
-    title: 'Авторизация',
-    models: [],
-    queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей авторизации',
-      type: '[AuthDto]',
-      example: { username: '...', password: '...' },
-    }],
-  })
-  async login(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
+  @Post('reset')
+  async reset(@Body() authDto: AuthDto) {
+    return this.methodsAuthService.reset(authDto);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('change/:code')
+  async change(
+    @Body() authDto: AuthDto,
+    @Param('code') code: string,
   ) {
-    return await this.formsAuthService.login(req, res);
+    return this.methodsAuthService.change(authDto, code);
   }
 
   @Auth()
+  @HttpCode(200)
   @Post('logout')
-  @CommonDoc({
-    title: 'Выход',
-    models: [],
-  })
-  async logout(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
-  ) {
-    return await this.formsAuthService.register(req, res);
+  async logout(@Req() req: any) {
+    return this.methodsAuthService.logout(req);
   }
 
+  // new
+  /*
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
   @Post('register')
-  @CommonDoc({
-    title: 'Регистрация',
-    models: [],
-    queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей регистрации',
-      type: '[AuthDto]',
-      example: { username: '...', password: '...' },
-    }],
-  })
-  async register(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
-  ) {
-    return await this.formsAuthService.register(req, res);
+  async register(@Body() authDto: AuthDto) {
+    return this.authService.register(authDto);
   }
 
-  @Post('restore')
-  @CommonDoc({
-    title: 'Запрос на смену пароля пользователя',
-    models: [],
-    queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей регистрации',
-      type: '[AuthDto]',
-      example: [{ username: '...' }],
-    }],
-  })
-  async restore(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
+  @Get('confirm/:code')
+  async confirm(
+    @Param('code') code: string,
   ) {
-    return await this.formsAuthService.restore(req, res);
+    return this.authService.confirm(code);
   }
+
+  @Post('reset')
+  async reset(@Body() authDto: AuthDto) {
+    return this.authService.reset(authDto);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('change/:code')
+  async change(
+    @Body() authDto: AuthDto,
+    @Param('code') code: string,
+  ) {
+    return this.authService.change(authDto, code);
+  }
+
+  @Auth()
+  @HttpCode(200)
+  @Post('logout')
+  async logout(@Req() req: any) {
+    return this.authService.logout(req);
+  }
+  */
 }

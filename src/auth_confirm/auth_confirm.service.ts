@@ -33,7 +33,7 @@ export class AuthConfirmService {
       },
       type,
     };
-    if (type === 'restore') {
+    if (type === 'reset') {
       const now = new Date();
       now.setHours(now.getHours() - 1);
       where.createdAt = MoreThan(now);
@@ -50,7 +50,7 @@ export class AuthConfirmService {
     type: string = 'code',
   ): Promise<AuthConfirmEntity> {
     const where: FindOptionsWhere<any> = { code, type };
-    if (type === 'restore') {
+    if (type === 'reset') {
       const now = new Date();
       now.setHours(now.getHours() - 1);
       where.createdAt = MoreThan(now);

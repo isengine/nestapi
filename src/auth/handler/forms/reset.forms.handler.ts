@@ -2,17 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
 import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { MailService } from '@src/mail/mail.service';
-import { redirect, query } from '@src/auth/handler/forms/helpers.handler';
+import { redirect, query } from '@src/auth/handler/forms/helpers.forms.handler';
 
 @Injectable()
-export class RestoreFormsHandler {
+export class ResetFormsHandler {
   constructor(
     private readonly methodsAuthService: MethodsAuthService,
     private readonly authConfirmService: AuthConfirmService,
     private readonly mailService: MailService,
   ) {}
 
-  async restore(req, res): Promise<any> {
+  async reset(req, res): Promise<any> {
     const { body } = req;
     const {
       username = '',
@@ -21,14 +21,14 @@ export class RestoreFormsHandler {
 
     let error;
 
-    const result = await this.methodsAuthService.restore({
+    const result = await this.methodsAuthService.reset({
       username,
     })
       .catch((e) => {
         error = e?.response;
       });
 
-    // console.log('-- restorePrepare...');
+    // console.log('-- reset...');
     // console.log('-- result', result);
 
     if (!result) {
@@ -37,7 +37,7 @@ export class RestoreFormsHandler {
 
     const { code = undefined } = await this.authConfirmService.findByUsername(
       username,
-      'restore',
+      'reset',
     );
 
     if (!code) {
@@ -48,7 +48,7 @@ export class RestoreFormsHandler {
       {
         to: username,
         subject: subject,
-        template: 'restore',
+        template: 'reset',
       },
       {
       },
@@ -57,7 +57,7 @@ export class RestoreFormsHandler {
       },
     );
 
-    const uri = '/auth/restore_complete.html';
+    const uri = '/auth/reset_complete.html';
     return await query(req, res, uri);
   }
 }

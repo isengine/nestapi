@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { redirect, query } from '@src/auth/handler/forms/helpers.handler';
+import { redirect, query } from '@src/auth/handler/forms/helpers.forms.handler';
 
 import { TokenService } from '@src/token/token.service';
 import { TypeGrants } from '@src/common/common.enum';

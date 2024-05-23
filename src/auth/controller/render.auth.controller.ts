@@ -61,18 +61,18 @@ export class RenderAuthController {
     };
   }
 
-  @Get('restore.html')
-  @Render('restore')
-  restoreRender(@Req() req: any) {
+  @Get('reset.html')
+  @Render('reset')
+  resetRender(@Req() req: any) {
     return {
       query: req.query,
       title: 'Сброс пароля',
     };
   }
 
-  @Get('restore_complete.html')
-  @Render('restore_complete')
-  restoreCompleteRender(@Req() req: any) {
+  @Get('reset_complete.html')
+  @Render('reset_complete')
+  resetCompleteRender(@Req() req: any) {
     return {
       query: req.query,
       title: 'Сброс пароля',

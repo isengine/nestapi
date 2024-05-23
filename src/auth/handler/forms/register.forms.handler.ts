@@ -3,7 +3,7 @@ import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
 import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { MailService } from '@src/mail/mail.service';
 import { TokenService } from '@src/token/token.service';
-import { redirect } from '@src/auth/handler/forms/helpers.handler';
+import { redirect } from '@src/auth/handler/forms/helpers.forms.handler';
 
 @Injectable()
 export class RegisterFormsHandler {

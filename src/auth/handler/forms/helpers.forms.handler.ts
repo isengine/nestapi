@@ -24,7 +24,6 @@ export async function redirect(req, res, data = undefined) {
     error: 'Bad request',
     message: 'Unknown error',
   };
-
   const backUrl = await back(req, data || error);
   return await res.redirect(backUrl);
 }

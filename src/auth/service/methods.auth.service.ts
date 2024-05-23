@@ -7,7 +7,7 @@ import { ConfirmMethodsHandler } from '@src/auth/handler/methods/confirm.methods
 import { LoginMethodsHandler } from '@src/auth/handler/methods/login.methods.handler';
 import { LogoutMethodsHandler } from '@src/auth/handler/methods/logout.methods.handler';
 import { RegisterMethodsHandler } from '@src/auth/handler/methods/register.methods.handler';
-import { RestoreMethodsHandler } from '@src/auth/handler/methods/restore.methods.handler';
+import { ResetMethodsHandler } from '@src/auth/handler/methods/reset.methods.handler';
 
 @Injectable()
 export class MethodsAuthService {
@@ -17,7 +17,7 @@ export class MethodsAuthService {
     protected readonly loginMethodsHandler: LoginMethodsHandler,
     protected readonly logoutMethodsHandler: LogoutMethodsHandler,
     protected readonly registerMethodsHandler: RegisterMethodsHandler,
-    protected readonly restoreMethodsHandler: RestoreMethodsHandler,
+    protected readonly resetMethodsHandler: ResetMethodsHandler,
   ) {}
 
   async confirm(code: string): Promise<boolean> {
@@ -40,7 +40,7 @@ export class MethodsAuthService {
     return await this.changeMethodsHandler.change(authDto, code);
   }
 
-  async restore(authDto: AuthDto): Promise<boolean> {
-    return await this.restoreMethodsHandler.restore(authDto);
+  async reset(authDto: AuthDto): Promise<boolean> {
+    return await this.resetMethodsHandler.reset(authDto);
   }
 }

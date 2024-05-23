@@ -4,7 +4,7 @@ import { ConfirmFormsHandler } from '@src/auth/handler/forms/confirm.forms.handl
 import { LoginFormsHandler } from '@src/auth/handler/forms/login.forms.handler';
 import { LogoutFormsHandler } from '@src/auth/handler/forms/logout.forms.handler';
 import { RegisterFormsHandler } from '@src/auth/handler/forms/register.forms.handler';
-import { RestoreFormsHandler } from '@src/auth/handler/forms/restore.forms.handler';
+import { ResetFormsHandler } from '@src/auth/handler/forms/reset.forms.handler';
 
 @Injectable()
 export class FormsAuthService {
@@ -14,7 +14,7 @@ export class FormsAuthService {
     private readonly loginFormsHandler: LoginFormsHandler,
     private readonly logoutFormsHandler: LogoutFormsHandler,
     private readonly registerFormsHandler: RegisterFormsHandler,
-    private readonly restoreFormsHandler: RestoreFormsHandler,
+    private readonly resetFormsHandler: ResetFormsHandler,
   ) {}
 
   async change(req, res): Promise<void> {
@@ -37,7 +37,7 @@ export class FormsAuthService {
     return await this.registerFormsHandler.register(req, res);
   }
 
-  async restore(req, res): Promise<any> {
-    return await this.restoreFormsHandler.restore(req, res);
+  async reset(req, res): Promise<any> {
+    return await this.resetFormsHandler.reset(req, res);
   }
 }
