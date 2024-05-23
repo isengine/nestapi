@@ -6,8 +6,8 @@ import { AuthService } from '@src/auth/auth.service';
 @Injectable()
 export class RestoreMethodsHandler {
   constructor(
-    protected readonly authConfirmService: AuthConfirmService,
     protected readonly authService: AuthService,
+    protected readonly authConfirmService: AuthConfirmService,
   ) {}
 
   async restore(authDto: AuthDto): Promise<boolean> {
