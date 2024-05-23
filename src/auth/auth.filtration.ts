@@ -28,6 +28,6 @@ export class Unauthorized implements ExceptionFilter {
     // console.log('-- request.session', response.req.session);
     console.log('-- request.cookies', response.req.cookies);
 
-    response.redirect(`/forms/auth.html?data=${data}`);
+    response.redirect(`/auth_forms/auth.html?data=${data}`);
   }
 }

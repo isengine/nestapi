@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column } from 'typeorm';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
-import { RolesTypes } from '@src/roles/roles.enum';
+import { AuthRolesTypes } from '@src/auth_roles/auth_roles.enum';
 
 @ObjectType()
-@Entity({ name: 'roles' })
-export class RolesEntity extends ProtectedEntity {
+@Entity({ name: 'auth_roles' })
+export class AuthRolesEntity extends ProtectedEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',
@@ -14,12 +14,12 @@ export class RolesEntity extends ProtectedEntity {
   })
   name?: string;
 
-  @Field(() => RolesTypes, { nullable: true, defaultValue: RolesTypes.DEFAULT })
+  @Field(() => AuthRolesTypes, { nullable: true, defaultValue: AuthRolesTypes.DEFAULT })
   @Column({
     type: 'enum',
-    enum: RolesTypes,
-    default: RolesTypes.DEFAULT,
+    enum: AuthRolesTypes,
+    default: AuthRolesTypes.DEFAULT,
     nullable: true,
   })
-  type: RolesTypes;
+  type: AuthRolesTypes;
 }

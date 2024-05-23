@@ -8,7 +8,6 @@ import { OAuthResolver } from '@src/oauth/oauth.resolver';
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { PostsModule } from '@src/posts/posts.module';
-import { RolesModule } from '@src/roles/roles.module';
 import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
 import { StrategiesModule } from '@src/strategies/strategies.module';
@@ -28,7 +27,6 @@ import { VerifyOAuthService } from '@src/oauth/service/verify.oauth.service';
     forwardRef(() => AuthSessionsModule),
     forwardRef(() => ClientsModule),
     forwardRef(() => PostsModule),
-    forwardRef(() => RolesModule),
     forwardRef(() => StrategiesModule),
     forwardRef(() => SocketsModule),
     forwardRef(() => TokenModule),

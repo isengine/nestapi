@@ -4,8 +4,8 @@ import { CommonEntity } from '@src/common/common.entity';
 import { AuthSessionsEntity } from '@src/auth_sessions/auth_sessions.entity';
 import { StrategiesEntity } from '@src/strategies/strategies.entity';
 import { AuthConfirmEntity } from '@src/auth_confirm/auth_confirm.entity';
+import { AuthRolesEntity } from '@src/auth_roles/auth_roles.entity';
 import { ClientsEntity } from '@src/clients/clients.entity';
-import { RolesEntity } from '@src/roles/roles.entity';
 import { SocketsEntity } from '@src/sockets/sockets.entity';
 import { PostsEntity } from '@src/posts/posts.entity';
 import { UsersEntity } from '@src/users/users.entity';
@@ -68,12 +68,12 @@ export class AuthEntity extends CommonEntity {
   })
   posts: PostsEntity[];
 
-  @OneToMany(() => RolesEntity, (roles) => roles.auth, {
+  @OneToMany(() => AuthRolesEntity, (roles) => roles.auth, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  roles: RolesEntity[];
+  roles: AuthRolesEntity[];
 
   @OneToMany(() => SocketsEntity, (sockets) => sockets.auth, {
     cascade: true,

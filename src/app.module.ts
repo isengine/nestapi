@@ -10,18 +10,18 @@ import { AppService } from '@src/app.service';
 import { NogqlModule } from '@src/typeorm/module/nogql.module';
 import { AuthModule } from '@src/auth/auth.module';
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
+import { AuthFormsModule } from '@src/auth_forms/auth_forms.module';
+import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
 import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { ClientsRedirectsModule } from '@src/clients_redirects/clients_redirects.module';
 import { FilesModule } from '@src/files/files.module';
-import { FormsModule } from '@src/forms/forms.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PersonsModule } from '@src/persons/persons.module';
 import { PostsModule } from '@src/posts/posts.module';
 import { PostsCategoriesModule } from '@src/posts_categories/posts_categories.module';
 import { PostsTagsModule } from '@src/posts_tags/posts_tags.module';
 import { RandomModule } from '@src/random/random.module';
-import { RolesModule } from '@src/roles/roles.module';
 import { RoomsModule } from '@src/rooms/rooms.module';
 import { SettingsModule } from '@src/settings/settings.module';
 import { SettingsGroupsModule } from '@src/settings_groups/settings_groups.module';
@@ -51,18 +51,18 @@ import { UsersModule } from '@src/users/users.module';
     PassportModule.register({ session: true }),
     AuthModule,
     AuthConfirmModule,
+    AuthFormsModule,
+    AuthRolesModule,
     AuthSessionsModule,
     ClientsModule,
     ClientsRedirectsModule,
     FilesModule,
-    FormsModule,
     MailModule,
     PersonsModule,
     PostsModule,
     PostsCategoriesModule,
     PostsTagsModule,
     RandomModule,
-    RolesModule,
     RoomsModule,
     SettingsModule,
     SettingsGroupsModule,

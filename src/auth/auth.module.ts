@@ -9,11 +9,11 @@ import { AuthStrategy } from '@src/auth/auth.strategy';
 import { AuthResolver } from '@src/auth/auth.resolver';
 
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
+import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
 import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { MailModule } from '@src/mail/mail.module';
 import { PostsModule } from '@src/posts/posts.module';
-import { RolesModule } from '@src/roles/roles.module';
 import { SocketsModule } from '@src/sockets/sockets.module';
 import { StrategiesModule } from '@src/strategies/strategies.module';
 import { TokenModule } from '@src/token/token.module';
@@ -43,11 +43,11 @@ import { RestoreFormsService } from '@src/auth/forms.service/restore.forms.servi
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => AuthConfirmModule),
+    forwardRef(() => AuthRolesModule),
     forwardRef(() => AuthSessionsModule),
     forwardRef(() => ClientsModule),
     forwardRef(() => MailModule),
     forwardRef(() => PostsModule),
-    forwardRef(() => RolesModule),
     forwardRef(() => StrategiesModule),
     forwardRef(() => SocketsModule),
     forwardRef(() => TokenModule),

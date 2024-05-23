@@ -1,11 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { RolesTypes } from '@src/roles/roles.enum';
+import { AuthRolesTypes } from '@src/auth_roles/auth_roles.enum';
 import { ProtectedDto } from '@src/common/dto/protected.dto';
 
 @InputType()
-export class RolesDto extends ProtectedDto {
+export class AuthRolesDto extends ProtectedDto {
   @ApiProperty({
     required: false,
     description: 'Название роли',
@@ -17,7 +17,7 @@ export class RolesDto extends ProtectedDto {
     required: false,
     description: 'Тип роли',
   })
-  @Field(() => RolesTypes, { nullable: true, defaultValue: RolesTypes.DEFAULT })
-  @IsEnum(RolesTypes)
-  type?: RolesTypes;
+  @Field(() => AuthRolesTypes, { nullable: true, defaultValue: AuthRolesTypes.DEFAULT })
+  @IsEnum(AuthRolesTypes)
+  type?: AuthRolesTypes;
 }
