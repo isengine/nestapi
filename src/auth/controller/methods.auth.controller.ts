@@ -27,9 +27,12 @@ export class MethodsAuthController {
 
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
-  @Post('register')
-  async xregister(@Body() authDto: AuthDto) {
-    return this.methodsAuthService.register(authDto);
+  @Post('change/:code')
+  async change(
+    @Body() authDto: AuthDto,
+    @Param('code') code: string,
+  ) {
+    return this.methodsAuthService.change(authDto, code);
   }
 
   @Get('confirm/:code')
@@ -39,19 +42,16 @@ export class MethodsAuthController {
     return this.methodsAuthService.confirm(code);
   }
 
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('register')
+  async register(@Body() authDto: AuthDto) {
+    return this.methodsAuthService.register(authDto);
+  }
+
   @Post('reset')
   async reset(@Body() authDto: AuthDto) {
     return this.methodsAuthService.reset(authDto);
-  }
-
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
-  @Post('change/:code')
-  async change(
-    @Body() authDto: AuthDto,
-    @Param('code') code: string,
-  ) {
-    return this.methodsAuthService.change(authDto, code);
   }
 
   @Auth()

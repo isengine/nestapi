@@ -20,25 +20,25 @@ export class MethodsAuthService {
     protected readonly resetMethodsHandler: ResetMethodsHandler,
   ) {}
 
-  async confirm(code: string): Promise<boolean> {
-    return await this.confirmMethodsHandler.confirm(code);
-  }
-
-  async login(authDto: AuthDto, request: any = null): Promise<AuthEntity> {
-    return await this.loginMethodsHandler.login(authDto, request);
-  }
-
-  async logout(request: any = null): Promise<boolean> {
-    return await this.logoutMethodsHandler.logout(request);
-  }
-
-  async register(authDto: AuthDto): Promise<AuthEntity> {
-    return await this.registerMethodsHandler.register(authDto);
-  }
-
   async change(authDto: AuthDto, code: string): Promise<boolean> {
     return await this.changeMethodsHandler.change(authDto, code);
   }
+
+  async confirm(code: string): Promise<boolean> {
+    return await this.confirmMethodsHandler.confirm(code);
+  }  
+
+  async login(authDto: AuthDto, request: any = null): Promise<AuthEntity> {
+    return await this.loginMethodsHandler.login(authDto, request);
+  }  
+
+  async logout(request: any = null): Promise<boolean> {
+    return await this.logoutMethodsHandler.logout(request);
+  }  
+
+  async register(authDto: AuthDto): Promise<AuthEntity> {
+    return await this.registerMethodsHandler.register(authDto);
+  }  
 
   async reset(authDto: AuthDto): Promise<boolean> {
     return await this.resetMethodsHandler.reset(authDto);

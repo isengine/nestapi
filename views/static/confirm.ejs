@@ -3,7 +3,7 @@
 <%- include('partials/head.ejs') %>
 <body>
     <div class="form">
-        <form action="/auth/confirm" method="post">
+        <form name="confirmForm" method="get">
             <h3><%= title %></h3>
             <div class="form-group">
                 <input
@@ -17,7 +17,14 @@
                 >
             </div>
             <%- include('partials/errors.ejs') %>
-            <%- include('partials/button.ejs', {button: 'Подтвердить регистрацию'}) %>
+            <div class="form-button">
+                <input
+                    class="btn"
+                    type="button"
+                    value="Подтвердить регистрацию"
+                    onclick="location.href='/auth/confirm/'+escape(document.forms['confirmForm'].elements['code'].value || null)"
+                >
+            </div>
         </form>
         <div class="bottom">
             Уже подтвержден?

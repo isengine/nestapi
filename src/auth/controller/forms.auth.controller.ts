@@ -25,7 +25,7 @@ export class FormsAuthController {
     private readonly formsAuthService: FormsAuthService,
   ) {}
 
-  @Post('change')
+  @Post('change/:code')
   @CommonDoc({
     title: 'Смена пароля пользователя',
     models: [],
@@ -43,13 +43,15 @@ export class FormsAuthController {
     }],
   })
   async change(
+    @Body() authDto: AuthDto,
+    @Param('code') code: string,
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.change(req, res);
+    return await this.formsAuthService.change(authDto, code, req, res);
   }
 
-  @Post('confirm')
+  @Get('confirm/:code')
   @CommonDoc({
     title: 'Подтверждение регистрации и активация учетной записи',
     models: [],
@@ -60,10 +62,11 @@ export class FormsAuthController {
     }],
   })
   async confirm(
+    @Param('code') code: string,
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.confirm(req, res);
+    return await this.formsAuthService.confirm(code, req, res);
   }  
 
   @Post('login')
