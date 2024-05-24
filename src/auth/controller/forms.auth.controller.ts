@@ -2,19 +2,14 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  NotFoundException,
   Param,
   Post,
   Req,
   Res,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AuthDto } from '@src/auth/auth.dto';
-import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
-import { Auth, Self } from '@src/auth/auth.decorator';
-import { Data } from '@src/common/common.decorator';
+import { ApiTags } from '@nestjs/swagger';
+import { Auth } from '@src/auth/auth.decorator';
 import { CommonDoc } from '@src/common/common.doc';
 import { FormsAuthService } from '@src/auth/service/forms.auth.service';
 import { GrantsTokenDto } from '@src/token/dto/grants.token.dto';
@@ -91,7 +86,7 @@ export class FormsAuthController {
     return await this.formsAuthService.login(grantsTokenDto, response_type, req, res);
   }
 
-  //@Auth()
+  @Auth()
   @Post('logout')
   @CommonDoc({
     title: 'Выход',

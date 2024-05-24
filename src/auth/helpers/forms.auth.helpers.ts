@@ -2,9 +2,16 @@ async function back(req, data): Promise<string> {
   const { body, headers } = req;
   const { referer } = headers;
 
-  const url = new URL(referer);
-  const { protocol, host, pathname } = url;
-  const ref = `${protocol}//${host}${pathname}`;
+  let ref;
+  if (referer) {
+    const url = new URL(referer);
+    const { protocol, host, pathname } = url;
+    ref = `${protocol}//${host}${pathname}`;
+  } else {
+    const base = selfUrl(req);
+    const url = '/auth/auth.html';
+    ref = `${base}${url}`;
+  }
 
   const dataArray = [];
   for (const [key, value] of Object.entries({ ...body, ...data })) {
@@ -25,6 +32,7 @@ export async function redirect(req, res, data = undefined) {
     message: 'Unknown error',
   };
   const backUrl = await back(req, data || error);
+  console.log('-- backUrl', backUrl);
   return await res.redirect(backUrl);
 }
 
