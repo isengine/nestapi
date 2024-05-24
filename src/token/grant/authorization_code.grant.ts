@@ -1,13 +1,13 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { OpenAuthService } from '@src/auth/service/open.auth.service';
 import { ClientsService } from '@src/clients/clients.service';
-import { OAuthService } from '@src/oauth/oauth.service';
 import { GrantsTokenDto } from '@src/token/dto/grants.token.dto';
 import { TokenService } from '@src/token/token.service';
 
 @Injectable()
 export class AuthorizationCodeGrant {
   constructor(
-    private readonly oauthService: OAuthService,
+    private readonly openAuthService: OpenAuthService,
     private readonly clientsService: ClientsService,
     private readonly tokenService: TokenService,
   ) {}
@@ -24,7 +24,7 @@ export class AuthorizationCodeGrant {
       throw new BadRequestException('Not specified authorization code, client_id or redirect uri in this request', 'invalid_grant');
     }
     const { code, client_id, redirect_uri } = grantsTokenDto;
-    const id = await this.oauthService.codeVerify(code, {
+    const id = await this.openAuthService.codeVerify(code, {
       client_id,
       redirect_uri,
     })

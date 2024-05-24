@@ -10,10 +10,12 @@ import { AuthResolver } from '@src/auth/auth.resolver';
 import { AuthController } from '@src/auth/auth.controller';
 import { FormsAuthController } from '@src/auth/controller/forms.auth.controller';
 import { MethodsAuthController } from '@src/auth/controller/methods.auth.controller';
+import { OpenAuthController } from '@src/auth/controller/open.auth.controller';
 import { RenderAuthController } from '@src/auth/controller/render.auth.controller';
 
 import { FormsAuthService } from '@src/auth/service/forms.auth.service';
 import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
+import { OpenAuthService } from '@src/auth/service/open.auth.service';
 
 import { ChangeAuthHandler } from '@src/auth/handler/change.auth.handler';
 import { ConfirmAuthHandler } from '@src/auth/handler/confirm.auth.handler';
@@ -37,6 +39,7 @@ import { UsersModule } from '@src/users/users.module';
     AuthController,
     FormsAuthController,
     MethodsAuthController,
+    OpenAuthController,
     RenderAuthController,
   ],
   imports: [
@@ -59,6 +62,7 @@ import { UsersModule } from '@src/users/users.module';
     AuthResolver,
     FormsAuthService,
     MethodsAuthService,
+    OpenAuthService,
 
     ChangeAuthHandler,
     ConfirmAuthHandler,
@@ -70,6 +74,7 @@ import { UsersModule } from '@src/users/users.module';
     AuthService,
     FormsAuthService,
     MethodsAuthService,
+    OpenAuthService,
   ],
 })
 export class AuthModule {}

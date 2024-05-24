@@ -4,7 +4,7 @@ import { CommonDto } from '@src/common/common.dto';
 import { TypeResponses } from '@src/common/common.enum';
 
 @InputType()
-export class OAuthDto extends CommonDto {
+export class OpenAuthDto extends CommonDto {
   @ApiProperty({
     required: true,
     description: 'Тип запроса. Один из token или code',

@@ -12,7 +12,6 @@ import { PairHandler } from '@src/token/handler/pair.handler';
 import { PrepareHandler } from '@src/token/handler/prepare.handler';
 import { RefreshHandler } from '@src/token/handler/refresh.handler';
 import { VerifyHandler } from '@src/token/handler/verify.handler';
-import { OAuthModule } from '@src/oauth/oauth.module';
 import { GrantsTokenService } from '@src/token/service/grants.token.service';
 
 import { AuthorizationCodeGrant } from '@src/token/grant/authorization_code.grant';
@@ -33,7 +32,6 @@ import { PersonsModule } from '@src/persons/persons.module';
       useFactory: getJwtConfig,
     }),
     forwardRef(() => ClientsModule),
-    forwardRef(() => OAuthModule),
     forwardRef(() => AuthModule),
     forwardRef(() => PersonsModule),
   ],

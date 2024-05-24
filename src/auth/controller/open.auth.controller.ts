@@ -1,55 +1,55 @@
 import { Controller, Get, Req, Res } from '@nestjs/common';
-import { OAuthService } from '@src/oauth/oauth.service';
-import { OAuthDto } from '@src/oauth/oauth.dto';
+import { OpenAuthService } from '@src/auth/service/open.auth.service';
+import { OpenAuthDto } from '@src/auth/dto/open.auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Data } from '@src/common/common.decorator';
 import { CommonDoc } from '@src/common/common.doc';
 
 @ApiTags('OAuth 2.0')
-@Controller('oauth')
-export class OAuthController {
+@Controller('auth')
+export class OpenAuthController {
   constructor(
-    private readonly oauthService: OAuthService,
+    private readonly openAuthService: OpenAuthService,
   ) {}
 
   @Get('')
   @CommonDoc({
     title: 'Базовый метод авторизации по протоколу OAuth 2.0',
-    models: [OAuthDto],
+    models: [OpenAuthDto],
     queries: [{
-      name: 'oauthDto',
+      name: 'openAuthDto',
       required: true,
       description: 'Объект полей авторизации',
-      type: '[OAuthDto]',
+      type: '[OpenAuthDto]',
       example: [{ response_type: 'code', client_id: '...', redirect_uri: '...' }],
     }],
   })
-  async oauth(
-    @Data() oauthDto: OAuthDto,
+  async openAuth(
+    @Data() openAuthDto: OpenAuthDto,
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    const client = await this.oauthService.verify(oauthDto);
+    const client = await this.openAuthService.verify(openAuthDto);
     const idCookie = req.cookies['id'];
     if (!idCookie) {
       const uri = '/auth/auth.html';
-      const queries = Object.entries(oauthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');
+      const queries = Object.entries(openAuthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');
       return await res.redirect(`${uri}?${queries}`);
     }
-    if (oauthDto.response_type === 'code') {
+    if (openAuthDto.response_type === 'code') {
       // response_type=code
       // client_id=s6BhdRkqt3
       // state=xyz
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
-      const url = await this.oauthService.code(client, idCookie, oauthDto.state);
+      const url = await this.openAuthService.code(client, idCookie, openAuthDto.state);
       return await res.redirect(url);
     }
-    if (oauthDto.response_type === 'token') {
+    if (openAuthDto.response_type === 'token') {
       // response_type=token
       // client_id=s6BhdRkqt3
       // state=xyz
       // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
-      const url = await this.oauthService.token(client, idCookie, oauthDto.state);
+      const url = await this.openAuthService.token(client, idCookie, openAuthDto.state);
       return await res.redirect(url);
     }
   }
