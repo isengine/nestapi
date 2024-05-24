@@ -8,7 +8,7 @@ import * as ejs from 'ejs';
 export const createPdf = async (
   template: string,
   data: object = {},
-  options: object = {},
+  options: puppeteer.PDFOptions = {},
   isFile: boolean = false,
 ) => {
   console.log('-- isFile', isFile);
