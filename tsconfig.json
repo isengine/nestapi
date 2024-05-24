@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "types": ["babel__generator", "Multer"],
+    "typeRoots": ["node_modules/@types"],
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,

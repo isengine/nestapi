@@ -36,11 +36,15 @@ export class MethodsAuthService {
     return await this.logoutMethodsHandler.logout(request);
   }  
 
-  async register(authDto: AuthDto): Promise<AuthEntity> {
-    return await this.registerMethodsHandler.register(authDto);
+  async register(authDto: AuthDto, subject: string, request: any = null): Promise<AuthEntity> {
+    const auth = await this.registerMethodsHandler.authCreate(authDto);
+    await this.registerMethodsHandler.sendMail(auth, subject);
+    return await this.registerMethodsHandler.tokenCreate(auth, request);
   }  
 
-  async reset(authDto: AuthDto): Promise<boolean> {
-    return await this.resetMethodsHandler.reset(authDto);
+  async reset(authDto: AuthDto, subject: string): Promise<boolean> {
+    const confirm = await this.resetMethodsHandler.confirmCreate(authDto);
+    await this.resetMethodsHandler.sendMail(authDto.username, subject, confirm.code);
+    return !!confirm?.code;
   }
 }

@@ -42,23 +42,30 @@ export class MethodsAuthController {
     return this.methodsAuthService.confirm(code);
   }
 
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
-  @Post('register')
-  async register(@Body() authDto: AuthDto) {
-    return this.methodsAuthService.register(authDto);
-  }
-
-  @Post('reset')
-  async reset(@Body() authDto: AuthDto) {
-    return this.methodsAuthService.reset(authDto);
-  }
-
-  @Auth()
+  //@Auth()
   @HttpCode(200)
   @Post('logout')
   async logout(@Req() req: any) {
     return this.methodsAuthService.logout(req);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('register')
+  async register(
+    @Body() authDto: AuthDto,
+    @Body('subject') subject: string,
+    @Req() request: any,
+  ) {
+    return this.methodsAuthService.register(authDto, subject, request);
+  }
+
+  @Post('reset')
+  async reset(
+    @Body() authDto: AuthDto,
+    @Body('subject') subject: string,
+  ) {
+    return this.methodsAuthService.reset(authDto, subject);
   }
 
   // new

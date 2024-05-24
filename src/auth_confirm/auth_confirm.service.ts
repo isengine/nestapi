@@ -23,28 +23,6 @@ export class AuthConfirmService {
     });
   }
 
-  async findByUsername(
-    username: string,
-    type: string = 'code',
-  ): Promise<AuthConfirmEntity> {
-    const where: FindOptionsWhere<any> = {
-      auth: {
-        username,
-      },
-      type,
-    };
-    if (type === 'reset') {
-      const now = new Date();
-      now.setHours(now.getHours() - 1);
-      where.createdAt = MoreThan(now);
-    }
-    return await this.repository.findOne({
-      where,
-      relations: ['auth'],
-      order: { createdAt: 'DESC' },
-    });
-  }
-
   async findByCode(
     code: string,
     type: string = 'code',

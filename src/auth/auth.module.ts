@@ -24,11 +24,7 @@ import { RegisterMethodsHandler } from '@src/auth/handler/methods/register.metho
 import { ResetMethodsHandler } from '@src/auth/handler/methods/reset.methods.handler';
 // ResetMethodsHandler = бывший RestorePrepareMethodsHandler
 
-import { ConfirmFormsHandler } from '@src/auth/handler/forms/confirm.forms.handler';
 import { LoginFormsHandler } from '@src/auth/handler/forms/login.forms.handler';
-import { LogoutFormsHandler } from '@src/auth/handler/forms/logout.forms.handler';
-import { RegisterFormsHandler } from '@src/auth/handler/forms/register.forms.handler';
-import { ResetFormsHandler } from '@src/auth/handler/forms/reset.forms.handler';
 
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
 import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
@@ -76,11 +72,7 @@ import { UsersModule } from '@src/users/users.module';
     RegisterMethodsHandler,
     ResetMethodsHandler,
 
-    ConfirmFormsHandler,
     LoginFormsHandler,
-    LogoutFormsHandler,
-    RegisterFormsHandler,
-    ResetFormsHandler,
   ],
   exports: [
     AuthService,

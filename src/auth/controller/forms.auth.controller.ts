@@ -88,7 +88,7 @@ export class FormsAuthController {
     return await this.formsAuthService.login(req, res);
   }
 
-  @Auth()
+  //@Auth()
   @Post('logout')
   @CommonDoc({
     title: 'Выход',
@@ -98,7 +98,7 @@ export class FormsAuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.register(req, res);
+    return await this.formsAuthService.logout(req, res);
   }
 
   @Post('register')
@@ -114,10 +114,14 @@ export class FormsAuthController {
     }],
   })
   async register(
+    @Body() authDto: AuthDto,
+    @Body('subject') subject: string,
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.register(req, res);
+    console.log('-- authDto', authDto);
+    console.log('-- subject', subject);
+    return await this.formsAuthService.register(authDto, subject, req, res);
   }
 
   @Post('reset')
@@ -133,9 +137,11 @@ export class FormsAuthController {
     }],
   })
   async reset(
+    @Body() authDto: AuthDto,
+    @Body('subject') subject: string,
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.reset(req, res);
+    return await this.formsAuthService.reset(authDto, subject, req, res);
   }
 }
