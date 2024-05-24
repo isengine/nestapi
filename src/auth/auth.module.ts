@@ -15,16 +15,11 @@ import { RenderAuthController } from '@src/auth/controller/render.auth.controlle
 import { FormsAuthService } from '@src/auth/service/forms.auth.service';
 import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
 
-import { ChangeMethodsHandler } from '@src/auth/handler/methods/change.methods.handler';
-// ChangeMethodsHandler = бывший RestoreMethodsHandler
-import { ConfirmMethodsHandler } from '@src/auth/handler/methods/confirm.methods.handler';
-import { LoginMethodsHandler } from '@src/auth/handler/methods/login.methods.handler';
-import { LogoutMethodsHandler } from '@src/auth/handler/methods/logout.methods.handler';
-import { RegisterMethodsHandler } from '@src/auth/handler/methods/register.methods.handler';
-import { ResetMethodsHandler } from '@src/auth/handler/methods/reset.methods.handler';
-// ResetMethodsHandler = бывший RestorePrepareMethodsHandler
-
-import { LoginFormsHandler } from '@src/auth/handler/forms/login.forms.handler';
+import { ChangeAuthHandler } from '@src/auth/handler/change.auth.handler';
+import { ConfirmAuthHandler } from '@src/auth/handler/confirm.auth.handler';
+import { LogoutAuthHandler } from '@src/auth/handler/logout.auth.handler';
+import { RegisterAuthHandler } from '@src/auth/handler/register.auth.handler';
+import { ResetAuthHandler } from '@src/auth/handler/reset.auth.handler';
 
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
 import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
@@ -65,14 +60,11 @@ import { UsersModule } from '@src/users/users.module';
     FormsAuthService,
     MethodsAuthService,
 
-    ChangeMethodsHandler,
-    ConfirmMethodsHandler,
-    LoginMethodsHandler,
-    LogoutMethodsHandler,
-    RegisterMethodsHandler,
-    ResetMethodsHandler,
-
-    LoginFormsHandler,
+    ChangeAuthHandler,
+    ConfirmAuthHandler,
+    LogoutAuthHandler,
+    RegisterAuthHandler,
+    ResetAuthHandler,
   ],
   exports: [
     AuthService,

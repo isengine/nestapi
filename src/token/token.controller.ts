@@ -25,7 +25,8 @@ export class TokenController {
   })
   async token(
     @Body() grantsTokenDto: GrantsTokenDto,
-    @Res({ passthrough: true }) response: any = undefined,
+    @Req() request: any,
+    @Res({ passthrough: true }) response: any,
   ): Promise<any> {
     // /token
     // grant_type=authorization_code
@@ -47,7 +48,7 @@ export class TokenController {
     // username=johndoe
     // password=A3ddj3w
     if (grantsTokenDto.grant_type === 'password') {
-      return await this.grantsTokenService.password(grantsTokenDto);
+      return await this.grantsTokenService.password(grantsTokenDto, request, response);
     }
     // /token
     // grant_type=person_credentials

@@ -17,6 +17,7 @@ import { Auth, Self } from '@src/auth/auth.decorator';
 import { Data } from '@src/common/common.decorator';
 import { CommonDoc } from '@src/common/common.doc';
 import { FormsAuthService } from '@src/auth/service/forms.auth.service';
+import { GrantsTokenDto } from '@src/token/dto/grants.token.dto';
 
 @ApiTags('Авторизация через формы')
 @Controller('auth')
@@ -82,10 +83,12 @@ export class FormsAuthController {
     }],
   })
   async login(
+    @Body() grantsTokenDto: GrantsTokenDto,
+    @Body('response_type') response_type: string,
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.login(req, res);
+    return await this.formsAuthService.login(grantsTokenDto, response_type, req, res);
   }
 
   //@Auth()

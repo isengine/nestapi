@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { ChangeMethodsHandler } from '@src/auth/handler/methods/change.methods.handler';
-import { ConfirmMethodsHandler } from '@src/auth/handler/methods/confirm.methods.handler';
-import { LoginFormsHandler } from '@src/auth/handler/forms/login.forms.handler';
-import { LogoutMethodsHandler } from '@src/auth/handler/methods/logout.methods.handler';
-import { RegisterMethodsHandler } from '@src/auth/handler/methods/register.methods.handler';
-import { ResetMethodsHandler } from '@src/auth/handler/methods/reset.methods.handler';
-import { redirect, query } from '@src/auth/handler/forms/helpers.forms.handler';
+import { ChangeAuthHandler } from '@src/auth/handler/change.auth.handler';
+import { ConfirmAuthHandler } from '@src/auth/handler/confirm.auth.handler';
+import { LogoutAuthHandler } from '@src/auth/handler/logout.auth.handler';
+import { RegisterAuthHandler } from '@src/auth/handler/register.auth.handler';
+import { ResetAuthHandler } from '@src/auth/handler/reset.auth.handler';
+import { redirect, query } from '@src/auth/helpers/forms.auth.helpers';
 import { AuthDto } from '@src/auth/auth.dto';
+import { GrantsTokenDto } from '@src/token/dto/grants.token.dto';
+import { GrantsTokenService } from '@src/token/service/grants.token.service';
 
 @Injectable()
 export class FormsAuthService {
   constructor(
-    protected readonly changeMethodsHandler: ChangeMethodsHandler,
-    protected readonly confirmMethodsHandler: ConfirmMethodsHandler,
-    private readonly loginFormsHandler: LoginFormsHandler,
-    protected readonly logoutMethodsHandler: LogoutMethodsHandler,
-    protected readonly registerMethodsHandler: RegisterMethodsHandler,
-    protected readonly resetMethodsHandler: ResetMethodsHandler,
+    protected readonly changeAuthHandler: ChangeAuthHandler,
+    protected readonly confirmAuthHandler: ConfirmAuthHandler,
+    protected readonly logoutAuthHandler: LogoutAuthHandler,
+    protected readonly registerAuthHandler: RegisterAuthHandler,
+    protected readonly resetAuthHandler: ResetAuthHandler,
+    protected readonly grantsTokenService: GrantsTokenService,
   ) {}
 
   async change(authDto: AuthDto, code: string, req, res): Promise<void> {
     let error;
-    const result = await this.changeMethodsHandler.change(authDto, code)
+    const result = await this.changeAuthHandler.change(authDto, code)
       .catch((e) => {
         error = e?.response;
       });
@@ -37,7 +38,7 @@ export class FormsAuthService {
       error: 'Bad request',
       message: 'Invalid confirm code',
     };
-    const result = await this.confirmMethodsHandler.confirm(code)
+    const result = await this.confirmAuthHandler.confirm(code)
       .catch((e) => {
         error = e?.response;
       });
@@ -48,13 +49,29 @@ export class FormsAuthService {
     return await query(req, res, uri);
   }
 
-  async login(req, res): Promise<void> {
-    return await this.loginFormsHandler.login(req, res);
+  async login(grantsTokenDto: GrantsTokenDto, response_type: string, req, res): Promise<void> {
+    let error = {
+      error: 'Unauthorized',
+      message: 'Unknown error',
+    };
+    const { redirect_uri, client_id } = grantsTokenDto;
+    const token = await this.grantsTokenService.password(grantsTokenDto, req, res)
+      .catch((e) => {
+        error = e?.response;
+      });
+    if (!token) {
+      return await redirect(req, res, error);
+    }
+    if (!redirect_uri || !client_id || !response_type) {
+      return token;
+    }
+    const uri = `/auth?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}`;
+    return await query(req, res, uri);
   }
 
   async logout(req, res): Promise<void> {
     let error;
-    const result = await this.logoutMethodsHandler.logout(req)
+    const result = await this.logoutAuthHandler.logout(req)
       .catch((e) => {
         error = e?.response;
       });
@@ -67,27 +84,28 @@ export class FormsAuthService {
 
   async register(authDto: AuthDto, subject: string, req, res): Promise<any> {
     let error;
-    const auth = await this.registerMethodsHandler.authCreate(authDto)
+    const auth = await this.registerAuthHandler.authCreate(authDto)
       .catch((e) => {
         error = e?.response;
       });
     if (!auth) {
       return await redirect(req, res, error);
     }
-    await this.registerMethodsHandler.sendMail(auth, subject);
-    return await this.registerMethodsHandler.tokenCreate(auth, req);
+    await this.registerAuthHandler.sendMail(auth, subject);
+    const uri = '/auth/register_complete.html';
+    return await query(req, res, uri);
   }
 
   async reset(authDto: AuthDto, subject: string, req, res): Promise<any> {
     let error;
-    const confirm = await this.resetMethodsHandler.confirmCreate(authDto)
+    const confirm = await this.resetAuthHandler.confirmCreate(authDto)
       .catch((e) => {
         error = e?.response;
       });
     if (!confirm?.code) {
       return await redirect(req, res, error);
     }
-    await this.resetMethodsHandler.sendMail(authDto.username, subject, confirm.code);
+    await this.resetAuthHandler.sendMail(authDto.username, subject, confirm.code);
     const uri = '/auth/reset_complete.html';
     return await query(req, res, uri);
   }

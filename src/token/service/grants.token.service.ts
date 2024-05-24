@@ -25,8 +25,8 @@ export class GrantsTokenService {
     return await this.clientCredentialsGrant.clientCredentials(grantsTokenDto);
   }
 
-  async password(grantsTokenDto: GrantsTokenDto): Promise<any> {
-    return await this.passwordGrant.password(grantsTokenDto);
+  async password(grantsTokenDto: GrantsTokenDto, request, response): Promise<any> {
+    return await this.passwordGrant.password(grantsTokenDto, request, response);
   }
 
   async personCredentials(grantsTokenDto: GrantsTokenDto): Promise<any> {

@@ -61,6 +61,15 @@ export class RenderAuthController {
     };
   }
 
+  @Get('register_complete.html')
+  @Render('register_complete')
+  registerCompleteRender(@Req() req: any) {
+    return {
+      query: req.query,
+      title: 'Регистрация',
+    };
+  }
+
   @Get('reset.html')
   @Render('reset')
   resetRender(@Req() req: any) {

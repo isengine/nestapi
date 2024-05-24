@@ -5,7 +5,7 @@ import { AuthService } from '@src/auth/auth.service';
 import { MailService } from '@src/mail/mail.service';
 
 @Injectable()
-export class ResetMethodsHandler {
+export class ResetAuthHandler {
   constructor(
     protected readonly authService: AuthService,
     protected readonly authConfirmService: AuthConfirmService,

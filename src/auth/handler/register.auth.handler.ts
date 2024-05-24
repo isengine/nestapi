@@ -5,15 +5,13 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { MailService } from '@src/mail/mail.service';
-import { TokenService } from '@src/token/token.service';
 
 @Injectable()
-export class RegisterMethodsHandler {
+export class RegisterAuthHandler {
   constructor(
     protected readonly authService: AuthService,
     protected readonly authConfirmService: AuthConfirmService,
     protected readonly mailService: MailService,
-    protected readonly tokenService: TokenService,
   ) {}
 
   async authCreate(authDto: AuthDto): Promise<AuthEntity> {
@@ -30,16 +28,6 @@ export class RegisterMethodsHandler {
     // authDto.isActivated = true;
 
     return await this.authService.create(authDto);
-  }
-
-  async tokenCreate(auth: AuthDto, request): Promise<AuthEntity> {
-    const token = await this.tokenService.pair({ id: auth.id });
-
-    // if (request) {
-    //   await this.authSessionsService.start(auth, token, request);
-    // }
-
-    return token;
   }
 
   async sendMail(auth: AuthDto, subject): Promise<void> {
