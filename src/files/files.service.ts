@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { createPdf } from '@src/files/handler/pdf.files.handler';
 import { FilesInterface } from '@src/files/files.interface';
 import { access, mkdir, writeFile } from 'fs/promises';
 import * as sharp from 'sharp';
@@ -132,5 +133,13 @@ export class FilesService {
       mimetype,
       size,
     });
+  }
+
+  async filesPdfGenerate(
+    template: string,
+    data: object = {},
+    options: object = {},
+  ): Promise<any> {
+    return await createPdf(template, data, options);
   }
 }

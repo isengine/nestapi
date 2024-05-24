@@ -4,6 +4,9 @@ import {
   UseInterceptors,
   UploadedFiles,
   Query,
+  Param,
+  Body,
+  Res,
 } from '@nestjs/common';
 import { FilesService } from '@src/files/files.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
@@ -14,6 +17,28 @@ import { ApiExcludeController } from '@nestjs/swagger';
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+
+  @Post('pdf/:template')
+  async getPDF(
+    @Param('template') template: string,
+    @Body('data') data: object,
+    @Body('options') options: object,
+    @Res() res: any,
+  ): Promise<void> {
+    const buffer = await this.filesService.filesPdfGenerate(template, data, options);
+    if (!buffer) {
+      return;
+    }
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=pdf.pdf`,
+      'Content-Length': buffer.length,
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: 0,
+    });
+    res.end(buffer);
+  }
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('file'))
