@@ -32,7 +32,7 @@ export class PasswordGrant {
       throw new BadRequestException('User authentication failed. Unknown user', 'invalid_user');
     }
     // if (request) {
-    //   await this.authSessionsService.start(auth, token, request);
+    //   await this.authSessionsService.start(auth, request);
     // }
     if (response) {
       await this.setCookie(auth.id, response);

@@ -17,7 +17,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     private readonly authStrategiesService: AuthStrategiesService,
     private readonly userService: UsersService,
   ) {
-    console.log('-- oauth/login');
+    // console.log('-- oauth/login');
 
     const clientID = configService.get('OAUTH_CLIENT_ID');
     const clientSecret = configService.get('OAUTH_CLIENT_SECRET');
@@ -26,14 +26,14 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     const authorizationURL = `${customAuthServer}/auth/?client_id=${clientID}&redirect_uri=${callbackURL}&response_type=code`;
     const tokenURL = `${customAuthServer}/token`;
 
-    console.log('-- oauth constructor...');
-    console.log('-- clientID', clientID);
-    console.log('-- clientSecret', clientSecret);
-    console.log('-- callbackURL', callbackURL);
-    console.log('-- customAuthServer', customAuthServer);
-    console.log('-- authorizationURL', authorizationURL);
-    console.log('-- tokenURL', tokenURL);
-    console.log('-- ^^^');
+    // console.log('-- oauth constructor...');
+    // console.log('-- clientID', clientID);
+    // console.log('-- clientSecret', clientSecret);
+    // console.log('-- callbackURL', callbackURL);
+    // console.log('-- customAuthServer', customAuthServer);
+    // console.log('-- authorizationURL', authorizationURL);
+    // console.log('-- tokenURL', tokenURL);
+    // console.log('-- ^^^');
 
     super({
       clientID,

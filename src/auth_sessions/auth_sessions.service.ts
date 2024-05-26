@@ -36,14 +36,12 @@ export class AuthSessionsService extends CommonService<
     return await this.create(data);
   }
 
-  async start(auth, token, request) {
-    const { refresh_token } = token;
+  async start(auth, request) {
     const { session } = request;
     // console.log('-- session create', session);
     if (!session) {
       return;
     }
-    session.token = refresh_token;
     session.save(async (e) => {
       await this.log(auth, request, e ? 'create error' : 'create');
     });

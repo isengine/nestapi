@@ -34,11 +34,9 @@ export class AuthStrategiesController {
   async oauthRedirect(@Req() req: any) {
     const { user: auth } = req;
     const tokens = await this.tokenService.pair({ id: auth.id });
-    await this.authSessionsService.start(auth, tokens, req);
-    return {
-      ...auth,
-      ...tokens,
-    };
+    await this.authSessionsService.start(auth, req);
+    delete auth.password;
+    return { auth, tokens };
   }
 
   @Get('google/login')
@@ -52,9 +50,9 @@ export class AuthStrategiesController {
   async googleRedirect(@Req() req: any) {
     const { user: auth } = req;
     const token = await this.tokenService.pair({ id: auth.id });
-    await this.authSessionsService.start(auth, token, req);
-    auth.token = token;
-    return auth;
+    await this.authSessionsService.start(auth, req);
+    delete auth.password;
+    return { auth, token };
   }
 
   @Get('leader/login')
@@ -72,8 +70,9 @@ export class AuthStrategiesController {
     }
     const auth = await this.leaderStrategiesProvider.validate(account);
     const token = await this.tokenService.pair({ id: auth.id });
-    await this.authSessionsService.start(auth, token, req);
+    await this.authSessionsService.start(auth, req);
     // auth.token = token;
-    return { ...auth, token };
+    delete auth.password;
+    return { auth, token };
   }
 }
