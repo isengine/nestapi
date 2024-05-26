@@ -87,7 +87,7 @@ export class LeaderProvider {
       uid: account.id,
       json: JSON.stringify(account),
     });
-    const user = await this.userService.first(null, null, auth.id);
+    const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
       {

@@ -28,6 +28,20 @@ export class AuthStrategiesDto extends CommonDto {
 
   @ApiProperty({
     required: false,
+    description: 'Токен доступа для аккаунта сервера OAuth 2.0',
+  })
+  @Field({ nullable: true })
+  accessToken?: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Токен обновления для аккаунта сервера OAuth 2.0',
+  })
+  @Field({ nullable: true })
+  refreshToken?: string;
+
+  @ApiProperty({
+    required: false,
     description: 'Данные авторизации, связанной с этой записью',
   })
   @Field(() => AuthDto, { nullable: true })

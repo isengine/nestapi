@@ -23,7 +23,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(access_token: string, refresh_token: string, profile: Profile) {
+  async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const account = profile._json;
     const auth = await this.authService.findByUsername(account.email);
 
@@ -35,23 +35,25 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     if (!auth) {
       return await this.authService
         .create(authDto)
-        .then(async (result) => await this.prepareResult(result, profile));
+        .then(async (result) => await this.prepareResult(result, profile, accessToken, refreshToken));
     }
 
     return await this.authService
       .update(auth.id, authDto)
-      .then(async (result) => await this.prepareResult(result, profile));
+      .then(async (result) => await this.prepareResult(result, profile, accessToken, refreshToken));
   }
 
-  async prepareResult(auth, profile): Promise<AuthDto> {
+  async prepareResult(auth, profile, accessToken, refreshToken): Promise<AuthDto> {
     const account = profile._json;
     await this.strategiesService.updateBy({
       auth: { id: auth.id },
       name: profile.provider,
       uid: profile.id,
       json: JSON.stringify(account),
+      accessToken,
+      refreshToken,
     });
-    const user = await this.userService.first(null, null, auth.id);
+    const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
       {

@@ -36,6 +36,22 @@ export class AuthStrategiesEntity extends CommonEntity {
   })
   json?: string;
 
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+    name: 'access_token',
+    nullable: true,
+  })
+  accessToken?: string;
+
+  @Field({ nullable: true })
+  @Column({
+    type: 'text',
+    name: 'refresh_token',
+    nullable: true,
+  })
+  refreshToken?: string;
+
   @ManyToOne(() => AuthEntity, (auth) => auth.strategies, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

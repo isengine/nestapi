@@ -14,9 +14,11 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
   constructor(
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
-    private readonly strategiesService: AuthStrategiesService,
+    private readonly authStrategiesService: AuthStrategiesService,
     private readonly userService: UsersService,
   ) {
+    console.log('-- oauth/login');
+
     const clientID = configService.get('OAUTH_CLIENT_ID');
     const clientSecret = configService.get('OAUTH_CLIENT_SECRET');
     const callbackURL = configService.get('OAUTH_CLIENT_CALLBACK');
@@ -43,7 +45,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     });
   }
 
-  async validate(accessToken, refreshToken) {
+  async validate(accessToken: string, refreshToken: string) {
     // откуда он берет accessToken и как он узнает его - ведь пользователь не введен
     // скорее всего он берет id учетки, на которую зарегаен клиент
     // нужно, чтобы сервер авторизации запрашивал токен у браузера пользователя
@@ -53,6 +55,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     console.log('-- oauth validate...');
     console.log('-- customAuthServer', customAuthServer);
     console.log('-- accessToken', accessToken);
+    console.log('-- refreshToken', refreshToken);
 
     const profile = await axios.get(
       `${customAuthServer}/auth/self`,
@@ -76,23 +79,25 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     if (!auth) {
       return await this.authService
         .create(authDto)
-        .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0]));
+        .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0], accessToken, refreshToken));
     }
 
     return await this.authService
       .update(auth.id, authDto)
-      .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0]));
+      .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0], accessToken, refreshToken));
   }
 
-  async prepareResult(auth, uid, profile): Promise<AuthDto> {
-    await this.strategiesService.updateBy({
+  async prepareResult(auth, uid, profile, accessToken, refreshToken): Promise<AuthDto> {
+    await this.authStrategiesService.updateBy({
       auth: { id: auth.id },
       name: 'oauth',
       uid,
       json: profile,
+      accessToken,
+      refreshToken,
       // json: JSON.stringify(profile),
     });
-    const user = await this.userService.first(null, null, auth.id);
+    const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
       {
@@ -103,6 +108,9 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
       null,
       auth.id,
     );
+    console.log('-- auth', auth);
+    console.log('-- user', user);
+    console.log('-- profile', profile);
     return auth;
   }
 }
