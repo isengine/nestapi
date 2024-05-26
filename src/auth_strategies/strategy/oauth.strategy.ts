@@ -52,10 +52,10 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     // и если его нет, то чтобы давал форму входа
     const customAuthServer = this.configService.get('OAUTH_SERVER');
 
-    console.log('-- oauth validate...');
-    console.log('-- customAuthServer', customAuthServer);
-    console.log('-- accessToken', accessToken);
-    console.log('-- refreshToken', refreshToken);
+    // console.log('-- oauth validate...');
+    // console.log('-- customAuthServer', customAuthServer);
+    // console.log('-- accessToken', accessToken);
+    // console.log('-- refreshToken', refreshToken);
 
     const profile = await axios.get(
       `${customAuthServer}/auth/self`,
@@ -66,8 +66,8 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
       },
     ).then(r => r.data);
 
-    console.log('-- profile', profile);
-    console.log('-- ^^^');
+    // console.log('-- profile', profile);
+    // console.log('-- ^^^');
 
     const auth = await this.authService.findByUsername(profile.username);
 
@@ -108,9 +108,9 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
       null,
       auth.id,
     );
-    console.log('-- auth', auth);
-    console.log('-- user', user);
-    console.log('-- profile', profile);
+    // console.log('-- auth', auth);
+    // console.log('-- user', user);
+    // console.log('-- profile', profile);
     return auth;
   }
 }
