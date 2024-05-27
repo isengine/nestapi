@@ -36,4 +36,16 @@ export class GrantsTokenService {
   async refreshToken(grantsTokenDto: GrantsTokenDto): Promise<any> {
     return await this.refreshTokenGrant.refreshToken(grantsTokenDto);
   }
+
+  async result(grantsTokenDto: GrantsTokenDto, result, response): Promise<any> {
+    if (grantsTokenDto.redirect_uri) {
+      const data = [];
+      for (const [key, value] of Object.entries(result)) {
+        data.push(`${key}=${ encodeURI(`${value}`) }`);
+      }
+      const uri = `${grantsTokenDto.redirect_uri}?${data.join('&')}`;
+      return await response.redirect(uri);
+    }
+    return result;
+  }
 }

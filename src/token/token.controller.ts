@@ -34,34 +34,39 @@ export class TokenController {
     // client_id=s6BhdRkqt3
     // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
     if (grantsTokenDto.grant_type === 'authorization_code') {
-      return await this.grantsTokenService.authorizationCode(grantsTokenDto);
+      const result = await this.grantsTokenService.authorizationCode(grantsTokenDto);
+      return await this.grantsTokenService.result(grantsTokenDto, result, response);
     }
     // /token
     // grant_type=client_credentials
     // client_id=s6BhdRkqt3
     // client_secret=7Fjfp0ZBr1KtDRbnfVdmIw
     if (grantsTokenDto.grant_type === 'client_credentials') {
-      return await this.grantsTokenService.clientCredentials(grantsTokenDto);
+      const result = await this.grantsTokenService.clientCredentials(grantsTokenDto);
+      return await this.grantsTokenService.result(grantsTokenDto, result, response);
     }
     // /token
     // grant_type=password
     // username=johndoe
     // password=A3ddj3w
     if (grantsTokenDto.grant_type === 'password') {
-      return await this.grantsTokenService.password(grantsTokenDto, request, response);
+      const result = await this.grantsTokenService.password(grantsTokenDto, request, response);
+      return await this.grantsTokenService.result(grantsTokenDto, result, response);
     }
     // /token
     // grant_type=person_credentials
     // username=johndoe
     // password=A3ddj3w
     if (grantsTokenDto.grant_type === 'person_credentials') {
-      return await this.grantsTokenService.personCredentials(grantsTokenDto);
+      const result = await this.grantsTokenService.personCredentials(grantsTokenDto);
+      return await this.grantsTokenService.result(grantsTokenDto, result, response);
     }
     // /token
     // grant_type=refresh_token
     // refresh_token=tGzv3JOkF0XG5Qx2TlKWIA
     if (grantsTokenDto.grant_type === 'refresh_token') {
-      return await this.grantsTokenService.refreshToken(grantsTokenDto);
+      const result = await this.grantsTokenService.refreshToken(grantsTokenDto);
+      return await this.grantsTokenService.result(grantsTokenDto, result, response);
     }
   }
 }

@@ -24,7 +24,6 @@ export class RefreshTokenGrant {
   }
 
   async auth(grantsTokenDto: GrantsTokenDto): Promise<any> {
-    console.log('-- grantsTokenAuth', grantsTokenDto);
     const { refresh_token } = grantsTokenDto;
     const token = await this.tokenService.refresh(
       refresh_token,

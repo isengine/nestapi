@@ -117,8 +117,6 @@ export class FormsAuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    console.log('-- authDto', authDto);
-    console.log('-- subject', subject);
     return await this.formsAuthService.register(authDto, subject, req, res);
   }
 

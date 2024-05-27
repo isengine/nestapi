@@ -44,10 +44,6 @@ export class OpenAuthService {
     openAuthDto: OpenAuthDto,
   ): Promise<ClientsDto> {
     const { client_id, redirect_uri, response_type } = openAuthDto;
-    console.log('-- verify');
-    console.log('-- client_id', client_id);
-    console.log('-- redirect_uri', redirect_uri);
-    console.log('-- response_type', response_type);
     if (['code', 'token'].indexOf(response_type) < 0) {
       throw new BadRequestException('Specified type of response_type field is not supported in this request', 'invalid_request');
     }
@@ -60,7 +56,6 @@ export class OpenAuthService {
       { name: 'auth' },
       { name: 'redirects' },
     ]);
-    console.log('-- result', result);
     if (!result || !result.redirects.length) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
@@ -83,11 +78,8 @@ export class OpenAuthService {
   }
 
   async codeVerify(code: string, clientsDto: ClientsDto): Promise<number> {
-    console.log('-- codeVerify...');
     const decoded = await Buffer.from(code, 'base64').toString('ascii');
-    console.log('-- decoded', decoded);
     const data = JSON.parse(decoded);
-    console.log('-- data', data);
     const { timestamp, id, client_id, redirect_uri } = data;
 
     const clientIdMatched = clientsDto.client_id === client_id;
@@ -95,10 +87,6 @@ export class OpenAuthService {
     const timestampNow = new Date();
     const timestampValid = timestampNow.setMinutes(timestampNow.getMinutes() - 10);
     const timestampMatched = timestampValid <= Number(timestamp);
-
-    console.log('-- clientIdMatched', clientIdMatched);
-    console.log('-- redirectUriMatched', redirectUriMatched);
-    console.log('-- timestampMatched', timestampMatched);
 
     if (!clientIdMatched || !redirectUriMatched || !timestampMatched) {
       throw new BadRequestException('Authorization code is invalid in verify process', 'invalid_request');

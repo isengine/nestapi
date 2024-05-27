@@ -15,7 +15,6 @@ export class PasswordGrant {
     request,
     response,
   ): Promise<any> {
-    console.log('-- password', grantsTokenDto);
     if (grantsTokenDto.grant_type !== 'password') {
       throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }
@@ -37,7 +36,6 @@ export class PasswordGrant {
     if (response) {
       await this.setCookie(auth.id, response);
     }
-    console.log('-- auth', auth);
     return await this.tokenService.prepare(token, grantsTokenDto.state);
   }
 

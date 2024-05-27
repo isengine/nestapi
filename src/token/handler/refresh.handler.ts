@@ -10,19 +10,14 @@ export class RefreshHandler {
   ) {}
 
   async refresh(refresh_token: string, callback = null): Promise<any> {
-    console.log('-- refresh_token', refresh_token);
-
     if (!refresh_token) {
       throw new UnauthorizedException('Please sign in!');
     }
 
     const result = await this.verifyHandler.verify(refresh_token, 'refresh');
 
-    console.log('-- verify', result);
-
     if (callback) {
       const matched = callback(result);
-      console.log('-- callback matched', matched);
       if (!matched) {
         throw new UnauthorizedException('Refresh token is not valid!');
       }

@@ -24,9 +24,9 @@ export class Unauthorized implements ExceptionFilter {
     const data = Buffer.from(JSON.stringify(dataParsed)).toString('base64');
     // response.req.cookies['abc'] = '123qweqwe';
     // response.req.session['abc'] = '123qweqwe';
-    console.log('---- request.data', dataParsed);
+    // console.log('---- request.data', dataParsed);
     // console.log('-- request.session', response.req.session);
-    console.log('-- request.cookies', response.req.cookies);
+    // console.log('-- request.cookies', response.req.cookies);
 
     response.redirect(`/auth/auth.html?data=${data}`);
   }

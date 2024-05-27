@@ -32,7 +32,6 @@ export async function redirect(req, res, data = undefined) {
     message: 'Unknown error',
   };
   const backUrl = await back(req, data || error);
-  console.log('-- backUrl', backUrl);
   return await res.redirect(backUrl);
 }
 

@@ -13,11 +13,9 @@ export class AuthorizationCodeGrant {
   ) {}
 
   async authorizationCode(grantsTokenDto: GrantsTokenDto): Promise<any> {
-    console.log('-- grantsTokenDto', grantsTokenDto);
     if (grantsTokenDto.grant_type !== 'authorization_code') {
       throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
     }
-    console.log('-- grant_type authorization_code');
     if (
       !grantsTokenDto.code
       || !grantsTokenDto.client_id
@@ -42,7 +40,7 @@ export class AuthorizationCodeGrant {
     }, [
       { name: 'auth' },
       { name: 'redirects' },
-    ]);
+    ]); 
     if (!client?.auth) {
       throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
     }
