@@ -89,19 +89,17 @@ export class OpenAuthService {
     const data = JSON.parse(decoded);
     console.log('-- data', data);
     const { timestamp, id, client_id, redirect_uri } = data;
-    
+
     const clientIdMatched = clientsDto.client_id === client_id;
     const redirectUriMatched = clientsDto.redirect_uri === redirect_uri;
-    const timestampMatched = Date.now() - 10 * 600 <= Number(timestamp);
+    const timestampNow = new Date();
+    const timestampValid = timestampNow.setMinutes(timestampNow.getMinutes() - 10);
+    const timestampMatched = timestampValid <= Number(timestamp);
+
     console.log('-- clientIdMatched', clientIdMatched);
     console.log('-- redirectUriMatched', redirectUriMatched);
-    console.log('-- timestampMatched...');
-    console.log('-- Date.now()', Date.now());
-    console.log('-- Date.now() - 10 * 600', Date.now() - 10 * 600);
-    console.log('-- Number(timestamp)', Number(timestamp));
     console.log('-- timestampMatched', timestampMatched);
-    console.log('-- // timestampMatched');
-    
+
     if (!clientIdMatched || !redirectUriMatched || !timestampMatched) {
       throw new BadRequestException('Authorization code is invalid in verify process', 'invalid_request');
     }
