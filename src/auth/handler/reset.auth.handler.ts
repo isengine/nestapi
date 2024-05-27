@@ -29,12 +29,12 @@ export class ResetAuthHandler {
       {
         to: username,
         subject,
-        template: 'register',
+        template: 'reset',
       },
       {
       },
       {
-        url: `/auth/confirm.html?code=${code}`,
+        url: `/auth/change.html?code=${code}`,
       },
     );
   }
