@@ -18,9 +18,7 @@ export const Data = createParamDecorator(
     if (typeof result === 'string') {
       try {
         result = JSON.parse(result);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch {}
     }
     return result;
   },

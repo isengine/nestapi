@@ -17,8 +17,9 @@ export class GrantsTokenService {
     private readonly refreshTokenGrant: RefreshTokenGrant,
   ) {}
 
-  async authorizationCode(grantsTokenDto: GrantsTokenDto): Promise<any> {
-    return await this.authorizationCodeGrant.authorizationCode(grantsTokenDto);
+  async authorizationCode(grantsTokenDto: GrantsTokenDto, request, response): Promise<any> {
+    const result = await this.authorizationCodeGrant.authorizationCode(grantsTokenDto);
+    return await this.result(grantsTokenDto, result, response);
   }
 
   async clientCredentials(grantsTokenDto: GrantsTokenDto): Promise<any> {

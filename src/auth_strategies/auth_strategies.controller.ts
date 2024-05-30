@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Header,
+  Param,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -12,15 +13,35 @@ import { LeaderProvider } from '@src/auth_strategies/provider/leader.provider';
 import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
 import { TokenService } from '@src/token/token.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Data } from '@src/common/common.decorator';
+import { AuthStrategiesDto } from '@src/auth_strategies/auth_strategies.dto';
+import { AuthStrategiesService } from '@src/auth_strategies/auth_strategies.service';
 
 @ApiTags('Стратегии авторизации')
 @Controller('auth/strategies')
 export class AuthStrategiesController {
   constructor(
+    private readonly authStrategiesService: AuthStrategiesService,
     private readonly authSessionsService: AuthSessionsService,
     private readonly tokenService: TokenService,
     private readonly leaderStrategiesProvider: LeaderProvider,
   ) {}
+
+  @Get('encode')
+  async encodeTokens(
+    @Data()
+    authStrategiesDto: AuthStrategiesDto,
+  ): Promise<AuthStrategiesDto> {
+    return await this.authStrategiesService.encodeTokens(authStrategiesDto);
+  }
+
+  @Get('decode')
+  async decodeTokens(
+    @Data()
+    authStrategiesDto: AuthStrategiesDto,
+  ): Promise<AuthStrategiesDto> {
+    return await this.authStrategiesService.decodeTokens(authStrategiesDto);
+  }
 
   @Get('oauth/login')
   @UseGuards(OauthGuard)
