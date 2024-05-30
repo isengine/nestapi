@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Header,
+  NotFoundException,
   Param,
   Req,
   UseGuards,
@@ -16,6 +17,10 @@ import { ApiTags } from '@nestjs/swagger';
 import { Data } from '@src/common/common.decorator';
 import { AuthStrategiesDto } from '@src/auth_strategies/auth_strategies.dto';
 import { AuthStrategiesService } from '@src/auth_strategies/auth_strategies.service';
+import { AuthStrategiesEntity } from './auth_strategies.entity';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { AuthDto } from '@src/auth/auth.dto';
+import { Auth, Self } from '@src/auth/auth.decorator';
 
 @ApiTags('Стратегии авторизации')
 @Controller('auth/strategies')
@@ -27,20 +32,32 @@ export class AuthStrategiesController {
     private readonly leaderStrategiesProvider: LeaderProvider,
   ) {}
 
-  @Get('encode')
-  async encodeTokens(
-    @Data()
-    authStrategiesDto: AuthStrategiesDto,
-  ): Promise<AuthStrategiesDto> {
-    return await this.authStrategiesService.encodeTokens(authStrategiesDto);
+  @Auth()
+  @Get('self')
+  // @ApiExcludeEndpoint()
+  async self(@Self() auth: AuthDto) {
+    const { id } = auth;
+    const result = await this.authStrategiesService.findAll(undefined, id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
   }
 
-  @Get('decode')
-  async decodeTokens(
-    @Data()
-    authStrategiesDto: AuthStrategiesDto,
-  ): Promise<AuthStrategiesDto> {
-    return await this.authStrategiesService.decodeTokens(authStrategiesDto);
+  @Auth()
+  @Get('self/:name')
+  // @ApiExcludeEndpoint()
+  async selfByName(
+    @Self() auth: AuthDto,
+    @Param('name') name: string,
+  ) {
+    const { id } = auth;
+    const where = { name };
+    const result = await this.authStrategiesService.find(where, undefined, undefined, id);
+    if (!result) {
+      throw new NotFoundException('Entry not found');
+    }
+    return result;
   }
 
   @Get('oauth/login')

@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { DeepPartial, FindOptionsOrder, FindOptionsWhere, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthStrategiesDto } from '@src/auth_strategies/auth_strategies.dto';
@@ -20,6 +20,73 @@ export class AuthStrategiesService extends CommonService<
     super();
   }
 
+  async find(
+    where: FindOptionsWhere<any> = undefined,
+    order: FindOptionsOrder<any> = { id: 'ASC' },
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<AuthStrategiesEntity[]> {
+    const result = await super.find(
+      where,
+      order,
+      relationsDto,
+      authId,
+    );
+    return await this.decodeEntries(result);
+  }
+
+  async findAll(
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<AuthStrategiesEntity[]> {
+    const result = await super.findAll(
+      relationsDto,
+      authId,
+    );
+    return await this.decodeEntries(result);
+  }
+
+  async first(
+    where: FindOptionsWhere<any> = undefined,
+    order: FindOptionsOrder<any> = { id: 'ASC' },
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<AuthStrategiesEntity> {
+    const result = await super.first(
+      where,
+      order,
+      relationsDto,
+      authId,
+    );
+    return await this.decodeTokens(result);
+  }
+
+  async many(
+    ids: Array<number | string>,
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<AuthStrategiesEntity[]> {
+    const result = await super.many(
+      ids,
+      relationsDto,
+      authId,
+    );
+    return await this.decodeEntries(result);
+  }
+
+  async findOne(
+    id: number,
+    relationsDto: Array<RelationsDto> = undefined,
+    authId: number = undefined,
+  ): Promise<AuthStrategiesEntity> {
+    const result = await super.findOne(
+      id,
+      relationsDto,
+      authId,
+    );
+    return await this.decodeTokens(result);
+  }
+
   async encodeTokens(
     authStrategiesDto: AuthStrategiesDto,
   ): Promise<AuthStrategiesDto> {
@@ -35,15 +102,28 @@ export class AuthStrategiesService extends CommonService<
   }
 
   async decodeTokens(
-    authStrategiesDto: AuthStrategiesDto,
-  ): Promise<AuthStrategiesDto> {
+    authStrategiesDto: AuthStrategiesEntity,
+  ): Promise<AuthStrategiesEntity> {
     if (authStrategiesDto?.accessToken) {
-      let { encrypted, iv } = JSON.parse(authStrategiesDto.accessToken);
-      authStrategiesDto.accessToken = await decrypt(encrypted, iv);
+      try {
+        let { encrypted, iv } = JSON.parse(authStrategiesDto.accessToken);
+        authStrategiesDto.accessToken = await decrypt(encrypted, iv);
+      } catch {}
     }
     if (authStrategiesDto?.refreshToken) {
-      let { encrypted, iv } = JSON.parse(authStrategiesDto.refreshToken);
-      authStrategiesDto.refreshToken = await decrypt(encrypted, iv);
+      try {
+        let { encrypted, iv } = JSON.parse(authStrategiesDto.refreshToken);
+        authStrategiesDto.refreshToken = await decrypt(encrypted, iv);
+      } catch {}
+    }
+    return authStrategiesDto;
+  }
+
+  async decodeEntries(
+    authStrategiesDto: Array<AuthStrategiesEntity>,
+  ): Promise<AuthStrategiesEntity[]> {
+    for await (const [index, item] of authStrategiesDto.entries()) {
+      authStrategiesDto[index] = await this.decodeTokens(item);
     }
     return authStrategiesDto;
   }
