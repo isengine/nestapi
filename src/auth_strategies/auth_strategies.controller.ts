@@ -14,13 +14,10 @@ import { LeaderProvider } from '@src/auth_strategies/provider/leader.provider';
 import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
 import { TokenService } from '@src/token/token.service';
 import { ApiTags } from '@nestjs/swagger';
-import { Data } from '@src/common/common.decorator';
-import { AuthStrategiesDto } from '@src/auth_strategies/auth_strategies.dto';
 import { AuthStrategiesService } from '@src/auth_strategies/auth_strategies.service';
-import { AuthStrategiesEntity } from './auth_strategies.entity';
-import { RelationsDto } from '@src/common/dto/relations.dto';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
+import { OauthProvider } from '@src/auth_strategies/provider/oauth.provider';
 
 @ApiTags('Стратегии авторизации')
 @Controller('auth/strategies')
@@ -29,7 +26,8 @@ export class AuthStrategiesController {
     private readonly authStrategiesService: AuthStrategiesService,
     private readonly authSessionsService: AuthSessionsService,
     private readonly tokenService: TokenService,
-    private readonly leaderStrategiesProvider: LeaderProvider,
+    private readonly leaderProvider: LeaderProvider,
+    private readonly oauthProvider: OauthProvider,
   ) {}
 
   @Auth()
@@ -68,13 +66,17 @@ export class AuthStrategiesController {
 
   @Get('oauth/redirect')
   @Header('content-type', 'application/json')
-  @UseGuards(OauthGuard)
+  // @UseGuards(OauthGuard)
   async oauthRedirect(@Req() req: any) {
-    const { user: auth } = req;
-    const tokens = await this.tokenService.pair({ id: auth.id });
+    const account = await this.oauthProvider.activate(req);
+    if (!account) {
+      return account;
+    }
+    const auth = await this.oauthProvider.validate(account);
+    const token = await this.tokenService.pair({ id: auth.id });
     await this.authSessionsService.start(auth, req);
     delete auth.password;
-    return { auth, tokens };
+    return { auth, token };
   }
 
   @Get('google/login')
@@ -102,11 +104,11 @@ export class AuthStrategiesController {
   @Get('leader/redirect')
   // @UseGuards(LeaderGuard)
   async leaderRedirect(@Req() req: any) {
-    const account = await this.leaderStrategiesProvider.activate(req);
+    const account = await this.leaderProvider.activate(req);
     if (!account) {
       return account;
     }
-    const auth = await this.leaderStrategiesProvider.validate(account);
+    const auth = await this.leaderProvider.validate(account);
     const token = await this.tokenService.pair({ id: auth.id });
     await this.authSessionsService.start(auth, req);
     // auth.token = token;

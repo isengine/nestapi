@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '@src/users/users.service';
 
 @Injectable()
-export class LeaderProvider {
+export class OauthProvider {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
@@ -16,26 +16,30 @@ export class LeaderProvider {
   ) {}
 
   async activate(request): Promise<any> {
-    const token = request?.query?.code;
+    const code = request?.query?.code;
 
-    if (!token) {
+    if (!code) {
       return null;
     }
 
-    const res = await this.getToken(token);
-    const user = res.user_id ? await this.getUser(res.user_id, res.access_token) : undefined;
+    const res = await this.getToken(code);
+    const user = res.access_token ? await this.getUser(res.access_token) : undefined;
     return user;
   }
-  
-  async getToken(token: string): Promise<any> {
+
+  async getToken(code: string) {
+    const customAuthServer = this.configService.get('OAUTH_SERVER');
+    const redirect_uri = this.configService.get('OAUTH_CLIENT_CALLBACK');
+    const client_id = this.configService.get('OAUTH_CLIENT_ID');
+
     return axios.post(
-      'https://apps.leader-id.ru/api/v1/oauth/token',
+      `${customAuthServer}/token`,
       {
         grant_type: 'authorization_code',
-        code: token,
-        client_id: this.configService.get('LEADER_CLIENT_ID'),
-        client_secret: this.configService.get('LEADER_CLIENT_SECRET'),
-      }
+        code,
+        client_id,
+        redirect_uri,
+      },
     )
       .then(r => r.data)
       .catch(e => {
@@ -43,9 +47,11 @@ export class LeaderProvider {
       });
   }
 
-  async getUser(userId: string, accessToken: string): Promise<any> {
+  async getUser(accessToken: string): Promise<any> {
+    const customAuthServer = this.configService.get('OAUTH_SERVER');
+
     return axios.get(
-      `https://apps.leader-id.ru/api/v1/users/${userId}`,
+      `${customAuthServer}/auth/self`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -59,55 +65,37 @@ export class LeaderProvider {
   }
 
   async validate(account) {
-    const auth = await this.authService.findByUsername(account.email);
+    const auth = await this.authService.findByUsername(account.username);
 
     const authDto: AuthDto = {
-      username: account.email,
-      isActivated: !!(account.emailConfirmed || account.phoneConfirmed),
+      username: account.username,
+      isActivated: !!account.isActivated,
     };
+
+    const userData = account?.users?.[0];
 
     if (!auth) {
       return await this.authService
         .create(authDto)
-        .then(async (result) => await this.prepareResult(result, account));
+        .then(async (result) => await this.prepareResult(result, userData));
     }
 
     return await this.authService
       .update(auth.id, authDto)
-      .then(async (result) => await this.prepareResult(result, account));
+      .then(async (result) => await this.prepareResult(result, userData));
   }
 
   async prepareResult(auth, account): Promise<AuthDto> {
-    const genders = {
-      male: 'm',
-      female: 'w',
-    };
-    const fields = [ 'postCode', 'country', 'region', 'city', 'street', 'house', 'building', 'wing', 'apartment', 'place' ];
-    const address = fields.filter(i => {
-      const r = account.address?.[i];
-      return !!r ? r : undefined;
-    }).join(', ');
     await this.strategiesService.updateBy({
       auth: { id: auth.id },
-      name: 'leaderid',
+      name: 'oauthid',
       uid: account.id,
       json: JSON.stringify(account),
     });
     const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
-      {
-        email: account.email,
-        phone: `7${account.phone}`,
-        name: account.firstName,
-        lastName: account.lastName,
-        parentName: account.fatherName,
-        avatar: account.photo,
-        birthday: account.birthday,
-        address,
-        timezone: account.address?.timezone,
-        gender: genders[account.gender] || '',
-      },
+      account,
       null,
       auth.id,
     );

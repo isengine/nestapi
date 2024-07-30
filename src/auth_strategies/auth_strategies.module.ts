@@ -13,6 +13,7 @@ import { GoogleStrategy } from '@src/auth_strategies/strategy/google.strategy';
 import { LeaderStrategy } from '@src/auth_strategies/strategy/leader.strategy';
 import { LeaderProvider } from '@src/auth_strategies/provider/leader.provider';
 import { OauthStrategy } from '@src/auth_strategies/strategy/oauth.strategy';
+import { OauthProvider } from '@src/auth_strategies/provider/oauth.provider';
 
 @Module({
   controllers: [AuthStrategiesController],
@@ -31,6 +32,7 @@ import { OauthStrategy } from '@src/auth_strategies/strategy/oauth.strategy';
     LeaderProvider,
     LeaderStrategy,
     OauthStrategy,
+    OauthProvider,
   ],
   exports: [AuthStrategiesService],
 })

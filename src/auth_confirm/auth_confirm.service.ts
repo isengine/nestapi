@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthConfirmEntity } from '@src/auth_confirm/auth_confirm.entity';
 import { RandomService } from '@src/random/random.service';
+import { hash } from '@src/common/service/crypt.service';
 
 @Injectable()
 export class AuthConfirmService {
@@ -51,7 +52,7 @@ export class AuthConfirmService {
         id: auth.id,
       },
       type,
-      code: v4(),
+      code: `${v4()}-${hash(auth.id)}`,
     };
     const created = await this.repository.save(entry);
     return await this.findById(created.id);

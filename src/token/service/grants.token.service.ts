@@ -17,9 +17,8 @@ export class GrantsTokenService {
     private readonly refreshTokenGrant: RefreshTokenGrant,
   ) {}
 
-  async authorizationCode(grantsTokenDto: GrantsTokenDto, request, response): Promise<any> {
-    const result = await this.authorizationCodeGrant.authorizationCode(grantsTokenDto);
-    return await this.result(grantsTokenDto, result, response);
+  async authorizationCode(grantsTokenDto: GrantsTokenDto): Promise<any> {
+    return await this.authorizationCodeGrant.authorizationCode(grantsTokenDto);
   }
 
   async clientCredentials(grantsTokenDto: GrantsTokenDto): Promise<any> {
@@ -36,17 +35,5 @@ export class GrantsTokenService {
 
   async refreshToken(grantsTokenDto: GrantsTokenDto): Promise<any> {
     return await this.refreshTokenGrant.refreshToken(grantsTokenDto);
-  }
-
-  async result(grantsTokenDto: GrantsTokenDto, result, response): Promise<any> {
-    if (grantsTokenDto.redirect_uri) {
-      const data = [];
-      for (const [key, value] of Object.entries(result)) {
-        data.push(`${key}=${ encodeURI(`${value}`) }`);
-      }
-      const uri = `${grantsTokenDto.redirect_uri}?${data.join('&')}`;
-      return await response.redirect(uri);
-    }
-    return result;
   }
 }

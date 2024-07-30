@@ -6,8 +6,10 @@ import { AuthService } from '@src/auth/auth.service';
 import { AuthDto } from '@src/auth/auth.dto';
 import { UsersService } from '@src/users/users.service';
 import { AuthStrategiesService } from '@src/auth_strategies/auth_strategies.service';
+// import { OauthProvider } from '@src/auth_strategies/provider/oauth.provider';
 
 import axios from 'axios';
+// import { Request } from 'express';
 
 @Injectable()
 export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
@@ -16,6 +18,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     private readonly authService: AuthService,
     private readonly authStrategiesService: AuthStrategiesService,
     private readonly userService: UsersService,
+    // private readonly oauthProvider: OauthProvider,
   ) {
     // console.log('-- oauth/login');
 
@@ -113,4 +116,19 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     // console.log('-- profile', profile);
     return auth;
   }
+
+  // async authenticate(req: Request, options?: any) {
+  //   if (!req.query?.code) {
+  //     return super.authenticate(req, options);
+  //   }
+  //   return await this.provider(req);
+  // }
+
+  // async provider(req: Request) {
+  //   const account = await this.oauthProvider.activate(req);
+  //   if (!account) {
+  //     return;
+  //   }
+  //   return await this.oauthProvider.validate(account);
+  // }
 }

@@ -34,7 +34,7 @@ export class TokenController {
     // client_id=s6BhdRkqt3
     // redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb
     if (grantsTokenDto.grant_type === 'authorization_code') {
-      const result = await this.grantsTokenService.authorizationCode(grantsTokenDto, request, response);
+      return await this.grantsTokenService.authorizationCode(grantsTokenDto);
     }
     // /token
     // grant_type=client_credentials

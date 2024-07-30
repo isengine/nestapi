@@ -1,4 +1,4 @@
-import { webcrypto } from 'node:crypto';
+import { createHash, webcrypto } from 'node:crypto';
 import * as dotenv from 'dotenv';
 import { BadRequestException } from '@nestjs/common';
 
@@ -72,4 +72,11 @@ export async function decrypt(encryptedData, iv) {
   } catch (e) {
     throw new BadRequestException(`Error decrypting data: ${e.message}`);
   }
+};
+
+export function hash(data, type = 'md5') {
+  return createHash(type)
+    .update(data)
+    .copy()
+    .digest('hex');
 };
