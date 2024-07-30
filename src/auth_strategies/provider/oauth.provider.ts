@@ -23,8 +23,12 @@ export class OauthProvider {
     }
 
     const res = await this.getToken(code);
-    const user = res.access_token ? await this.getUser(res.access_token) : undefined;
-    return user;
+    const user = res.access_token ? await this.getUser(res.access_token, res.refresh_token) : undefined;
+    return {
+      ...user,
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token,
+    };
   }
 
   async getToken(code: string) {
@@ -47,7 +51,7 @@ export class OauthProvider {
       });
   }
 
-  async getUser(accessToken: string): Promise<any> {
+  async getUser(accessToken: string, refreshToken: string): Promise<any> {
     const customAuthServer = this.configService.get('OAUTH_SERVER');
 
     return axios.get(
@@ -73,24 +77,27 @@ export class OauthProvider {
     };
 
     const userData = account?.users?.[0];
+    const { accessToken, refreshToken } = account;
 
     if (!auth) {
       return await this.authService
         .create(authDto)
-        .then(async (result) => await this.prepareResult(result, userData));
+        .then(async (result) => await this.prepareResult(result, userData, accessToken, refreshToken));
     }
 
     return await this.authService
       .update(auth.id, authDto)
-      .then(async (result) => await this.prepareResult(result, userData));
+      .then(async (result) => await this.prepareResult(result, userData, accessToken, refreshToken));
   }
 
-  async prepareResult(auth, account): Promise<AuthDto> {
+  async prepareResult(auth, account, accessToken, refreshToken): Promise<AuthDto> {
     await this.strategiesService.updateBy({
       auth: { id: auth.id },
       name: 'oauthid',
       uid: account.id,
       json: JSON.stringify(account),
+      accessToken,
+      refreshToken,
     });
     const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(

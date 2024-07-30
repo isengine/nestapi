@@ -24,7 +24,11 @@ export class LeaderProvider {
 
     const res = await this.getToken(token);
     const user = res.user_id ? await this.getUser(res.user_id, res.access_token) : undefined;
-    return user;
+    return {
+      ...user,
+      accessToken: res.access_token,
+      refreshToken: res.refresh_token,
+    };
   }
   
   async getToken(token: string): Promise<any> {
@@ -92,6 +96,8 @@ export class LeaderProvider {
       name: 'leaderid',
       uid: account.id,
       json: JSON.stringify(account),
+      accessToken: account.accessToken,
+      refreshToken: account.refreshToken,
     });
     const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
