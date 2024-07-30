@@ -3,5 +3,8 @@
     <div class="link-group">
         <a class="link" href="/auth/strategies/leader/login"><img src="/img/leader_logo.svg"></a>
         <a class="link" href="/auth/strategies/google/login"><img src="/img/google_logo.svg"></a>
+        <% if (!isOauthServer) { %>
+        <a class="link" href="/auth/strategies/oauth/login"><img src="/img/oauth_logo.svg"></a>
+        <% } %>
     </div>
 </div>

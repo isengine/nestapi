@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/sessions
 .env
 package-lock.json
 yarn.lock

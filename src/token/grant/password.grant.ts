@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { AuthService } from '@src/auth/auth.service';
 import { GrantsTokenDto } from '@src/token/dto/grants.token.dto';
 import { TokenService } from '@src/token/token.service';
+import { Cookie } from '@src/common/service/cookie.service';
 
 @Injectable()
 export class PasswordGrant {
@@ -34,20 +35,9 @@ export class PasswordGrant {
     //   await this.authSessionsService.start(auth, request);
     // }
     if (response) {
-      await this.setCookie(auth.id, response);
+      const cookie = new Cookie(request, response);
+      cookie.set('id', auth.id);
     }
     return await this.tokenService.prepare(token, grantsTokenDto.state);
-  }
-
-  async setCookie(id: number, response): Promise<void> {
-    response.cookie(
-      'id',
-      id,
-      {
-        httpOnly: true,
-        secure: false,
-      },
-    );
-    // localStorage.setItem('jwt', access_token);
   }
 }

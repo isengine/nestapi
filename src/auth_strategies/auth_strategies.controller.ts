@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { OauthGuard } from '@src/auth_strategies/guard/oauth.guard';
@@ -18,6 +19,8 @@ import { AuthStrategiesService } from '@src/auth_strategies/auth_strategies.serv
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { OauthProvider } from '@src/auth_strategies/provider/oauth.provider';
+import { OpenAuthService } from '@src/auth/service/open.auth.service';
+import { Cookie } from '@src/common/service/cookie.service';
 
 @ApiTags('Стратегии авторизации')
 @Controller('auth/strategies')
@@ -28,6 +31,7 @@ export class AuthStrategiesController {
     private readonly tokenService: TokenService,
     private readonly leaderProvider: LeaderProvider,
     private readonly oauthProvider: OauthProvider,
+    private readonly openAuthService: OpenAuthService,
   ) {}
 
   @Auth()
@@ -67,12 +71,25 @@ export class AuthStrategiesController {
   @Get('oauth/redirect')
   @Header('content-type', 'application/json')
   // @UseGuards(OauthGuard)
-  async oauthRedirect(@Req() req: any) {
+  async oauthRedirect(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
     const account = await this.oauthProvider.activate(req);
     if (!account) {
       return account;
     }
     const auth = await this.oauthProvider.validate(account);
+
+    const cookie = new Cookie(req, res);
+    const openAuthDto = cookie.getJson('query');
+
+    if (openAuthDto?.response_type === 'code') {
+      const client = await this.openAuthService.verify(openAuthDto);
+      const url = await this.openAuthService.code(client, auth.id, openAuthDto.state);
+      return await res.redirect(url);
+    }
+
     const token = await this.tokenService.pair({ id: auth.id });
     await this.authSessionsService.start(auth, req);
     delete auth.password;
@@ -87,8 +104,21 @@ export class AuthStrategiesController {
 
   @Get('google/redirect')
   @UseGuards(GoogleGuard)
-  async googleRedirect(@Req() req: any) {
+  async googleRedirect(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
     const { user: auth } = req;
+
+    const cookie = new Cookie(req, res);
+    const openAuthDto = cookie.getJson('query');
+
+    if (openAuthDto?.response_type === 'code') {
+      const client = await this.openAuthService.verify(openAuthDto);
+      const url = await this.openAuthService.code(client, auth.id, openAuthDto.state);
+      return await res.redirect(url);
+    }
+
     const token = await this.tokenService.pair({ id: auth.id });
     await this.authSessionsService.start(auth, req);
     delete auth.password;
@@ -103,12 +133,25 @@ export class AuthStrategiesController {
 
   @Get('leader/redirect')
   // @UseGuards(LeaderGuard)
-  async leaderRedirect(@Req() req: any) {
+  async leaderRedirect(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
     const account = await this.leaderProvider.activate(req);
     if (!account) {
       return account;
     }
     const auth = await this.leaderProvider.validate(account);
+
+    const cookie = new Cookie(req, res);
+    const openAuthDto = cookie.getJson('query');
+
+    if (openAuthDto?.response_type === 'code') {
+      const client = await this.openAuthService.verify(openAuthDto);
+      const url = await this.openAuthService.code(client, auth.id, openAuthDto.state);
+      return await res.redirect(url);
+    }
+
     const token = await this.tokenService.pair({ id: auth.id });
     await this.authSessionsService.start(auth, req);
     // auth.token = token;

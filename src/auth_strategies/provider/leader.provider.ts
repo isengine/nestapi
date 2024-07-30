@@ -95,7 +95,8 @@ export class LeaderProvider {
       auth: { id: auth.id },
       name: 'leaderid',
       uid: account.id,
-      json: JSON.stringify(account),
+      json: account,
+      // json: JSON.stringify(account),
       accessToken: account.accessToken,
       refreshToken: account.refreshToken,
     });

@@ -21,6 +21,14 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
 - сделать/вернуть сессии при входе через формы, чтобы запоминался токен, рефреш кажется, и проверялся в сессии
 - оставить функции как класс или импортировать их как константы?
 
+- убрать:
+    - src/auth/service/methods.auth.service.ts
+    - src/auth/controller/methods.auth.controller.ts
+    - MethodsAuthService из src/auth/auth.module.ts
+    как дублирующие обычные методы из форм
+- возможно, сделать сервисы из FormsAuthService по типу login:
+    - если !redirect_uri || !client_id || !response_type, то возвращается значение без редиректа
+
 # Оглавление
 
 - [Установка](#установка)

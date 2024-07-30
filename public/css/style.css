@@ -114,3 +114,7 @@ p {
 .link {
   padding: 0 4px;
 }
+
+.link img {
+    height: 24px;
+}

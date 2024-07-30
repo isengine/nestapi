@@ -49,7 +49,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       auth: { id: auth.id },
       name: profile.provider,
       uid: profile.id,
-      json: JSON.stringify(account),
+      json: account,
+      // json: JSON.stringify(account),
       accessToken,
       refreshToken,
     });

@@ -95,7 +95,8 @@ export class OauthProvider {
       auth: { id: auth.id },
       name: 'oauthid',
       uid: account.id,
-      json: JSON.stringify(account),
+      json: account,
+      // json: JSON.stringify(account),
       accessToken,
       refreshToken,
     });

@@ -1,17 +1,30 @@
-import { Controller, Get, Render, Req } from '@nestjs/common';
+import { Controller, Get, Render, Req, Res } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { Cookie } from '@src/common/service/cookie.service';
+import { ConfigService } from '@nestjs/config';
 
 @ApiExcludeController()
 @Controller('auth')
 export class RenderAuthController {
   constructor(
+    private readonly configService: ConfigService,
   ) {}
 
   @Get('auth.html')
   @Render('auth')
-  authRender(@Req() req: any) {
+  authRender(
+    @Req() req: any,
+    @Res() res: any,
+  ) {
+    const cookie = new Cookie(req, res);
+    cookie.setJson('query', req.query);
+
+    const isOauthServer = this.configService.get('OAUTH_SERVER') === `${req.protocol}://${req.headers.host}`;
+    console.log('-- host', isOauthServer);
+
     return {
       query: req.query,
+      isOauthServer,
       title: 'Вход',
     };
   }

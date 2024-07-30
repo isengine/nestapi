@@ -6,6 +6,7 @@
                     {
                         'bad request': 'Ошибка',
                         'unauthorized': 'Ошибка авторизации',
+                        'unsupported_grant_type': 'Неподдерживаемый тип авторизации',
                     }[
                         `${query.error}`.toLowerCase()
                     ]
@@ -23,6 +24,7 @@
                         'user not found': 'Пользователь не найден',
                         'username must be an email': 'Вы некорректно указали электронную почту',
                         'user with this username is already in the system': 'Пользователь уже зарегистрирован',
+                        'specified type of grant_type field is not supported in this request': 'Тип авторизации не задан или не поддерживается в этом запросе',
                     }[
                         `${query.message}`.toLowerCase()
                     ]

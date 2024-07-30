@@ -4,6 +4,7 @@ import { OpenAuthDto } from '@src/auth/dto/open.auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Data } from '@src/common/common.decorator';
 import { CommonDoc } from '@src/common/common.doc';
+import { Cookie } from '@src/common/service/cookie.service';
 
 @ApiTags('OAuth 2.0')
 @Controller('auth')
@@ -30,7 +31,8 @@ export class OpenAuthController {
     @Res({ passthrough: true }) res: any,
   ) {
     const client = await this.openAuthService.verify(openAuthDto);
-    const idCookie = req.cookies['id'];
+    const cookie = new Cookie(req, res);
+    const idCookie = cookie.get('id');
     if (!idCookie) {
       const uri = '/auth/auth.html';
       const queries = Object.entries(openAuthDto)?.map(([key, value]) => `${key}=${encodeURIComponent(`${value}`)}`)?.join('&');

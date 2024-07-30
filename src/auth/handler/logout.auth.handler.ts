@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
+import { Cookie } from '@src/common/service/cookie.service';
 
 @Injectable()
 export class LogoutAuthHandler {
@@ -20,7 +21,11 @@ export class LogoutAuthHandler {
       throw new UnauthorizedException('Session does not exist!');
     }
     delete request.user;
-    response.clearCookie('id');
+
+    const cookie = new Cookie(request, response);
+    cookie.reset('id');
+    cookie.reset('query');
+
     return true;
   }
 }
