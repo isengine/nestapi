@@ -20,7 +20,7 @@ export class OpenAuthService {
     const updated = await this.codeGenerate({ ...clientsDto }, id);
     const [{ uri }] = clientsDto.redirects;
     if (!updated) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [code.open.auth.service]', 'invalid_client');
     }
     return `${uri}?code=${updated.code}&client_id=${updated.client_id}${state ? `&state=${state}` : ''}`;
   }
@@ -35,7 +35,7 @@ export class OpenAuthService {
     delete clientsDto.redirects;
     const token = await this.tokenService.pair({ id });
     if (!token) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [token.open.auth.service]', 'invalid_client');
     }
     return `${uri}?token_type=Bearer&expires_in=${token.expires_in}${state ? `&state=${state}` : ''}#access_token=${token.access_token}`;
   }
@@ -57,7 +57,7 @@ export class OpenAuthService {
       { name: 'redirects' },
     ]);
     if (!result || !result.redirects.length) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [verify.open.auth.service]', 'invalid_client');
     }
     return result;
   }

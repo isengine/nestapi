@@ -42,7 +42,7 @@ export class AuthorizationCodeGrant {
       { name: 'redirects' },
     ]); 
     if (!client?.auth) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [client.authorization.code.grant]', 'invalid_client');
     }
     client.code = null
     await this.clientsService.update(client.id, { ...client }, null, client.auth.id);
@@ -52,7 +52,7 @@ export class AuthorizationCodeGrant {
     // либо должен быть токен для клиента, либо редирект на авторизацию пользователя
     const token = await this.tokenService.pair({ id });
     if (!token) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [token.authorization.code.grant]', 'invalid_client');
     }
     return await this.tokenService.prepare(token, grantsTokenDto.state);
   }

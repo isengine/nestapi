@@ -26,11 +26,11 @@ export class ClientCredentialsGrant {
       client_secret,
     });
     if (!client) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [client.client.credentials.grant]', 'invalid_client');
     }
     const token = await this.tokenService.pair({ client_id });
     if (!token) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [token.client.credentials.grant]', 'invalid_client');
     }
     return await this.tokenService.prepare(token, grantsTokenDto.state);
   }

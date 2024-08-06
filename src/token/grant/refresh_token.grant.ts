@@ -47,7 +47,7 @@ export class RefreshTokenGrant {
       client_secret,
     });
     if (!client || !client_id || !client_secret) {
-      throw new BadRequestException('Client authentication failed. Unknown client', 'invalid_client');
+      throw new BadRequestException('Client authentication failed. Unknown client [client.refresh.token.grant]', 'invalid_client');
     }
     const token = await this.tokenService.refresh(
       refresh_token,
