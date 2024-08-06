@@ -49,6 +49,7 @@ API backend service with RESTful and GrapQL based on Nest.js, TypeORM, Apollo
 - [Отношения](#отношения)
 - [Защита данных](#защита-данных)
 - [Модели данных](#модели-данных)
+- [Генерация модели данных](#генерация-модели-данных)
 - [Контроллеры и резолверы](#контроллеры-и-резолверы)
   - [Аргументы запросов](#аргументы-запросов)
   - [Методы запросов](#методы-запросов)
@@ -499,6 +500,24 @@ npm run prod
     src/common/entity/protected.dto.ts
     src/common/entity/private.dto.ts
     src/common/entity/closed.dto.ts
+
+[^ к оглавлению](#оглавление)
+
+# Генерация модели данных
+
+Если вы используете существующую базу данных и хотите сгенерировать модель на ее основе, вы можете воспользоваться подключенной библиотекой **typeorm-model-generator**.
+
+Вызов:
+
+```
+yarn|npm run typeorm-model-generator -h {DB_HOST} -d {DB_NAME} -u {DB_USERNAME} -x {DB_PASSWORD} -e {mysql|postgres} -o ./src/typeorm/
+```
+
+Пример вызова:
+
+```
+yarn typeorm-model-generator -h localhost -d mydatabase -u root -x 1234 -e mysql -o ./src/typeorm/
+```
 
 [^ к оглавлению](#оглавление)
 

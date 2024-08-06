@@ -7,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getDbConfig } from '@config/db.config';
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
-import { NogqlModule } from '@src/typeorm/module/nogql.module';
+import { NogqlModule } from '@src/common/module/nogql.module';
 import { AuthModule } from '@src/auth/auth.module';
 import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
 import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';

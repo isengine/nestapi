@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /sessions
+/src/typeorm
 .env
 package-lock.json
 yarn.lock
