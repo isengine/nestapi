@@ -19,12 +19,8 @@ export class RenderAuthController {
     const cookie = new Cookie(req, res);
     cookie.setJson('query', req.query);
 
-    const isOauthServer = this.configService.get('OAUTH_SERVER') === `${req.protocol}://${req.headers.host}`;
-    console.log('-- host', isOauthServer);
-
     return {
       query: req.query,
-      isOauthServer,
       title: 'Вход',
     };
   }

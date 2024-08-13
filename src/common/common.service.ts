@@ -141,6 +141,18 @@ export class CommonService<
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
   ): Promise<Filter[]> {
+    if (relationsDto.length) {
+      relationsDto = relationsDto.map(i => {
+        if (i.order === undefined) {
+          i.order = 'id';
+        }
+        if (i.desc === undefined) {
+          i.desc = false;
+        }
+        return i;
+      });
+    }
+
     if (authId !== undefined) {
       const auth = { id: authId };
       dto = { ...dto, auth };
@@ -149,6 +161,7 @@ export class CommonService<
       }
       relationsDto.push({ name: 'auth', order: 'id', desc: false });
     }
+
     const { root, core, fields } = entityGetParams(this.repository.target);
     const query = this.repository.createQueryBuilder(root);
     const where = filterService(
@@ -160,6 +173,7 @@ export class CommonService<
     );
     query.where(where);
     relationsCreate(query, relationsDto, root);
+
     try {
       return await optionsService(query, optionsDto, relationsDto, root);
     }
@@ -221,8 +235,11 @@ export class CommonService<
     }
 
     try {
-      const created = await this.repository.save(entry);
-      return await this.findOne(created.id, relationsDto, authId);
+      await this.updateRelations(entry, relationsDto, authId);
+      await this.repository.update({ id: entry.id }, entry);
+      return await this.findOne(entry.id, relationsDto, authId);
+      // const created = await this.repository.save(entry);
+      // return await this.findOne(created.id, relationsDto, authId);
     }
     catch (e) {
       this.error(e);
@@ -244,6 +261,51 @@ export class CommonService<
     }
     catch (e) {
       this.error(e);
+    }
+  }
+
+  async updateRelations (entry, relationsDto, authId) {
+    if (!relationsDto?.length) {
+      return;
+    }
+
+    const relationEntries = [];
+
+    for (const relation of relationsDto) {
+      const { name } = relation;
+      if (entry[name]) {
+        relationEntries.push({
+          name,
+          data: entry[name],
+        });
+        delete entry[name];
+      }
+    }
+
+    if (!relationEntries.length) {
+      return;
+    }
+
+    const result = await this.findOne(entry.id, relationsDto, authId);
+
+    for (const relationEntry of relationEntries) {
+      const { name, data } = relationEntry;
+      const r = result[name];
+
+      if (r?.length) {
+        for (const [idx, val] of r.entries()) {
+          const type = val.constructor.name;
+          const item = data[idx];
+          if (item.id === val.id) {
+            const subRepository = this.repository.manager.getRepository(`${type}`);
+            await subRepository.update({ id: item.id }, item);
+          }
+        }
+      } else {
+        const type = r.constructor.name;
+        const subRepository = this.repository.manager.getRepository(`${type}`);
+        await subRepository.update({ id: r.id }, relationEntry.data);
+      }
     }
   }
 
