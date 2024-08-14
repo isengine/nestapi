@@ -100,6 +100,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
       refreshToken,
       // json: JSON.stringify(profile),
     });
+
     const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
@@ -114,6 +115,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     // console.log('-- auth', auth);
     // console.log('-- user', user);
     // console.log('-- profile', profile);
+
     return auth;
   }
 

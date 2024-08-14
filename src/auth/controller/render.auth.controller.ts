@@ -18,9 +18,10 @@ export class RenderAuthController {
   ) {
     const cookie = new Cookie(req, res);
     cookie.setJson('query', req.query);
-
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
+      strategies: req.query?.strategies ? JSON.parse(req.query?.strategies || []) : [],
       title: 'Вход',
     };
   }
@@ -30,6 +31,7 @@ export class RenderAuthController {
   changeRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Смена пароля',
     };
   }
@@ -39,6 +41,7 @@ export class RenderAuthController {
   changeCompleteRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Смена пароля',
     };
   }
@@ -48,6 +51,7 @@ export class RenderAuthController {
   confirmRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Подтверждение регистрации',
     };
   }
@@ -57,6 +61,7 @@ export class RenderAuthController {
   confirmCompleteRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Подтверждение регистрации',
     };
   }
@@ -66,6 +71,7 @@ export class RenderAuthController {
   registerRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Регистрация',
     };
   }
@@ -75,6 +81,7 @@ export class RenderAuthController {
   registerCompleteRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Регистрация',
     };
   }
@@ -84,6 +91,7 @@ export class RenderAuthController {
   resetRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Сброс пароля',
     };
   }
@@ -93,6 +101,7 @@ export class RenderAuthController {
   resetCompleteRender(@Req() req: any) {
     return {
       query: req.query,
+      prefix: this.configService.get('PREFIX'),
       title: 'Сброс пароля',
     };
   }

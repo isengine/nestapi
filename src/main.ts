@@ -86,9 +86,10 @@ async function bootstrap() {
   app.setViewEngine('ejs');
 
   const port = process.env.PORT || 5000;
-  const message = `Server running \n in ${process.env.NODE_ENV} mode on ${port} port \n at http://localhost:${port}`;
+  const ip = process.env.IP || 'localhost';
+  const message = `Server running \n in ${process.env.NODE_ENV} mode on ${port} port \n at http://${ip}:${port}`;
 
-  await app.listen(port).then(() => {
+  await app.listen(port, ip).then(() => {
     console.log(message);
   });
 }

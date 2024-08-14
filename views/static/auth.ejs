@@ -2,7 +2,7 @@
 <%- include('partials/head.ejs') %>
 <body>
     <div class="form">
-        <form action="/auth/login" method="post">
+        <form action="<%= prefix %>/auth/login" method="post">
             <h3><%= title %></h3>
             <div>
                 <input
@@ -56,11 +56,11 @@
         <div class="bottom">
             <p>
                 Нет аккаунта?
-                <a class="link" href="/auth/register.html">Зарегистрироваться</a>
+                <a class="link" href="<%= prefix %>/auth/register.html">Зарегистрироваться</a>
             </p>
             <p>
                 Забыли пароль?
-                <a class="link" href="/auth/reset.html">Сбросить</a>
+                <a class="link" href="<%= prefix %>/auth/reset.html">Сбросить</a>
             </p>
         </div>
     </div>

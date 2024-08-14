@@ -54,6 +54,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       accessToken,
       refreshToken,
     });
+
     const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
@@ -67,6 +68,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       null,
       auth.id,
     );
+
     return auth;
   }
 }

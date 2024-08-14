@@ -22,7 +22,7 @@
                     class="btn"
                     type="button"
                     value="Подтвердить регистрацию"
-                    onclick="location.href='/auth/confirm/'+escape(document.forms['confirmForm'].elements['code'].value || null)"
+                    onclick="location.href='<%= prefix %>/auth/confirm/'+escape(document.forms['confirmForm'].elements['code'].value || null)"
                 >
             </div>
         </form>

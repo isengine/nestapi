@@ -2,7 +2,7 @@
 <%- include('partials/head.ejs') %>
 <body>
     <div class="form">
-        <form action="/auth/change/<%= query.code %>" method="post">
+        <form action="<%= prefix %>/auth/change/<%= query.code %>" method="post">
             <h3><%= title %></h3>
             <div class="form-group">
                 <input

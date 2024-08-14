@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '@src/users/users.service';
 
 @Injectable()
-export class LeaderProvider {
+export class UntiProvider {
   constructor(
     private readonly authService: AuthService,
     private readonly configService: ConfigService,
@@ -23,7 +23,7 @@ export class LeaderProvider {
     }
 
     const res = await this.getToken(token);
-    const user = res.user_id ? await this.getUser(res.user_id, res.access_token) : undefined;
+    const user = res.access_token ? await this.getUser(res.access_token) : undefined;
     return {
       ...user,
       accessToken: res.access_token,
@@ -33,13 +33,19 @@ export class LeaderProvider {
   
   async getToken(token: string): Promise<any> {
     return axios.post(
-      'https://apps.leader-id.ru/api/v1/oauth/token',
+      'https://sso.2035.university/oauth2/access_token',
       {
         grant_type: 'authorization_code',
         code: token,
-        client_id: this.configService.get('LEADER_CLIENT_ID'),
-        client_secret: this.configService.get('LEADER_CLIENT_SECRET'),
-      }
+        client_id: this.configService.get('UNTI_CLIENT_ID'),
+        client_secret: this.configService.get('UNTI_CLIENT_SECRET'),
+        redirect_uri: this.configService.get('UNTI_CLIENT_CALLBACK'),
+      },
+      {
+        headers: { 
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      },
     )
       .then(r => r.data)
       .catch(e => {
@@ -47,9 +53,9 @@ export class LeaderProvider {
       });
   }
 
-  async getUser(userId: string, accessToken: string): Promise<any> {
+  async getUser(accessToken: string): Promise<any> {
     return axios.get(
-      `https://apps.leader-id.ru/api/v1/users/${userId}`,
+      'https://sso.2035.university/users/me',
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -67,7 +73,7 @@ export class LeaderProvider {
 
     const authDto: AuthDto = {
       username: account.email,
-      isActivated: !!(account.emailConfirmed || account.phoneConfirmed),
+      isActivated: true,
     };
 
     if (!auth) {
@@ -84,37 +90,22 @@ export class LeaderProvider {
   async prepareResult(auth, account): Promise<AuthDto> {
     await this.strategiesService.updateBy({
       auth: { id: auth.id },
-      name: 'leaderid',
-      uid: account.id,
+      name: 'unti',
+      uid: account.unti_id,
       json: account,
       // json: JSON.stringify(account),
       accessToken: account.accessToken,
       refreshToken: account.refreshToken,
     });
 
-    const genders = {
-      male: 'm',
-      female: 'w',
-    };
-    const fields = [ 'postCode', 'country', 'region', 'city', 'street', 'house', 'building', 'wing', 'apartment', 'place' ];
-    const address = fields.filter(i => {
-      const r = account.address?.[i];
-      return !!r ? r : undefined;
-    }).join(', ');
     const user = await this.userService.first(null, null, null, auth.id);
     await this.userService.update(
       user.id,
       {
         email: account.email,
-        phone: `7${account.phone}`,
-        name: account.firstName,
-        lastName: account.lastName,
-        parentName: account.fatherName,
-        avatar: account.photo,
-        birthday: account.birthday,
-        address,
-        timezone: account.address?.timezone,
-        gender: genders[account.gender] || '',
+        name: account.firstname,
+        lastName: account.lastname,
+        parentName: account.secondname,
       },
       null,
       auth.id,

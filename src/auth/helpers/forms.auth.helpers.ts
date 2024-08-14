@@ -1,3 +1,7 @@
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 async function back(req, data): Promise<string> {
   const { body, headers } = req;
   const { referer } = headers;
@@ -22,8 +26,9 @@ async function back(req, data): Promise<string> {
 }
 
 function selfUrl(req) {
+  const prefix = process.env.PREFIX;
   const { headers, protocol } = req;
-  return `${protocol}://${headers.host}`;
+  return `${protocol}://${headers.host}${prefix}`;
 }
 
 export async function redirect(req, res, data = undefined) {

@@ -12,6 +12,8 @@ import { OauthGuard } from '@src/auth_strategies/guard/oauth.guard';
 import { GoogleGuard } from '@src/auth_strategies/guard/google.guard';
 import { LeaderGuard } from '@src/auth_strategies/guard/leader.guard';
 import { LeaderProvider } from '@src/auth_strategies/provider/leader.provider';
+import { UntiGuard } from '@src/auth_strategies/guard/unti.guard';
+import { UntiProvider } from '@src/auth_strategies/provider/unti.provider';
 import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
 import { TokenService } from '@src/token/token.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -30,6 +32,7 @@ export class AuthStrategiesController {
     private readonly authSessionsService: AuthSessionsService,
     private readonly tokenService: TokenService,
     private readonly leaderProvider: LeaderProvider,
+    private readonly untiProvider: UntiProvider,
     private readonly oauthProvider: OauthProvider,
     private readonly openAuthService: OpenAuthService,
   ) {}
@@ -142,6 +145,40 @@ export class AuthStrategiesController {
       return account;
     }
     const auth = await this.leaderProvider.validate(account);
+
+    const cookie = new Cookie(req, res);
+    const openAuthDto = cookie.getJson('query');
+
+    if (openAuthDto?.response_type === 'code') {
+      const client = await this.openAuthService.verify(openAuthDto);
+      const url = await this.openAuthService.code(client, auth.id, openAuthDto.state);
+      return await res.redirect(url);
+    }
+
+    const token = await this.tokenService.pair({ id: auth.id });
+    await this.authSessionsService.start(auth, req);
+    // auth.token = token;
+    delete auth.password;
+    return { auth, token };
+  }
+
+  @Get('2035/login')
+  @UseGuards(UntiGuard)
+  async untiLogin() {
+    return;
+  }
+
+  @Get('2035/redirect')
+  // @UseGuards(UntiGuard)
+  async untiRedirect(
+    @Req() req: any,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    const account = await this.untiProvider.activate(req);
+    if (!account) {
+      return account;
+    }
+    const auth = await this.untiProvider.validate(account);
 
     const cookie = new Cookie(req, res);
     const openAuthDto = cookie.getJson('query');

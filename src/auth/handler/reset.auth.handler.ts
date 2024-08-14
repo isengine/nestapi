@@ -3,12 +3,14 @@ import { AuthDto } from '@src/auth/auth.dto';
 import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { AuthService } from '@src/auth/auth.service';
 import { MailService } from '@src/mail/mail.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ResetAuthHandler {
   constructor(
     protected readonly authService: AuthService,
     protected readonly authConfirmService: AuthConfirmService,
+    protected readonly configService: ConfigService,
     protected readonly mailService: MailService,
   ) {}
 
@@ -25,6 +27,7 @@ export class ResetAuthHandler {
     subject: string,
     code: string,
   ): Promise<void> {
+    const prefix = this.configService.get('PREFIX');
     await this.mailService.sendTemplate(
       {
         to: username,
@@ -34,7 +37,8 @@ export class ResetAuthHandler {
       {
       },
       {
-        url: `/auth/change.html?code=${code}`,
+        host: '',
+        url: `${prefix}/auth/change.html?code=${code}`,
       },
     );
   }

@@ -12,6 +12,8 @@ import { SessionSerializer } from '@src/auth_strategies/serializer/session.seria
 import { GoogleStrategy } from '@src/auth_strategies/strategy/google.strategy';
 import { LeaderStrategy } from '@src/auth_strategies/strategy/leader.strategy';
 import { LeaderProvider } from '@src/auth_strategies/provider/leader.provider';
+import { UntiStrategy } from '@src/auth_strategies/strategy/unti.strategy';
+import { UntiProvider } from '@src/auth_strategies/provider/unti.provider';
 import { OauthStrategy } from '@src/auth_strategies/strategy/oauth.strategy';
 import { OauthProvider } from '@src/auth_strategies/provider/oauth.provider';
 
@@ -31,6 +33,8 @@ import { OauthProvider } from '@src/auth_strategies/provider/oauth.provider';
     GoogleStrategy,
     LeaderProvider,
     LeaderStrategy,
+    UntiProvider,
+    UntiStrategy,
     OauthStrategy,
     OauthProvider,
   ],

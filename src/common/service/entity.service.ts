@@ -10,11 +10,14 @@ export const entityGetParams = (dto) => {
       root = i.tableName;
     }
     i?.columns?.forEach((c) => {
+      if (!c) {
+        return;
+      }
       const tableName = c.entityMetadata?.tableName;
       const key = `${tableName ? `${tableName}.` : ''}${c.propertyName}`;
       fields[key] = c.databaseName;
     });
   });
-
+  
   return { root, core, fields };
 };

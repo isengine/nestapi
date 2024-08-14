@@ -5,12 +5,14 @@ import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
 import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
 import { MailService } from '@src/mail/mail.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RegisterAuthHandler {
   constructor(
     protected readonly authService: AuthService,
     protected readonly authConfirmService: AuthConfirmService,
+    protected readonly configService: ConfigService,
     protected readonly mailService: MailService,
   ) {}
 
@@ -36,6 +38,7 @@ export class RegisterAuthHandler {
     // закомментируйте строки ниже, если пользователь будет сразу же активирован
     // используйте generate чтобы генерировать код из цифр
     const confirm = await this.authConfirmService.create(auth);
+    const prefix = this.configService.get('PREFIX');
 
     await this.mailService.sendTemplate(
       {
@@ -46,7 +49,8 @@ export class RegisterAuthHandler {
       {
       },
       {
-        url: `/auth/confirm.html?code=${confirm.code}`,
+        host: '',
+        url: `${prefix}/auth/confirm.html?code=${confirm.code}`,
       },
     );
   }

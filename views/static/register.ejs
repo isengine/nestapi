@@ -3,7 +3,7 @@
 <%- include('partials/head.ejs') %>
 <body>
     <div class="form">
-        <form action="/auth/register" method="post">
+        <form action="<%= prefix %>/auth/register" method="post">
             <h3><%= title %></h3>
             <div>
                 <input
