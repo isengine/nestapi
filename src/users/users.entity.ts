@@ -1,11 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Entity, Column } from 'typeorm';
-import { PrivateEntity } from '@src/common/entity/private.entity';
+import { PrivateOneEntity } from '@src/common/entity/private_one.entity';
 import { TypeGenders } from '@src/common/common.enum';
 
 @ObjectType()
 @Entity({ name: 'users' })
-export class UsersEntity extends PrivateEntity {
+export class UsersEntity extends PrivateOneEntity {
   @Field({ nullable: true })
   @Column({
     type: 'varchar',

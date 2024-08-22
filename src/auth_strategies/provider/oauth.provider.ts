@@ -76,7 +76,7 @@ export class OauthProvider {
       isActivated: !!account.isActivated,
     };
 
-    const userData = account?.users?.[0];
+    const userData = account?.users;
     const { accessToken, refreshToken } = account;
 
     if (!auth) {

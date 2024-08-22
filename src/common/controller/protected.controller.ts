@@ -21,6 +21,7 @@ export const ProtectedController = <T extends Type<unknown>>(
   name: string,
   classEntity: T,
   classDto,
+  authKey: string = '',
 ) => {
   class BaseProtectedController<
     Service extends CommonService<Entity, Dto, Filter>,
@@ -47,8 +48,8 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Body('relations') relationsDto: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.id;
-      return await this.service.create(dto, relationsDto, authId);
+      const authId = !authKey ? auth.id : auth[authKey].id;
+      return await this.service.create(dto, relationsDto, authId, authKey);
     }
 
     @Auth()
@@ -60,8 +61,8 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Body('relations') relationsDto: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      const result = await this.service.update(Number(id), dto, relationsDto, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      const result = await this.service.update(Number(id), dto, relationsDto, authId, authKey);
       if (!result) {
         throw new NotFoundException('Entry not found');
       }
@@ -75,8 +76,8 @@ export const ProtectedController = <T extends Type<unknown>>(
       @Param('id', ParseIntPipe) id: number,
       @Self() auth: AuthDto,
     ): Promise<boolean> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.remove(id, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.remove(id, authId, authKey);
     }
   }
   return BaseProtectedController;

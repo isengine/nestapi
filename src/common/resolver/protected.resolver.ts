@@ -13,6 +13,7 @@ export const ProtectedResolver = <T extends Type<unknown>>(
   classEntity: T,
   classDto,
   classFilter,
+  authKey: string = '',
 ) => {
   class BaseProtectedResolver<
     Service extends CommonService<Entity, Dto, Filter>,
@@ -42,8 +43,8 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.id;
-      return await this.service.create(dto, relationsDto, authId);
+      const authId = !authKey ? auth.id : auth[authKey].id;
+      return await this.service.create(dto, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -58,8 +59,8 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.update(id, dto, relationsDto, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.update(id, dto, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -70,8 +71,8 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<boolean> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.remove(id, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.remove(id, authId, authKey);
     }
   }
   return BaseProtectedResolver;

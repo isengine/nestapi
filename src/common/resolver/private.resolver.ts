@@ -16,6 +16,7 @@ export const PrivateResolver = <T extends Type<unknown>>(
   classEntity: T,
   classDto,
   classFilter,
+  authKey: string = '',
 ) => {
   class BasePrivateResolver<
     Service extends CommonService<Entity, Dto, Filter>,
@@ -47,8 +48,8 @@ export const PrivateResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity[]> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.find(where, order, relationsDto, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.find(where, order, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -61,8 +62,8 @@ export const PrivateResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.findOne(id, relationsDto, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.findOne(id, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -77,8 +78,8 @@ export const PrivateResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.first(where, order, relationsDto, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.first(where, order, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -91,8 +92,8 @@ export const PrivateResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity[]> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
-      return await this.service.many(ids, relationsDto, authId);
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
+      return await this.service.many(ids, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -107,8 +108,8 @@ export const PrivateResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity[]> {
-      const authId = auth.id;
-      return await this.service.find(where, order, relationsDto, authId);
+      const authId = !authKey ? auth.id : auth[authKey].id;
+      return await this.service.find(where, order, relationsDto, authId, authKey);
     }
 
     @Auth('gql')
@@ -125,13 +126,14 @@ export const PrivateResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<Filter[]> {
-      const authId = auth.isSuperuser ? undefined : auth.id;
+      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
       return await this.service.filter(
         dto,
         searchDto,
         optionsDto,
         relationsDto,
         authId,
+        authKey,
       );
     }
   }

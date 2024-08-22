@@ -22,10 +22,12 @@ export class CommonService<
     order: FindOptionsOrder<any> = { id: 'ASC' },
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity[]> {
     if (authId !== undefined) {
       const auth = { id: authId };
-      where = { ...where, auth };
+      where = { ...where };
+      where[authKey || 'auth'] = auth;
     }
     try {
       return await this.repository.find({
@@ -42,12 +44,13 @@ export class CommonService<
   async findAll(
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity[]> {
     const order: FindOptionsOrder<any> = { id: 'ASC' };
     const where: FindOptionsWhere<any> = {};
     if (authId !== undefined) {
       const auth = { id: authId };
-      where.auth = auth;
+      where[authKey || 'auth'] = auth;
     }
     try {
       return await this.repository.find({
@@ -66,10 +69,12 @@ export class CommonService<
     order: FindOptionsOrder<any> = { id: 'ASC' },
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity> {
     if (authId !== undefined) {
       const auth = { id: authId };
-      where = { ...where, auth };
+      where = { ...where };
+      where[authKey || 'auth'] = auth;
     }
     try {
       const [ result ] = await this.repository.find({
@@ -94,12 +99,13 @@ export class CommonService<
     ids: Array<number | string>,
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity[]> {
     const order: FindOptionsOrder<any> = { id: 'ASC' };
     const where: FindOptionsWhere<any> = { id: In(ids?.map(i => Number(i) || 0)) };
     if (authId !== undefined) {
       const auth = { id: authId };
-      where.auth = auth;
+      where[authKey || 'auth'] = auth;
     }
     try {
       return await this.repository.find({
@@ -117,11 +123,12 @@ export class CommonService<
     id: number,
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity> {
     const where: FindOptionsWhere<any> = { id };
     if (authId !== undefined) {
       const auth = { id: authId };
-      where.auth = auth;
+      where[authKey || 'auth'] = auth;
     }
     try {
       return await this.repository.findOne({
@@ -140,6 +147,7 @@ export class CommonService<
     optionsDto: OptionsDto,
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Filter[]> {
     if (relationsDto.length) {
       relationsDto = relationsDto.map(i => {
@@ -155,7 +163,8 @@ export class CommonService<
 
     if (authId !== undefined) {
       const auth = { id: authId };
-      dto = { ...dto, auth };
+      dto = { ...dto };
+      dto[authKey || 'auth'] = auth;
       if (!relationsDto) {
         relationsDto = [];
       }
@@ -186,6 +195,7 @@ export class CommonService<
     dto: Dto,
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity> {
     delete dto.createdAt;
     delete dto.updatedAt;
@@ -195,7 +205,7 @@ export class CommonService<
     }
     if (authId !== undefined) {
       const auth = { id: authId };
-      entry.auth = auth;
+      entry[authKey || 'auth'] = auth;
     }
     try {
       const created = await this.repository.save(entry);
@@ -211,6 +221,7 @@ export class CommonService<
     dto: Dto,
     relationsDto: Array<RelationsDto> = undefined,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<Entity> {
     if (id === undefined) {
       return;
@@ -219,7 +230,7 @@ export class CommonService<
     const where: FindOptionsWhere<any> = { id };
     if (authId !== undefined) {
       const auth = { id: authId };
-      where.auth = auth;
+      where[authKey || 'auth'] = auth;
     }
     const find = await this.repository.findOne({
       where,
@@ -249,11 +260,12 @@ export class CommonService<
   async remove(
     id: number,
     authId: number = undefined,
+    authKey: string = '',
   ): Promise<boolean> {
     const where: FindOptionsWhere<any> = { id };
     if (authId !== undefined) {
       const auth = { id: authId };
-      where.auth = auth;
+      where[authKey || 'auth'] = auth;
     }
     try {
       const result = await this.repository.delete(where);

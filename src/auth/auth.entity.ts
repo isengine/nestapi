@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, OneToOne } from 'typeorm';
 import { CommonEntity } from '@src/common/common.entity';
 import { AuthConfirmEntity } from '@src/auth_confirm/auth_confirm.entity';
 import { AuthRolesEntity } from '@src/auth_roles/auth_roles.entity';
@@ -82,10 +82,10 @@ export class AuthEntity extends CommonEntity {
   })
   sockets: SocketsEntity[];
 
-  @OneToMany(() => UsersEntity, (users) => users.auth, {
+  @OneToOne(() => UsersEntity, (users) => users.auth, {
     cascade: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  users: UsersEntity[];
+  users: UsersEntity;
 }

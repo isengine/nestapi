@@ -82,12 +82,12 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
     if (!auth) {
       return await this.authService
         .create(authDto)
-        .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0], accessToken, refreshToken));
+        .then(async (result) => await this.prepareResult(result, profile.id, profile.users, accessToken, refreshToken));
     }
 
     return await this.authService
       .update(auth.id, authDto)
-      .then(async (result) => await this.prepareResult(result, profile.id, profile.users[0], accessToken, refreshToken));
+      .then(async (result) => await this.prepareResult(result, profile.id, profile.users, accessToken, refreshToken));
   }
 
   async prepareResult(auth, uid, profile, accessToken, refreshToken): Promise<AuthDto> {
