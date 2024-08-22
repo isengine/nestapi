@@ -305,10 +305,10 @@ export class CommonService<
       const r = result[name];
 
       if (r?.length) {
-        for (const [idx, val] of r.entries()) {
+        for (const val of r.entries()) {
           const type = val.constructor.name;
-          const item = data[idx];
-          if (item.id === val.id) {
+          const item = data.filter(i => `${i.id}` === `${val.id}`)?.[0];
+          if (item) {
             const subRepository = this.repository.manager.getRepository(`${type}`);
             await subRepository.update({ id: item.id }, item);
           }
