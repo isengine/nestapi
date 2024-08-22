@@ -554,7 +554,6 @@ npm run prod
 Например, в файле **src/posts/posts.controller.ts** поменять:
 
 ```
-@Controller('posts')
 export class PostsController extends ProtectedController(
   'Посты',
   PostsEntity,
@@ -566,7 +565,6 @@ export class PostsController extends ProtectedController(
 И в файле **src/posts/posts.resolver.ts** поменять:
 
 ```
-@Resolver(PostsEntity)
 export class PostsResolver extends ProtectedResolver(
   'posts',
   PostsEntity,
@@ -574,6 +572,25 @@ export class PostsResolver extends ProtectedResolver(
   PostsFilter,
   'users',
 )...
+```
+
+Также нужно не забыть отвязать сущность **posts** от **auth**. Для этого в файле **src/posts/posts.entity.ts** поменять:
+
+```
+export class PostsEntity extends CommonEntity {
+    @ManyToOne(() => UsersEntity)
+    @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+    users: UsersEntity;
+    ...
+```
+
+По аналогии внести изменения в файл **src/posts/posts.dto.ts**:
+
+```
+export class PostsDto extends CommonDto {
+    @Field(() => UsersDto, { nullable: true })
+    users?: UsersDto;
+    ...
 ```
 
 [^ к оглавлению](#оглавление)

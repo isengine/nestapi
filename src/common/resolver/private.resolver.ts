@@ -10,6 +10,8 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 import { ProtectedResolver } from '@src/common/resolver/protected.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
+import { CommonEntity } from '@src/common/common.entity';
+import { CommonDto } from '@src/common/common.dto';
 
 export const PrivateResolver = <T extends Type<unknown>>(
   name: string,
@@ -20,8 +22,8 @@ export const PrivateResolver = <T extends Type<unknown>>(
 ) => {
   class BasePrivateResolver<
     Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends PrivateEntity,
-    Dto extends PrivateDto,
+    Entity extends PrivateEntity | CommonEntity,
+    Dto extends PrivateDto | CommonDto,
     Filter
   > extends ProtectedResolver(
     name,

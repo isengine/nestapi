@@ -16,6 +16,8 @@ import { ProtectedController } from '@src/common/controller/protected.controller
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { Data, Doc } from '@src/common/common.decorator';
+import { CommonEntity } from '@src/common/common.entity';
+import { CommonDto } from '@src/common/common.dto';
 
 export const PrivateController = <T extends Type<unknown>>(
   name: string,
@@ -25,8 +27,8 @@ export const PrivateController = <T extends Type<unknown>>(
 ) => {
   class BasePrivateController<
     Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends PrivateEntity,
-    Dto extends PrivateDto,
+    Entity extends PrivateEntity | CommonEntity,
+    Dto extends PrivateDto | CommonDto,
     Filter
   > extends ProtectedController(
     name,

@@ -7,6 +7,8 @@ import { ProtectedEntity } from '@src/common/entity/protected.entity';
 import { CommonResolver } from '@src/common/common.resolver';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
+import { CommonEntity } from '@src/common/common.entity';
+import { CommonDto } from '@src/common/common.dto';
 
 export const ProtectedResolver = <T extends Type<unknown>>(
   name: string,
@@ -17,8 +19,8 @@ export const ProtectedResolver = <T extends Type<unknown>>(
 ) => {
   class BaseProtectedResolver<
     Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends ProtectedEntity,
-    Dto extends ProtectedDto,
+    Entity extends ProtectedEntity | CommonEntity,
+    Dto extends ProtectedDto | CommonDto,
     Filter
   > extends CommonResolver(
     name,
