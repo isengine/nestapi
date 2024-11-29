@@ -24,7 +24,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, 'oauth') {
 
     const clientID = configService.get('OAUTH_CLIENT_ID');
     const clientSecret = configService.get('OAUTH_CLIENT_SECRET');
-    const callbackURL = configService.get('OAUTH_CLIENT_CALLBACK');
+    const callbackURL = configService.get('OAUTH_CLIENT_REDIRECT');
     const customAuthServer = configService.get('OAUTH_SERVER');
     const authorizationURL = `${customAuthServer}/auth/?client_id=${clientID}&redirect_uri=${callbackURL}&response_type=code`;
     const tokenURL = `${customAuthServer}/token`;

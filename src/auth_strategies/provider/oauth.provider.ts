@@ -33,7 +33,7 @@ export class OauthProvider {
 
   async getToken(code: string) {
     const customAuthServer = this.configService.get('OAUTH_SERVER');
-    const redirect_uri = this.configService.get('OAUTH_CLIENT_CALLBACK');
+    const redirect_uri = this.configService.get('OAUTH_CLIENT_REDIRECT');
     const client_id = this.configService.get('OAUTH_CLIENT_ID');
 
     return axios.post(

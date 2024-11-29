@@ -39,7 +39,7 @@ export class UntiProvider {
         code: token,
         client_id: this.configService.get('UNTI_CLIENT_ID'),
         client_secret: this.configService.get('UNTI_CLIENT_SECRET'),
-        redirect_uri: this.configService.get('UNTI_CLIENT_CALLBACK'),
+        redirect_uri: this.configService.get('UNTI_CLIENT_REDIRECT'),
       },
       {
         headers: { 
