@@ -4,7 +4,7 @@ import { ClosedEntity } from '@src/common/entity/closed.entity';
 import { SettingsEntity } from '../settings.entity';
 import {
   BooleanColumn,
-  PositionFirstColumn,
+  PositionAscColumn,
   VarcharColumn,
 } from '@src/common/common.column';
 
@@ -17,7 +17,7 @@ export class SettingsGroupsEntity extends ClosedEntity {
   @VarcharColumn('description', 1024)
   description?: string;
 
-  @PositionFirstColumn()
+  @PositionAscColumn()
   position?: string;
 
   @BooleanColumn('is_disabled')

@@ -6,7 +6,7 @@ import { SettingsGroupsEntity } from './settings_groups/settings_groups.entity';
 import {
   BooleanColumn,
   EnumColumn,
-  PositionFirstColumn,
+  PositionAscColumn,
   TextColumn,
   VarcharColumn,
 } from '@src/common/common.column';
@@ -23,7 +23,7 @@ export class SettingsEntity extends ClosedEntity {
   @EnumColumn('type', TypeValues, TypeValues.DEFAULT)
   type?: TypeValues;
 
-  @PositionFirstColumn()
+  @PositionAscColumn()
   position?: string;
 
   @TextColumn('default')

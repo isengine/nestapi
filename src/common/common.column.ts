@@ -7,8 +7,8 @@ import { FloatColumn } from './column/float.column';
 import { IdColumn } from '@src/common/column/id.column';
 import { IntColumn } from './column/int.column';
 import { JsonColumn } from './column/json.column';
-import { PositionFirstColumn } from './column/position_first.column';
-import { PositionLastColumn } from './column/position_last.column';
+import { PositionAscColumn } from './column/position_asc.column';
+import { PositionDescColumn } from './column/position_desc.column';
 import { TextColumn } from './column/text.column';
 import { UpdatedColumn } from '@src/common/column/updated.column';
 import { VarcharColumn } from './column/varchar.column';
@@ -23,8 +23,8 @@ export {
   IdColumn,
   IntColumn,
   JsonColumn,
-  PositionFirstColumn,
-  PositionLastColumn,
+  PositionAscColumn,
+  PositionDescColumn,
   TextColumn,
   UpdatedColumn,
   VarcharColumn,

@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { Column } from 'typeorm';
 import { IndexedColumn } from './indexed.column';
 
-export function PositionLastColumn(
+export function PositionDescColumn(
   name = 'position',
   options = undefined,
 ): PropertyDecorator {
