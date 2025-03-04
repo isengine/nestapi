@@ -1,13 +1,19 @@
-import { applyDecorators, createParamDecorator, ExecutionContext } from '@nestjs/common';
+import {
+  applyDecorators,
+  createParamDecorator,
+  ExecutionContext,
+} from '@nestjs/common';
 import { FindDoc } from '@src/common/doc/find.doc';
-import { FindOneDoc } from '@src/common/doc/findone.doc';
-import { FirstDoc } from '@src/common/doc/first.doc';
-import { ManyDoc } from '@src/common/doc/many.doc';
+import { FindOneDoc } from '@src/common/doc/find_one.doc';
+import { FindFirstDoc } from '@src/common/doc/find_first.doc';
+import { FindManyDoc } from '@src/common/doc/find_many.doc';
 import { SelfDoc } from '@src/common/doc/self.doc';
-import { FilterDoc } from '@src/common/doc/filter.doc';
+import { CountDoc } from '@src/common/doc/count.doc';
 import { CreateDoc } from '@src/common/doc/create.doc';
 import { UpdateDoc } from '@src/common/doc/update.doc';
 import { RemoveDoc } from '@src/common/doc/remove.doc';
+import { SortPositionDoc } from '@src/common/doc/position_sort.doc';
+import { MovePositionDoc } from '@src/common/doc/position_move.doc';
 
 export const Data = createParamDecorator(
   async (arg = '', context: ExecutionContext) => {
@@ -31,17 +37,17 @@ export const Doc = (type, classDto) => {
   if (type === 'findOne') {
     return applyDecorators(FindOneDoc(classDto));
   }
-  if (type === 'first') {
-    return applyDecorators(FirstDoc(classDto));
+  if (type === 'findFirst') {
+    return applyDecorators(FindFirstDoc(classDto));
   }
-  if (type === 'many') {
-    return applyDecorators(ManyDoc(classDto));
+  if (type === 'findMany') {
+    return applyDecorators(FindManyDoc(classDto));
   }
   if (type === 'self') {
     return applyDecorators(SelfDoc(classDto));
   }
-  if (type === 'filter') {
-    return applyDecorators(FilterDoc(classDto));
+  if (type === 'count') {
+    return applyDecorators(CountDoc(classDto));
   }
   if (type === 'create') {
     return applyDecorators(CreateDoc(classDto));
@@ -51,5 +57,11 @@ export const Doc = (type, classDto) => {
   }
   if (type === 'remove') {
     return applyDecorators(RemoveDoc());
+  }
+  if (type === 'sortPosition') {
+    return applyDecorators(SortPositionDoc(classDto));
+  }
+  if (type === 'movePosition') {
+    return applyDecorators(MovePositionDoc());
   }
 };

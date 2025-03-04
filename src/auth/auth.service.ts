@@ -1,42 +1,36 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Injectable,
-  BadRequestException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { compare } from 'bcryptjs';
 import { Repository } from 'typeorm';
-import { AuthDto } from '@src/auth/auth.dto';
-import { AuthEntity } from '@src/auth/auth.entity';
-import { AuthFilter } from '@src/auth/auth.filter';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CommonService } from '@src/common/common.service';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { UsersService } from '@src/users/users.service';
-import { compare } from 'bcryptjs';
+import { AuthDto } from './auth.dto';
+import { AuthEntity } from './auth.entity';
 
 @Injectable()
-export class AuthService extends CommonService<
-  AuthEntity,
-  AuthDto,
-  AuthFilter
-> {
+export class AuthService extends CommonService<AuthDto, AuthEntity> {
   constructor(
     @InjectRepository(AuthEntity)
     protected readonly repository: Repository<AuthEntity>,
-    protected readonly userService: UsersService,
   ) {
     super();
   }
 
-  async create(authDto: AuthDto, relationsDto: Array<RelationsDto> = undefined): Promise<AuthEntity> {
-    const result = await super.create(authDto, relationsDto);
-    await this.userService.create(
-      {
-        email: result.username,
-      },
-      null,
-      result.id,
-    );
-    return result;
+  async create(
+    authDto: AuthDto,
+    relations: Array<RelationsDto> = undefined,
+  ): Promise<AuthEntity> {
+    delete authDto.isSuperuser;
+    return await super.create(authDto, relations);
+  }
+
+  async update(
+    id: number,
+    authDto: AuthDto,
+    relations: Array<RelationsDto> = undefined,
+  ): Promise<AuthEntity> {
+    delete authDto.isSuperuser;
+    return await super.update(id, authDto, relations);
   }
 
   async findByUsername(username: string): Promise<AuthEntity> {
@@ -51,6 +45,9 @@ export class AuthService extends CommonService<
     const isValidPassword = await compare(authDto.password, auth.password);
     if (!isValidPassword) {
       throw new UnauthorizedException('Invalid password');
+    }
+    if (!auth.isActivated) {
+      throw new UnauthorizedException('Not activated');
     }
     return auth;
   }

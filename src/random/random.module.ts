@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { RandomController } from '@src/random/random.controller';
-import { RandomService } from '@src/random/random.service';
-import { RandomResolver } from '@src/random/random.resolver';
+import { RandomController } from './random.controller';
+import { RandomResolver } from './random.resolver';
+import { RandomService } from './random.service';
 
 @Module({
   controllers: [RandomController],

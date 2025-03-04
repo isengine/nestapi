@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 import { CommonDto } from '@src/common/common.dto';
 import { TypeResponses } from '@src/common/common.enum';
 

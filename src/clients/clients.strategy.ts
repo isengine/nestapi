@@ -30,7 +30,8 @@ export class ClientsStrategy extends PassportStrategy(Strategy, 'clients') {
   ) {
     // const authorization = request.body?.['client_secret'] || request.headers?.['client_secret'] || request.headers?.['authorization'];
     // const client_secret = authorization?.replace(/.*?bearer\s*/ui, '');
-    const client_secret = request.body?.['client_secret'] || request.headers?.['client_secret'];
+    const client_secret =
+      request.body?.['client_secret'] || request.headers?.['client_secret'];
     if (!client_id || !client_secret) {
       throw new ForbiddenException('You have no rights!');
     }

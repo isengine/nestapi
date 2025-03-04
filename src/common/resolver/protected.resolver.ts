@@ -9,30 +9,19 @@ import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { CommonEntity } from '@src/common/common.entity';
 import { CommonDto } from '@src/common/common.dto';
+import { BindDto } from '../dto/bind.dto';
 
 export const ProtectedResolver = <T extends Type<unknown>>(
   name: string,
-  classEntity: T,
   classDto,
-  classFilter,
-  authKey: string = '',
+  classEntity: T,
+  authTable = '',
 ) => {
   class BaseProtectedResolver<
-    Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends ProtectedEntity | CommonEntity,
     Dto extends ProtectedDto | CommonDto,
-    Filter
-  > extends CommonResolver(
-    name,
-    classEntity,
-    classDto,
-    classFilter,
-  )<
-    Service,
-    Entity,
-    Dto,
-    Filter
-  > {
+    Entity extends ProtectedEntity | CommonEntity,
+    Service extends CommonService<Dto, Entity>,
+  > extends CommonResolver(name, classDto, classEntity)<Dto, Entity, Service> {
     readonly service: Service;
 
     @Auth('gql')
@@ -40,13 +29,20 @@ export const ProtectedResolver = <T extends Type<unknown>>(
     async create(
       @Args('create', { type: () => classDto })
       dto: Dto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
+      @Args('relations', {
+        nullable: true,
+        defaultValue: [],
+        type: () => [RelationsDto],
+      })
+      relations: Array<RelationsDto>,
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = !authKey ? auth.id : auth[authKey].id;
-      return await this.service.create(dto, relationsDto, authId, authKey);
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      return await this.service.create(dto, relations, bind);
     }
 
     @Auth('gql')
@@ -56,13 +52,20 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       id: number,
       @Args('update', { type: () => classDto })
       dto: Dto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
+      @Args('relations', {
+        nullable: true,
+        defaultValue: [],
+        type: () => [RelationsDto],
+      })
+      relations: Array<RelationsDto>,
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      return await this.service.update(id, dto, relationsDto, authId, authKey);
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      return await this.service.update(id, dto, relations, bind);
     }
 
     @Auth('gql')
@@ -73,9 +76,12 @@ export const ProtectedResolver = <T extends Type<unknown>>(
       @Self('gql')
       auth: AuthDto,
     ): Promise<boolean> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      return await this.service.remove(id, authId, authKey);
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      return await this.service.remove(id, bind);
     }
   }
   return BaseProtectedResolver;
-}
+};

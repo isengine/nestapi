@@ -12,10 +12,16 @@ export class RefreshTokenGrant {
 
   async refreshToken(grantsTokenDto: GrantsTokenDto): Promise<any> {
     if (grantsTokenDto.grant_type !== 'refresh_token') {
-      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
+      throw new BadRequestException(
+        'Specified type of grant_type field is not supported in this request',
+        'unsupported_grant_type',
+      );
     }
     if (!grantsTokenDto.refresh_token) {
-      throw new BadRequestException('Not specified refresh token in this request', 'invalid_grant');
+      throw new BadRequestException(
+        'Not specified refresh token in this request',
+        'invalid_grant',
+      );
     }
     if (grantsTokenDto.client_id || grantsTokenDto.client_secret) {
       return await this.client(grantsTokenDto);
@@ -29,7 +35,6 @@ export class RefreshTokenGrant {
       refresh_token,
       (data) => !data.client_id,
     );
-    // console.log('-- request.session', request?.session);
     // if (request) {
     //   const sessionToken = request.session.token;
     //   if (!sessionToken || refresh_token !== sessionToken) {
@@ -47,7 +52,10 @@ export class RefreshTokenGrant {
       client_secret,
     });
     if (!client || !client_id || !client_secret) {
-      throw new BadRequestException('Client authentication failed. Unknown client [client.refresh.token.grant]', 'invalid_client');
+      throw new BadRequestException(
+        'Client authentication failed. Unknown client [client.refresh.token.grant]',
+        'invalid_client',
+      );
     }
     const token = await this.tokenService.refresh(
       refresh_token,

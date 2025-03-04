@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RoomsController } from '@src/rooms/rooms.controller';
-import { RoomsEntity } from '@src/rooms/rooms.entity';
-import { RoomsService } from '@src/rooms/rooms.service';
+import { RoomsController } from './rooms.controller';
+import { RoomsEntity } from './rooms.entity';
+import { RoomsService } from './rooms.service';
 
 @Module({
   controllers: [RoomsController],

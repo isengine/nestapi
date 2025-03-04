@@ -1,28 +1,31 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { join } from 'path';
+
+type DatabaseTypes =
+  | 'mysql'
+  | 'postgres'
+  | 'sqlite'
+  | 'mssql'
+  | 'oracle'
+  | 'mongodb';
 
 export const getDbConfig = async (
   config: ConfigService,
 ): Promise<TypeOrmModuleOptions> => ({
-  type: config.get<any>('DB_TYPE'),
+  type: config.get<DatabaseTypes>('DB_TYPE'),
   host: config.get<string>('DB_HOST'),
   database: config.get<string>('DB_NAME'),
+  schema: config.get<string>('DB_SCHEMA'),
   username: config.get<string>('DB_USER'),
   password: config.get<string>('DB_PASSWORD'),
   port: config.get<number>('DB_PORT'),
 
-  synchronize: !!config.get<string>('DB_SYNCHRONIZE'),
+  synchronize: config.get<string>('DB_SYNCHRONIZE') === 'true',
   autoLoadEntities: true,
-  logging: true,
+  logging: config.get<string>('DB_LOG') === 'true',
 
-  // entities: ['/src/**/*.entity{.ts,.js}'],
-  entities: [__dirname + 'dist/**/*.entity{.ts,.js}'],
+  entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
+  migrations: [join(__dirname, '../typeorm/migrations/*.ts')],
   migrationsTableName: 'migrations_typeorm',
-  migrations: [__dirname + 'src/typeorm/migrations/*.ts'],
-
-  // "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
-  // "migration:create": "npm run build && npm run typeorm migration:create -- -n",
-  // "migration:generate": "npm run build && npm run typeorm migration:generate -- -n",
-  // "migration:run": "npm run build && npm run typeorm migration:run",
-  // "migration:revert": "npm run typeorm migration:revert"
 });

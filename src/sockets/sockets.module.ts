@@ -1,11 +1,11 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SocketsController } from '@src/sockets/sockets.controller';
-import { SocketsEntity } from '@src/sockets/sockets.entity';
-import { SocketsGateway } from '@src/sockets/sockets.gateway';
-import { SocketsService } from '@src/sockets/sockets.service';
-import { RoomsModule } from '@src/rooms/rooms.module';
 import { AuthModule } from '@src/auth/auth.module';
+import { RoomsModule } from '@src/rooms/rooms.module';
+import { SocketsController } from './sockets.controller';
+import { SocketsEntity } from './sockets.entity';
+import { SocketsGateway } from './sockets.gateway';
+import { SocketsService } from './sockets.service';
 
 @Module({
   controllers: [SocketsController],

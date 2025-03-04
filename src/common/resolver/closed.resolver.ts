@@ -10,26 +10,14 @@ import { Auth, Self } from '@src/auth/auth.decorator';
 
 export const ClosedResolver = <T extends Type<unknown>>(
   name: string,
-  classEntity: T,
   classDto,
-  classFilter,
+  classEntity: T,
 ) => {
   class BaseClosedResolver<
-    Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends ClosedEntity,
     Dto extends ClosedDto,
-    Filter
-  > extends CommonResolver(
-    name,
-    classEntity,
-    classDto,
-    classFilter,
-  )<
-    Service,
-    Entity,
-    Dto,
-    Filter
-  > {
+    Entity extends ClosedEntity,
+    Service extends CommonService<Dto, Entity>,
+  > extends CommonResolver(name, classDto, classEntity)<Dto, Entity, Service> {
     readonly service: Service;
 
     @Auth('gql')
@@ -37,15 +25,19 @@ export const ClosedResolver = <T extends Type<unknown>>(
     async create(
       @Args('create', { type: () => classDto })
       dto: Dto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
+      @Args('relations', {
+        nullable: true,
+        defaultValue: [],
+        type: () => [RelationsDto],
+      })
+      relations: Array<RelationsDto>,
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
       if (!auth?.isSuperuser) {
         throw new ForbiddenException('You have no rights!');
       }
-      return await this.service.create(dto, relationsDto);
+      return await this.service.create(dto, relations);
     }
 
     @Auth('gql')
@@ -55,15 +47,19 @@ export const ClosedResolver = <T extends Type<unknown>>(
       id: number,
       @Args('update', { type: () => classDto })
       dto: Dto,
-      @Args('relations', { nullable: true, defaultValue: [], type: () => [RelationsDto] })
-      relationsDto: Array<RelationsDto>,
+      @Args('relations', {
+        nullable: true,
+        defaultValue: [],
+        type: () => [RelationsDto],
+      })
+      relations: Array<RelationsDto>,
       @Self('gql')
       auth: AuthDto,
     ): Promise<Entity> {
       if (!auth?.isSuperuser) {
         throw new ForbiddenException('You have no rights!');
       }
-      return await this.service.update(id, dto, relationsDto);
+      return await this.service.update(id, dto, relations);
     }
 
     @Auth('gql')
@@ -81,4 +77,4 @@ export const ClosedResolver = <T extends Type<unknown>>(
     }
   }
   return BaseClosedResolver;
-}
+};

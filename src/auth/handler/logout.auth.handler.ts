@@ -1,17 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthSessionsService } from '@src/auth_sessions/auth_sessions.service';
+import { AuthSessionsService } from '@src/auth/auth_sessions/auth_sessions.service';
 import { Cookie } from '@src/common/service/cookie.service';
 
 @Injectable()
 export class LogoutAuthHandler {
-  constructor(
-    protected readonly authSessionsService: AuthSessionsService,
-  ) {}
+  constructor(protected readonly authSessionsService: AuthSessionsService) {}
 
-  async logout(
-    request: any = null,
-    response: any = null,
-  ): Promise<boolean> {
+  async logout(request: any = null, response: any = null): Promise<boolean> {
     if (!request || !request?.user) {
       return false;
     }

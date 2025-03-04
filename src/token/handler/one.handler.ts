@@ -14,17 +14,12 @@ export class OneHandler {
     const expires = this.configService.get(configKey) || '';
     const token = await this.jwtService.signAsync(
       data,
-      expires
-        ? { expiresIn: expires }
-        : {},
+      expires ? { expiresIn: expires } : {},
     );
 
     const date = {};
-    expires?.match(/\d+[A-Za-z]*/igu)?.forEach(i => {
-      const match = [
-        i?.match(/\d+/igu)?.[0],
-        i?.match(/[A-Za-z]+/igu)?.[0],
-      ];
+    expires?.match(/\d+[A-Za-z]*/giu)?.forEach((i) => {
+      const match = [i?.match(/\d+/giu)?.[0], i?.match(/[A-Za-z]+/giu)?.[0]];
       date[match[1] || 's'] = Number(match[0]) || 0;
     });
     const expiresIn = moment.duration(date).asSeconds();

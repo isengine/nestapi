@@ -10,35 +10,28 @@ import { RelationsDto } from '@src/common/dto/relations.dto';
 import { CommonService } from '@src/common/common.service';
 import { PrivateDto } from '@src/common/dto/private.dto';
 import { PrivateEntity } from '@src/common/entity/private.entity';
-import { OptionsDto } from '@src/common/dto/options.dto';
-import { SearchDto } from '@src/common/dto/search.dto';
 import { ProtectedController } from '@src/common/controller/protected.controller';
 import { AuthDto } from '@src/auth/auth.dto';
 import { Auth, Self } from '@src/auth/auth.decorator';
 import { Data, Doc } from '@src/common/common.decorator';
 import { CommonEntity } from '@src/common/common.entity';
 import { CommonDto } from '@src/common/common.dto';
+import { BindDto } from '../dto/bind.dto';
 
 export const PrivateController = <T extends Type<unknown>>(
   name: string,
-  classEntity: T,
   classDto,
-  authKey: string = '',
+  classEntity: T,
+  authTable = '',
 ) => {
   class BasePrivateController<
-    Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends PrivateEntity | CommonEntity,
     Dto extends PrivateDto | CommonDto,
-    Filter
-  > extends ProtectedController(
-    name,
-    classEntity,
-    classDto,
-  )<
-    Service,
-    Entity,
+    Entity extends PrivateEntity | CommonEntity,
+    Service extends CommonService<Dto, Entity>,
+  > extends ProtectedController(name, classDto, classEntity, authTable)<
     Dto,
-    Filter
+    Entity,
+    Service
   > {
     readonly service: Service;
 
@@ -46,13 +39,86 @@ export const PrivateController = <T extends Type<unknown>>(
     @Get('find')
     @Doc('find', classDto)
     async find(
+      @Data('search') search: object,
+      @Data('select') select: object,
       @Data('where') where: object,
       @Data('order') order: object,
-      @Data('relations') relationsDto: Array<RelationsDto>,
+      @Data('limit') limit: number = undefined,
+      @Data('offset') offset: number = undefined,
+      @Data('relations') relations: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity[]> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      return await this.service.find(where, order, relationsDto, authId, authKey);
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      return await this.service.find(
+        {
+          search,
+          select,
+          where,
+          order,
+          limit,
+          offset,
+          relations,
+        },
+        bind,
+      );
+    }
+
+    @Auth()
+    @Get('find/first')
+    @Doc('findFirst', classDto)
+    async findFirst(
+      @Data('search') search: object,
+      @Data('select') select: object,
+      @Data('where') where: object,
+      @Data('order') order: object,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self() auth: AuthDto,
+    ): Promise<Entity> {
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      return await this.service.findFirst(
+        {
+          search,
+          select,
+          where,
+          order,
+          relations,
+        },
+        bind,
+      );
+    }
+
+    @Auth()
+    @Get('find/many/:ids')
+    @Doc('findMany', classDto)
+    async findMany(
+      @Param('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
+      ids: Array<number>,
+      @Data('select') select: object,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self() auth: AuthDto,
+    ): Promise<Entity[]> {
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      const result = await this.service.findMany(
+        {
+          ids,
+          select,
+          relations,
+        },
+        bind,
+      );
+      if (!result) {
+        throw new NotFoundException('Entrie not found');
+      }
+      return result;
     }
 
     @Auth()
@@ -60,42 +126,24 @@ export const PrivateController = <T extends Type<unknown>>(
     @Doc('findOne', classDto)
     async findOne(
       @Param('id', ParseIntPipe) id: number,
-      @Data('relations') relationsDto: Array<RelationsDto>,
+      @Data('select') select: object,
+      @Data('relations') relations: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      const result = await this.service.findOne(Number(id), relationsDto, authId, authKey);
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      const result = await this.service.findOne(
+        {
+          id: Number(id),
+          select,
+          relations,
+        },
+        bind,
+      );
       if (!result) {
-        throw new NotFoundException('Entry not found');
-      }
-      return result;
-    }
-
-    @Auth()
-    @Get('first')
-    @Doc('first', classDto)
-    async first(
-      @Data('where') where: object,
-      @Data('order') order: object,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      @Self() auth: AuthDto,
-    ): Promise<Entity> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      return await this.service.first(where, order, relationsDto, authId, authKey);
-    }
-
-    @Auth()
-    @Get('many/:ids')
-    @Doc('many', classDto)
-    async many(
-      @Param('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: Array<number>,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      @Self() auth: AuthDto,
-    ): Promise<Entity[]> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      const result = await this.service.many(ids, relationsDto, authId, authKey);
-      if (!result) {
-        throw new NotFoundException('Entry not found');
+        throw new NotFoundException('Entrie not found');
       }
       return result;
     }
@@ -104,39 +152,51 @@ export const PrivateController = <T extends Type<unknown>>(
     @Get('self')
     @Doc('self', classDto)
     async self(
+      @Data('select') select: object,
       @Data('where') where: object,
       @Data('order') order: object,
-      @Data('relations') relationsDto: Array<RelationsDto>,
+      @Data('relations') relations: Array<RelationsDto>,
       @Self() auth: AuthDto,
     ): Promise<Entity[]> {
-      const authId = !authKey ? auth.id : auth[authKey].id;
-      return await this.service.find(where, order, relationsDto, authId, authKey);
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: false,
+      });
+      return await this.service.find(
+        {
+          where,
+          select,
+          order,
+          relations,
+        },
+        bind,
+      );
     }
 
     @Auth()
-    @Get('filter')
-    @Doc('filter', classDto)
-    async filter(
-      @Data('where') dto: Dto,
-      @Data('search') searchDto: SearchDto,
-      @Data('options') optionsDto: OptionsDto,
-      @Data('relations') relationsDto: Array<RelationsDto>,
+    @Get('count')
+    @Doc('count', classDto)
+    async count(
+      @Data('where') where: object,
+      @Data('limit') limit: number = undefined,
+      @Data('offset') offset: number = undefined,
+      @Data('relations') relations: Array<RelationsDto>,
       @Self() auth: AuthDto,
-    ): Promise<Filter[]> {
-      const authId = auth.isSuperuser ? undefined : (!authKey ? auth.id : auth[authKey].id);
-      const result = await this.service.filter(
-        dto,
-        searchDto,
-        optionsDto,
-        relationsDto,
-        authId,
-        authKey,
+    ): Promise<number> {
+      const bind: BindDto = this.service.bind(auth, {
+        name: authTable,
+        allow: auth?.isSuperuser,
+      });
+      return await this.service.count(
+        {
+          where,
+          limit,
+          offset,
+          relations,
+        },
+        bind,
       );
-      if (!result) {
-        throw new NotFoundException('Any results not found');
-      }
-      return result;
     }
   }
   return BasePrivateController;
-}
+};

@@ -1,9 +1,5 @@
 import { ObjectType } from '@nestjs/graphql';
-import {
-  Entity,
-  JoinColumn,
-  OneToOne,
-} from 'typeorm';
+import { Entity, JoinColumn, OneToOne } from 'typeorm';
 import { CommonEntity } from '@src/common/common.entity';
 import { AuthEntity } from '@src/auth/auth.entity';
 

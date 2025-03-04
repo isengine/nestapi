@@ -4,7 +4,8 @@ import {
   randomNames,
   randomEnNames,
   randomRuNames,
-} from '@src/random/random.const';
+} from './random.const';
+
 @Injectable()
 export class RandomService {
   random(min, max, step = 1) {

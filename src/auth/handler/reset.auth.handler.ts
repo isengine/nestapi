@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthDto } from '@src/auth/auth.dto';
-import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
+import { AuthConfirmService } from '@src/auth/auth_confirm/auth_confirm.service';
 import { AuthService } from '@src/auth/auth.service';
 import { MailService } from '@src/mail/mail.service';
 import { ConfigService } from '@nestjs/config';
@@ -27,18 +27,15 @@ export class ResetAuthHandler {
     subject: string,
     code: string,
   ): Promise<void> {
-    const prefix = this.configService.get('PREFIX');
-    await this.mailService.sendTemplate(
+    const url = this.configService.get('FORM_CHANGE');
+    await this.mailService.sendByTemplate(
       {
         to: username,
         subject,
         template: 'reset',
       },
       {
-      },
-      {
-        host: '',
-        url: `${prefix}/auth/change.html?code=${code}`,
+        url: `${url}?code=${code}`,
       },
     );
   }

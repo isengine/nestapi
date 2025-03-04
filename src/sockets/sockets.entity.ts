@@ -1,34 +1,27 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { ProtectedEntity } from '@src/common/entity/protected.entity';
-import { UsersEntity } from '@src/users/users.entity';
 import { RoomsEntity } from '@src/rooms/rooms.entity';
+import { UsersEntity } from '@src/db/users/users.entity';
+import {
+  JsonColumn,
+  TextColumn,
+  VarcharColumn,
+} from '@src/common/common.column';
 
 @ObjectType()
 @Entity({ name: 'sockets' })
 export class SocketsEntity extends ProtectedEntity {
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 100,
-    nullable: true,
-  })
+  @VarcharColumn('name')
   name?: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'json',
-    nullable: true,
-  })
+  @JsonColumn('data')
   data?: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
+  @TextColumn('message')
   message?: string;
 
+  @Field(() => RoomsEntity, { nullable: true })
   @ManyToOne(() => RoomsEntity, (room) => room.sockets, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

@@ -3,21 +3,16 @@ import { genSalt, hash } from 'bcryptjs';
 import { Repository } from 'typeorm';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientsDto } from '@src/clients/clients.dto';
-import { ClientsEntity } from '@src/clients/clients.entity';
-import { ClientsFilter } from '@src/clients/clients.filter';
-import { RelationsDto } from '@src/common/dto/relations.dto';
-import { ClientsRedirectsService } from '@src/clients_redirects/clients_redirects.service';
-import { TokenService } from '@src/token/token.service';
 import { CommonService } from '@src/common/common.service';
+import { RelationsDto } from '@src/common/dto/relations.dto';
+import { TokenService } from '@src/token/token.service';
+import { ClientsDto } from './clients.dto';
+import { ClientsEntity } from './clients.entity';
+import { ClientsRedirectsService } from './clients_redirects/clients_redirects.service';
+import { BindDto } from '@src/common/dto/bind.dto';
 
 @Injectable()
-export class ClientsService extends CommonService<
-  ClientsEntity,
-  ClientsDto,
-  ClientsFilter
-> {
-  
+export class ClientsService extends CommonService<ClientsDto, ClientsEntity> {
   constructor(
     @InjectRepository(ClientsEntity)
     protected readonly repository: Repository<ClientsEntity>,
@@ -29,8 +24,8 @@ export class ClientsService extends CommonService<
 
   async create(
     clientsDto: ClientsDto,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number,
+    relations: Array<RelationsDto> = undefined,
+    bind: BindDto,
   ): Promise<ClientsEntity> {
     if (clientsDto.client_password) {
       const salt = await genSalt(10);
@@ -41,29 +36,41 @@ export class ClientsService extends CommonService<
         client_id: clientsDto.client_id,
       });
       if (exists) {
-        throw new BadRequestException('Client is exists', { cause: new Error(), description: 'invalid_client' });
+        throw new BadRequestException('Client is exists', {
+          cause: new Error(),
+          description: 'invalid_client',
+        });
       }
     }
     if (!clientsDto.client_id) {
       clientsDto.client_id = `${v4()}`;
     }
-    const client = await super.create(clientsDto, relationsDto, authId);
+    const client = await super.create(clientsDto, relations, bind);
     if (!client) {
-      throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
+      throw new BadRequestException(
+        'Client is unknown, not registered, or parameters are set incorrectly',
+        { cause: new Error(), description: 'invalid_client' },
+      );
     }
     if (clientsDto.redirect_uri) {
-      await this.clientsRedirectsService.create({
-        client: {
-          id: client.id,
+      await this.clientsRedirectsService.create(
+        {
+          client: {
+            id: client.id,
+          },
+          uri: clientsDto.redirect_uri,
         },
-        uri: clientsDto.redirect_uri,
-      });
+        [{ name: 'client' }],
+      );
     }
-    const clientSecretData = await this.tokenService.one({
-      client_id: client.client_id,
-    }, 'JWT_CLIENTS_EXPIRES');
+    const clientSecretData = await this.tokenService.one(
+      {
+        client_id: client.client_id,
+      },
+      'JWT_CLIENTS_EXPIRES',
+    );
     client.client_secret = clientSecretData.token;
-    const updated = await this.update(client.id, client, null, authId);
+    const updated = await this.update(client.id, client, relations, bind);
     return updated ? client : null;
   }
 
@@ -74,28 +81,37 @@ export class ClientsService extends CommonService<
         where: {
           client_id,
           client_secret,
-        }
+        },
       });
     } catch (e) {
       // grant_type=password
       console.error('Clients verify error', e);
-      throw new BadRequestException(e.message, { cause: new Error(), description: 'invalid_request' });
+      throw new BadRequestException(e.message, {
+        cause: new Error(),
+        description: 'invalid_request',
+      });
     }
     if (!client) {
-      throw new BadRequestException('Client is unknown, not registered, or parameters are set incorrectly', { cause: new Error(), description: 'invalid_client' });
+      throw new BadRequestException(
+        'Client is unknown, not registered, or parameters are set incorrectly',
+        { cause: new Error(), description: 'invalid_client' },
+      );
     }
     if (!client.client_id || !client.client_secret) {
-      throw new BadRequestException('Client is not authorized or has the rights to this request', { cause: new Error(), description: 'unauthorized_client' });
+      throw new BadRequestException(
+        'Client is not authorized or has the rights to this request',
+        { cause: new Error(), description: 'unauthorized_client' },
+      );
     }
     return client;
   }
 
   async clientsGetWhere(
-    where: Object,
-    relationsDto: Array<RelationsDto> = undefined,
+    where: object,
+    relations: Array<RelationsDto> = undefined,
   ): Promise<ClientsEntity> {
     return await this.repository.findOne({
-      relations: relationsDto?.map(i => i.name),
+      relations: relations?.map((i) => i.name),
       where,
     });
   }

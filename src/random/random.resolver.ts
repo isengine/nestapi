@@ -1,6 +1,6 @@
 import { Resolver } from '@nestjs/graphql';
-import { RandomService } from '@src/random/random.service';
 import { Auth } from '@src/auth/auth.decorator';
+import { RandomService } from './random.service';
 
 @Resolver('random')
 export class RandomResolver {

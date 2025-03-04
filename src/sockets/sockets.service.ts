@@ -1,19 +1,13 @@
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SocketsDto } from '@src/sockets/sockets.dto';
-import { SocketsEntity } from '@src/sockets/sockets.entity';
-import { SocketsFilter } from '@src/sockets/sockets.filter';
-import { RelationsDto } from '@src/common/dto/relations.dto';
-import { RoomsService } from '@src/rooms/rooms.service';
 import { CommonService } from '@src/common/common.service';
+import { RoomsService } from '@src/rooms/rooms.service';
+import { SocketsDto } from './sockets.dto';
+import { SocketsEntity } from './sockets.entity';
 
 @Injectable()
-export class SocketsService extends CommonService<
-  SocketsEntity,
-  SocketsDto,
-  SocketsFilter
-> {
+export class SocketsService extends CommonService<SocketsDto, SocketsEntity> {
   constructor(
     @InjectRepository(SocketsEntity)
     protected readonly repository: Repository<SocketsEntity>,
@@ -22,17 +16,13 @@ export class SocketsService extends CommonService<
     super();
   }
 
-  async create(
-    socketsDto: SocketsDto,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-  ): Promise<SocketsEntity> {
-    const roomId = socketsDto.room?.id;
+  async create(sockets: SocketsDto): Promise<SocketsEntity> {
+    const roomId = sockets.room?.id;
     if (roomId) {
-      const room = await this.roomsService.findOne(roomId);
-      socketsDto.room = room;
+      const room = await this.roomsService.findOne({ id: roomId });
+      sockets.room = room;
     }
-    delete socketsDto.room;
-    return await super.create(socketsDto, relationsDto, authId);
+    delete sockets.room;
+    return await super.create(sockets);
   }
 }

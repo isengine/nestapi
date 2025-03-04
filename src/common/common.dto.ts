@@ -9,18 +9,4 @@ export class CommonDto {
   })
   @Field(() => ID, { nullable: true })
   id?: number;
-
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
-  createdAt?: Date;
-
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
-  updatedAt?: Date;
 }

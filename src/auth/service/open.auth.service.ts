@@ -20,9 +20,14 @@ export class OpenAuthService {
     const updated = await this.codeGenerate({ ...clientsDto }, id);
     const [{ uri }] = clientsDto.redirects;
     if (!updated) {
-      throw new BadRequestException('Client authentication failed. Unknown client [code.open.auth.service]', 'invalid_client');
+      throw new BadRequestException(
+        'Client authentication failed. Unknown client [code.open.auth.service]',
+        'invalid_client',
+      );
     }
-    return `${uri}?code=${updated.code}&client_id=${updated.client_id}${state ? `&state=${state}` : ''}`;
+    return `${uri}?code=${updated.code}&client_id=${updated.client_id}${
+      state ? `&state=${state}` : ''
+    }`;
   }
 
   async token(
@@ -35,46 +40,63 @@ export class OpenAuthService {
     delete clientsDto.redirects;
     const token = await this.tokenService.pair({ id });
     if (!token) {
-      throw new BadRequestException('Client authentication failed. Unknown client [token.open.auth.service]', 'invalid_client');
+      throw new BadRequestException(
+        'Client authentication failed. Unknown client [token.open.auth.service]',
+        'invalid_client',
+      );
     }
-    return `${uri}?token_type=Bearer&expires_in=${token.expires_in}${state ? `&state=${state}` : ''}#access_token=${token.access_token}`;
+    return `${uri}?token_type=Bearer&expires_in=${token.expires_in}${
+      state ? `&state=${state}` : ''
+    }#access_token=${token.access_token}`;
   }
 
-  async verify(
-    openAuthDto: OpenAuthDto,
-  ): Promise<ClientsDto> {
+  async verify(openAuthDto: OpenAuthDto): Promise<ClientsDto> {
     const { client_id, redirect_uri, response_type } = openAuthDto;
     if (['code', 'token'].indexOf(response_type) < 0) {
-      throw new BadRequestException('Specified type of response_type field is not supported in this request', 'invalid_request');
+      throw new BadRequestException(
+        'Specified type of response_type field is not supported in this request',
+        'invalid_request',
+      );
     }
-    const result = await this.clientsService.clientsGetWhere({
-      client_id,
-      redirects: {
-        uri: redirect_uri,
+    const result = await this.clientsService.clientsGetWhere(
+      {
+        client_id,
+        redirects: {
+          uri: redirect_uri,
+        },
       },
-    }, [
-      { name: 'auth' },
-      { name: 'redirects' },
-    ]);
+      [{ name: 'auth' }, { name: 'redirects' }],
+    );
     if (!result || !result.redirects.length) {
-      throw new BadRequestException('Client authentication failed. Unknown client [verify.open.auth.service]', 'invalid_client');
+      throw new BadRequestException(
+        'Client authentication failed. Unknown client [verify.open.auth.service]',
+        'invalid_client',
+      );
     }
     return result;
   }
 
-  async codeGenerate(clientsDto: ClientsDto, id: number): Promise<ClientsEntity> {
+  async codeGenerate(
+    clientsDto: ClientsDto,
+    id: number,
+  ): Promise<ClientsEntity> {
     const data = {
       timestamp: Date.now(),
       id,
       client_id: clientsDto.client_id,
-      redirect_uri: clientsDto.redirects?.[0].uri,
+      redirect_uri: clientsDto.redirect_uri,
     };
     const code = await Buffer.from(JSON.stringify(data)).toString('base64');
 
     clientsDto.code = code;
     delete clientsDto.auth;
     delete clientsDto.redirects;
-    return await this.clientsService.update(clientsDto.id, clientsDto, null, null);
+    return await this.clientsService.update(
+      clientsDto.id,
+      clientsDto,
+      null,
+      null,
+    );
   }
 
   async codeVerify(code: string, clientsDto: ClientsDto): Promise<number> {
@@ -85,11 +107,16 @@ export class OpenAuthService {
     const clientIdMatched = clientsDto.client_id === client_id;
     const redirectUriMatched = clientsDto.redirect_uri === redirect_uri;
     const timestampNow = new Date();
-    const timestampValid = timestampNow.setMinutes(timestampNow.getMinutes() - 10);
+    const timestampValid = timestampNow.setMinutes(
+      timestampNow.getMinutes() - 10,
+    );
     const timestampMatched = timestampValid <= Number(timestamp);
 
     if (!clientIdMatched || !redirectUriMatched || !timestampMatched) {
-      throw new BadRequestException('Authorization code is invalid in verify process', 'invalid_request');
+      throw new BadRequestException(
+        'Authorization code is invalid in verify process',
+        'invalid_request',
+      );
     }
     return id;
   }

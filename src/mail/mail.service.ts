@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { MailDto } from '@src/mail/mail.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { FilesInterface } from '@src/files/files.interface';
-import { AttachmentsMailInterface } from '@src/mail/interface/attachments.mail.interface';
-import { ConfigService } from '@nestjs/config';
+import { AttachmentsMailInterface } from './interface/attachments.mail.interface';
+import { MailDto } from './mail.dto';
 
 @Injectable()
 export class MailService {
-  constructor(
-    private readonly mailerService: MailerService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly mailerService: MailerService) {}
 
   async send(options: MailDto, files: FilesInterface[] = undefined) {
     const attachments = await this.attachments(files);
@@ -32,13 +28,11 @@ export class MailService {
     return result;
   }
 
-  async sendTemplate(
+  async sendByTemplate(
     options: MailDto,
     data: object,
-    links: object,
     files: FilesInterface[] = undefined,
   ) {
-    const linksData = await this.links(links);
     const attachments = await this.attachments(files);
 
     const result = await this.mailerService
@@ -48,7 +42,6 @@ export class MailService {
         template: options.template,
         context: {
           data,
-          links: linksData,
         },
         attachments,
       })
@@ -58,7 +51,9 @@ export class MailService {
     return result;
   }
 
-  async attachments(files: FilesInterface[]): Promise<AttachmentsMailInterface[]> {
+  async attachments(
+    files: FilesInterface[],
+  ): Promise<AttachmentsMailInterface[]> {
     const attachments: AttachmentsMailInterface[] = await Promise.all(
       files && files.length
         ? files?.map(
@@ -72,17 +67,5 @@ export class MailService {
         : [],
     );
     return attachments;
-  }
-
-  links(links: object): object {
-    const domain = this.configService.get('SMTP_LINKS_DOMAIN');
-
-    const result: object = {};
-    Object.entries(links)?.map(
-      ([key, path]): void => {
-        result[key] = `${domain}${path}`;
-      }
-    );
-    return result;
   }
 }

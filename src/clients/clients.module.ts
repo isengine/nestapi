@@ -1,19 +1,18 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientsController } from '@src/clients/clients.controller';
-import { ClientsEntity } from '@src/clients/clients.entity';
-import { ClientsService } from '@src/clients/clients.service';
-import { ClientsStrategy } from '@src/clients/clients.strategy';
-import { ClientsResolver } from '@src/clients/clients.resolver';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from '@src/token/token.module';
 // import { AuthModule } from '@src/auth/auth.module';
-import { ClientsRedirectsModule } from '@src/clients_redirects/clients_redirects.module';
+
+import { ClientsController } from './clients.controller';
+import { ClientsEntity } from './clients.entity';
+import { ClientsResolver } from './clients.resolver';
+import { ClientsService } from './clients.service';
+import { ClientsStrategy } from './clients.strategy';
+import { ClientsRedirectsModule } from './clients_redirects/clients_redirects.module';
 
 @Module({
-  controllers: [
-    ClientsController,
-  ],
+  controllers: [ClientsController],
   imports: [
     TypeOrmModule.forFeature([ClientsEntity]),
     // forwardRef(() => AuthModule),
@@ -21,13 +20,7 @@ import { ClientsRedirectsModule } from '@src/clients_redirects/clients_redirects
     forwardRef(() => TokenModule),
     ConfigModule,
   ],
-  providers: [
-    ClientsService,
-    ClientsStrategy,
-    ClientsResolver,
-  ],
-  exports: [
-    ClientsService,
-  ],
+  providers: [ClientsService, ClientsStrategy, ClientsResolver],
+  exports: [ClientsService],
 })
 export class ClientsModule {}

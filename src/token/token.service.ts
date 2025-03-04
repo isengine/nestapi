@@ -28,7 +28,7 @@ export class TokenService {
   async prepare(token: TokenDto, state: any): Promise<any> {
     return await this.prepareHandler.prepare(token, state);
   }
-  
+
   async refresh(refresh_token: string, callback = null): Promise<any> {
     return await this.refreshHandler.refresh(refresh_token, callback);
   }

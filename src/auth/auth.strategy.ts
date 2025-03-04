@@ -1,9 +1,12 @@
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import {
+  ForbiddenException,
+  UnauthorizedException,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ForbiddenException, UnauthorizedException, Injectable } from '@nestjs/common';
-import { AuthService } from '@src/auth/auth.service';
-// import { AuthEntity } from '@src/auth/auth.entity';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthStrategy extends PassportStrategy(Strategy) {
@@ -18,13 +21,12 @@ export class AuthStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // async validate({ id }: Pick<AuthEntity, 'id'>) {
-  async validate({ id, type }) {
+  async validate({ id, type, key }) {
     if (!type || type !== 'access') {
       throw new UnauthorizedException('Invalid token or expired!');
     }
-    const auth = await this.authService.findOne(id, [{ name: 'users' }]);
-    if (!auth.id || !auth.isActivated) {
+    const auth = await this.authService.findOne({ id });
+    if (!auth.id || (!auth.isActivated && !key)) {
       throw new ForbiddenException('You have no rights!');
     }
     return auth;

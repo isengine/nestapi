@@ -2,37 +2,33 @@ import { ConfigModule } from '@nestjs/config';
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthEntity } from '@src/auth/auth.entity';
-import { AuthService } from '@src/auth/auth.service';
-import { AuthStrategy } from '@src/auth/auth.strategy';
-import { AuthResolver } from '@src/auth/auth.resolver';
+import { AuthController } from './auth.controller';
+import { AuthEntity } from './auth.entity';
+import { AuthResolver } from './auth.resolver';
+import { AuthService } from './auth.service';
+import { AuthStrategy } from './auth.strategy';
 
-import { AuthController } from '@src/auth/auth.controller';
-import { FormsAuthController } from '@src/auth/controller/forms.auth.controller';
-import { MethodsAuthController } from '@src/auth/controller/methods.auth.controller';
-import { OpenAuthController } from '@src/auth/controller/open.auth.controller';
-import { RenderAuthController } from '@src/auth/controller/render.auth.controller';
+import { FormsAuthController } from './controller/forms.auth.controller';
+import { MethodsAuthController } from './controller/methods.auth.controller';
+import { OpenAuthController } from './controller/open.auth.controller';
+import { ChangeAuthHandler } from './handler/change.auth.handler';
+import { ConfirmAuthHandler } from './handler/confirm.auth.handler';
+import { HashAuthHandler } from './handler/hash.auth.handler';
+import { LogoutAuthHandler } from './handler/logout.auth.handler';
+import { RegisterAuthHandler } from './handler/register.auth.handler';
+import { ResetAuthHandler } from './handler/reset.auth.handler';
+import { FormsAuthService } from './service/forms.auth.service';
+import { MethodsAuthService } from './service/methods.auth.service';
+import { OpenAuthService } from './service/open.auth.service';
 
-import { FormsAuthService } from '@src/auth/service/forms.auth.service';
-import { MethodsAuthService } from '@src/auth/service/methods.auth.service';
-import { OpenAuthService } from '@src/auth/service/open.auth.service';
+import { AuthConfirmModule } from './auth_confirm/auth_confirm.module';
+import { AuthSessionsModule } from './auth_sessions/auth_sessions.module';
+import { AuthStrategiesModule } from './auth_strategies/auth_strategies.module';
 
-import { ChangeAuthHandler } from '@src/auth/handler/change.auth.handler';
-import { ConfirmAuthHandler } from '@src/auth/handler/confirm.auth.handler';
-import { LogoutAuthHandler } from '@src/auth/handler/logout.auth.handler';
-import { RegisterAuthHandler } from '@src/auth/handler/register.auth.handler';
-import { ResetAuthHandler } from '@src/auth/handler/reset.auth.handler';
-
-import { AuthConfirmModule } from '@src/auth_confirm/auth_confirm.module';
-import { AuthRolesModule } from '@src/auth_roles/auth_roles.module';
-import { AuthSessionsModule } from '@src/auth_sessions/auth_sessions.module';
-import { AuthStrategiesModule } from '@src/auth_strategies/auth_strategies.module';
 import { ClientsModule } from '@src/clients/clients.module';
 import { MailModule } from '@src/mail/mail.module';
-import { PostsModule } from '@src/posts/posts.module';
-import { SocketsModule } from '@src/sockets/sockets.module';
 import { TokenModule } from '@src/token/token.module';
-import { UsersModule } from '@src/users/users.module';
+import { UsersModule } from '@src/db/users/users.module';
 
 @Module({
   controllers: [
@@ -40,18 +36,14 @@ import { UsersModule } from '@src/users/users.module';
     FormsAuthController,
     MethodsAuthController,
     OpenAuthController,
-    RenderAuthController,
   ],
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
     forwardRef(() => AuthConfirmModule),
-    forwardRef(() => AuthRolesModule),
     forwardRef(() => AuthSessionsModule),
     forwardRef(() => AuthStrategiesModule),
     forwardRef(() => ClientsModule),
     forwardRef(() => MailModule),
-    forwardRef(() => PostsModule),
-    forwardRef(() => SocketsModule),
     forwardRef(() => TokenModule),
     forwardRef(() => UsersModule),
     ConfigModule,
@@ -66,15 +58,11 @@ import { UsersModule } from '@src/users/users.module';
 
     ChangeAuthHandler,
     ConfirmAuthHandler,
+    HashAuthHandler,
     LogoutAuthHandler,
     RegisterAuthHandler,
     ResetAuthHandler,
   ],
-  exports: [
-    AuthService,
-    FormsAuthService,
-    MethodsAuthService,
-    OpenAuthService,
-  ],
+  exports: [AuthService, FormsAuthService, MethodsAuthService, OpenAuthService],
 })
 export class AuthModule {}

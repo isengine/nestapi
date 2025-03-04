@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { genSalt, hash } from 'bcryptjs';
+import { ConfigService } from '@nestjs/config';
 import { AuthDto } from '@src/auth/auth.dto';
 import { AuthEntity } from '@src/auth/auth.entity';
 import { AuthService } from '@src/auth/auth.service';
-import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
+import { AuthConfirmService } from '@src/auth/auth_confirm/auth_confirm.service';
+import { HashAuthHandler } from '@src/auth/handler/hash.auth.handler';
 import { MailService } from '@src/mail/mail.service';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RegisterAuthHandler {
@@ -14,17 +14,20 @@ export class RegisterAuthHandler {
     protected readonly authConfirmService: AuthConfirmService,
     protected readonly configService: ConfigService,
     protected readonly mailService: MailService,
+    protected readonly hashAuthHandler: HashAuthHandler,
   ) {}
 
   async authCreate(authDto: AuthDto): Promise<AuthEntity> {
     const authExists = await this.authService.findByUsername(authDto.username);
     if (authExists) {
-      throw new BadRequestException(
-        'User with this username is already in the system',
-      );
+      if (+authExists.isActivated) {
+        throw new BadRequestException(
+          'User with this username is already in the system',
+        );
+      }
+      return authExists;
     }
-    const salt = await genSalt(10);
-    authDto.password = await hash(authDto.password, salt);
+    authDto.password = await this.hashAuthHandler.generate(authDto.password);
 
     // используйте данную строку, если пользователь будет сразу же активирован
     // authDto.isActivated = true;
@@ -38,19 +41,16 @@ export class RegisterAuthHandler {
     // закомментируйте строки ниже, если пользователь будет сразу же активирован
     // используйте generate чтобы генерировать код из цифр
     const confirm = await this.authConfirmService.create(auth);
-    const prefix = this.configService.get('PREFIX');
+    const url = this.configService.get('FORM_CONFIRM');
 
-    await this.mailService.sendTemplate(
+    await this.mailService.sendByTemplate(
       {
         to: username,
         subject,
         template: 'register',
       },
       {
-      },
-      {
-        host: '',
-        url: `${prefix}/auth/confirm.html?code=${confirm.code}`,
+        url: `${url}?code=${confirm.code}`,
       },
     );
   }

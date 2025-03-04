@@ -11,13 +11,15 @@ export const SelfDoc = (classDto) => {
       queries: [
         {
           name: 'where',
-          description: 'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
+          description:
+            'Объект с нужными полями записи и их значениями, по которым запись будет выбираться',
           type: classDto.name,
           example: { id: 1 },
         },
         {
           name: 'order',
-          description: 'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
+          description:
+            'Объект с полями записи и значением ASC/DESC, для сортировки записей по этим полям',
           example: { id: 'DESC' },
         },
         {
@@ -27,6 +29,6 @@ export const SelfDoc = (classDto) => {
           example: [{ name: 'table', order: 'id', desc: true }],
         },
       ],
-    })
+    }),
   );
 };

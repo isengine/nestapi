@@ -14,6 +14,8 @@ export const getMailConfig = async (
   const senderName = configService.get<string>('SMTP_SENDER_NAME');
   const senderEmail = configService.get<string>('SMTP_SENDER_EMAIL');
 
+  const rootPath = configService.get<string>('ROOT_PATH');
+
   const from = senderName ? `"${senderName}" <${senderEmail}>` : senderEmail;
   const transport = `${
     secure ? 'smtps' : 'smtp'
@@ -26,7 +28,7 @@ export const getMailConfig = async (
     },
     // preview: true,
     template: {
-      dir: join(__dirname, '..', '..', 'views/mail'),
+      dir: join(rootPath, 'views/mail'),
       adapter: new EjsAdapter(),
       options: {
         // strict: true,

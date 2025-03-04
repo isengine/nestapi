@@ -12,13 +12,14 @@ export const UpdateDoc = (classDto) => {
         {
           name: 'id',
           required: true,
-          description: 'Id номер записи'
-        }
+          description: 'Id номер записи',
+        },
       ],
       queries: [
         {
           name: 'update',
-          description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
+          description:
+            'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
           type: classDto.name,
         },
         {
@@ -28,6 +29,6 @@ export const UpdateDoc = (classDto) => {
           example: [{ name: 'table', order: 'id', desc: true }],
         },
       ],
-    })
+    }),
   );
 };

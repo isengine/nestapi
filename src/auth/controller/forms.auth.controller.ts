@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { AuthDto } from '@src/auth/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Auth } from '@src/auth/auth.decorator';
@@ -17,26 +9,28 @@ import { GrantsTokenDto } from '@src/token/dto/grants.token.dto';
 @ApiTags('Авторизация через формы')
 @Controller('auth')
 export class FormsAuthController {
-  constructor(
-    private readonly formsAuthService: FormsAuthService,
-  ) {}
+  constructor(private readonly formsAuthService: FormsAuthService) {}
 
   @Post('change/:code')
   @CommonDoc({
     title: 'Смена пароля пользователя',
     models: [],
-    params: [{
-      name: 'code',
-      required: true,
-      description: 'Код подтверждения',
-    }],
-      queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей регистрации',
-      type: '[AuthDto]',
-      example: [{ password: '...' }],
-    }],
+    params: [
+      {
+        name: 'code',
+        required: true,
+        description: 'Код подтверждения',
+      },
+    ],
+    queries: [
+      {
+        name: 'authDto',
+        required: true,
+        description: 'Объект полей регистрации',
+        type: '[AuthDto]',
+        example: [{ password: '...' }],
+      },
+    ],
   })
   async change(
     @Body() authDto: AuthDto,
@@ -51,11 +45,13 @@ export class FormsAuthController {
   @CommonDoc({
     title: 'Подтверждение регистрации и активация учетной записи',
     models: [],
-    params: [{
-      name: 'code',
-      required: true,
-      description: 'Код подтверждения',
-    }],
+    params: [
+      {
+        name: 'code',
+        required: true,
+        description: 'Код подтверждения',
+      },
+    ],
   })
   async confirm(
     @Param('code') code: string,
@@ -63,19 +59,21 @@ export class FormsAuthController {
     @Res({ passthrough: true }) res: any,
   ) {
     return await this.formsAuthService.confirm(code, req, res);
-  }  
+  }
 
   @Post('login')
   @CommonDoc({
     title: 'Авторизация',
     models: [],
-    queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей авторизации',
-      type: '[AuthDto]',
-      example: { username: '...', password: '...' },
-    }],
+    queries: [
+      {
+        name: 'authDto',
+        required: true,
+        description: 'Объект полей авторизации',
+        type: '[AuthDto]',
+        example: { username: '...', password: '...' },
+      },
+    ],
   })
   async login(
     @Body() grantsTokenDto: GrantsTokenDto,
@@ -83,7 +81,12 @@ export class FormsAuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: any,
   ) {
-    return await this.formsAuthService.login(grantsTokenDto, response_type, req, res);
+    return await this.formsAuthService.login(
+      grantsTokenDto,
+      response_type,
+      req,
+      res,
+    );
   }
 
   @Auth()
@@ -92,10 +95,7 @@ export class FormsAuthController {
     title: 'Выход',
     models: [],
   })
-  async logout(
-    @Req() req: any,
-    @Res({ passthrough: true }) res: any,
-  ) {
+  async logout(@Req() req: any, @Res({ passthrough: true }) res: any) {
     return await this.formsAuthService.logout(req, res);
   }
 
@@ -103,13 +103,15 @@ export class FormsAuthController {
   @CommonDoc({
     title: 'Регистрация',
     models: [],
-    queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей регистрации',
-      type: '[AuthDto]',
-      example: { username: '...', password: '...' },
-    }],
+    queries: [
+      {
+        name: 'authDto',
+        required: true,
+        description: 'Объект полей регистрации',
+        type: '[AuthDto]',
+        example: { username: '...', password: '...' },
+      },
+    ],
   })
   async register(
     @Body() authDto: AuthDto,
@@ -124,13 +126,15 @@ export class FormsAuthController {
   @CommonDoc({
     title: 'Запрос на сброс пароля пользователя',
     models: [],
-    queries: [{
-      name: 'authDto',
-      required: true,
-      description: 'Объект полей регистрации',
-      type: '[AuthDto]',
-      example: [{ username: '...' }],
-    }],
+    queries: [
+      {
+        name: 'authDto',
+        required: true,
+        description: 'Объект полей регистрации',
+        type: '[AuthDto]',
+        example: [{ username: '...' }],
+      },
+    ],
   })
   async reset(
     @Body() authDto: AuthDto,

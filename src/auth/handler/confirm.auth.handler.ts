@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthConfirmService } from '@src/auth_confirm/auth_confirm.service';
+import { AuthConfirmService } from '@src/auth/auth_confirm/auth_confirm.service';
 import { AuthService } from '@src/auth/auth.service';
 
 @Injectable()

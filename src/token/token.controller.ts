@@ -7,21 +7,27 @@ import { GrantsTokenService } from '@src/token/service/grants.token.service';
 @ApiTags('Токены')
 @Controller('token')
 export class TokenController {
-  constructor(
-    private readonly grantsTokenService: GrantsTokenService,
-  ) {}
+  constructor(private readonly grantsTokenService: GrantsTokenService) {}
 
   @Post('/')
   @CommonDoc({
     title: 'Базовый метод получения токена',
     models: [GrantsTokenDto],
-    queries: [{
-      name: 'grantsTokenDto',
-      required: true,
-      description: 'Объект полей запроса токена',
-      type: '[GrantsTokenDto]',
-      example: [{ grant_type: 'authorization_code', client_id: '...', redirect_uri: '...' }],
-    }],
+    queries: [
+      {
+        name: 'grantsTokenDto',
+        required: true,
+        description: 'Объект полей запроса токена',
+        type: '[GrantsTokenDto]',
+        example: [
+          {
+            grant_type: 'authorization_code',
+            client_id: '...',
+            redirect_uri: '...',
+          },
+        ],
+      },
+    ],
   })
   async token(
     @Body() grantsTokenDto: GrantsTokenDto,
@@ -44,18 +50,26 @@ export class TokenController {
       return await this.grantsTokenService.clientCredentials(grantsTokenDto);
     }
     // /token
+    // grant_type=key
+    // username=johndoe
+    // chatId=A3ddj3w
+    if (grantsTokenDto.grant_type === 'key') {
+      return await this.grantsTokenService.key(
+        grantsTokenDto,
+        request,
+        response,
+      );
+    }
+    // /token
     // grant_type=password
     // username=johndoe
     // password=A3ddj3w
     if (grantsTokenDto.grant_type === 'password') {
-      return await this.grantsTokenService.password(grantsTokenDto, request, response);
-    }
-    // /token
-    // grant_type=person_credentials
-    // username=johndoe
-    // password=A3ddj3w
-    if (grantsTokenDto.grant_type === 'person_credentials') {
-      return await this.grantsTokenService.personCredentials(grantsTokenDto);
+      return await this.grantsTokenService.password(
+        grantsTokenDto,
+        request,
+        response,
+      );
     }
     // /token
     // grant_type=refresh_token

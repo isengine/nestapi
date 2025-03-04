@@ -1,5 +1,14 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiParam, ApiQuery, getSchemaPath, ApiResponse, ApiTags, ApiExtraModels } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiBody,
+  ApiParam,
+  ApiQuery,
+  getSchemaPath,
+  ApiResponse,
+  ApiTags,
+  ApiExtraModels,
+} from '@nestjs/swagger';
 import { RelationsDto } from '@src/common/dto/relations.dto';
 
 export const CommonDoc = ({
@@ -12,9 +21,7 @@ export const CommonDoc = ({
 }) => {
   const decorators = [];
 
-  decorators.push(
-    ApiOperation({ summary: title })
-  );
+  decorators.push(ApiOperation({ summary: title }));
 
   if (queries) {
     queries.forEach((query) => {
@@ -22,14 +29,14 @@ export const CommonDoc = ({
         query.required = false;
       }
       if (!query.required) {
-        query.type = `${query.type || ''}${query.type ? ', ' : ''}необязательный`;
+        query.type = `${query.type || ''}${
+          query.type ? ', ' : ''
+        }необязательный`;
       }
       if (query.example) {
         query.example = JSON.stringify(query.example);
       }
-      decorators.push(
-        ApiQuery(query)
-      );
+      decorators.push(ApiQuery(query));
     });
   }
 
@@ -44,9 +51,7 @@ export const CommonDoc = ({
       if (param.example) {
         param.example = JSON.stringify(param.example);
       }
-      decorators.push(
-        ApiParam(param)
-      );
+      decorators.push(ApiParam(param));
     });
   }
 
@@ -64,9 +69,7 @@ export const CommonDoc = ({
     models.forEach((model) => {
       anyOf.push({ $ref: getSchemaPath(model) });
     });
-    decorators.push(
-      ApiBody({ schema: { anyOf } })
-    );
+    decorators.push(ApiBody({ schema: { anyOf } }));
   }
 
   decorators.push(
@@ -74,14 +77,14 @@ export const CommonDoc = ({
       status: HttpStatus.OK,
       description: 'Выполнено',
       type: success,
-    })
+    }),
   );
 
   decorators.push(
     ApiResponse({
       status: HttpStatus.BAD_REQUEST,
       description: 'Ошибка',
-    })
+    }),
   );
 
   return applyDecorators(...decorators);

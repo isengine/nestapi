@@ -17,19 +17,25 @@ export class PasswordGrant {
     response,
   ): Promise<any> {
     if (grantsTokenDto.grant_type !== 'password') {
-      throw new BadRequestException('Specified type of grant_type field is not supported in this request', 'unsupported_grant_type');
+      throw new BadRequestException(
+        'Specified type of grant_type field is not supported in this request',
+        'unsupported_grant_type',
+      );
     }
-    if (
-      !grantsTokenDto.username
-      || !grantsTokenDto.password
-    ) {
-      throw new BadRequestException('Not specified username or password in this request', 'invalid_grant');
+    if (!grantsTokenDto.username || !grantsTokenDto.password) {
+      throw new BadRequestException(
+        'Not specified username or password in this request',
+        'invalid_grant',
+      );
     }
     const { username, password } = grantsTokenDto;
     const auth = await this.authService.login({ username, password });
     const token = await this.tokenService.pair({ id: auth.id });
     if (!token) {
-      throw new BadRequestException('User authentication failed. Unknown user', 'invalid_user');
+      throw new BadRequestException(
+        'User authentication failed. Unknown user',
+        'invalid_user',
+      );
     }
     // if (request) {
     //   await this.authSessionsService.start(auth, request);

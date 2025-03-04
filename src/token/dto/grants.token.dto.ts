@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 import { CommonDto } from '@src/common/common.dto';
 import { TypeGrants } from '@src/common/common.enum';
 
@@ -7,7 +7,8 @@ import { TypeGrants } from '@src/common/common.enum';
 export class GrantsTokenDto extends CommonDto {
   @ApiProperty({
     required: true,
-    description: 'Тип гранта. Один из password, refresh_token, authorization_code, client_credentials, person_credentials',
+    description:
+      'Тип гранта. Один из password, refresh_token, authorization_code, client_credentials',
   })
   @Field(() => TypeGrants)
   grant_type: TypeGrants;
@@ -60,6 +61,14 @@ export class GrantsTokenDto extends CommonDto {
   })
   @Field({ nullable: true })
   code?: string;
+
+  @ApiProperty({
+    required: false,
+    description:
+      'Ключ для беспарольного доступа, сгенерированный как хэш от chatId',
+  })
+  @Field({ nullable: true })
+  key?: string;
 
   @ApiProperty({
     required: false,

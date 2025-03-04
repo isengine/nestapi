@@ -1,14 +1,14 @@
 import {
+  Body,
   Controller,
   Post,
-  UseInterceptors,
   UploadedFiles,
-  Body,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { MailDto } from '@src/mail/mail.dto';
-import { MailService } from '@src/mail/mail.service';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { MailDto } from './mail.dto';
+import { MailService } from './mail.service';
 
 @ApiExcludeController()
 @Controller('mail')
@@ -24,19 +24,13 @@ export class MailController {
     return await this.mailService.send(options, files);
   }
 
-  @Post('sendtemplate')
+  @Post('send_by_template')
   @UseInterceptors(FilesInterceptor('file'))
-  async sendTemplate(
+  async sendByTemplate(
     @Body('options') options: MailDto,
     @Body('data') data: object,
-    @Body('links') links: object,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return await this.mailService.sendTemplate(
-      options,
-      data,
-      links,
-      files,
-    );
+    return await this.mailService.sendByTemplate(options, data, files);
   }
 }

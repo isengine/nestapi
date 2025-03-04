@@ -1,18 +1,32 @@
-const { DataSource } = require('typeorm');
-require('dotenv').config();
+import * as dotenv from 'dotenv';
+import { join } from 'path';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
-const AppDataSource = new DataSource({
-  type: process.env.DB_TYPE,
+dotenv.config();
+
+type DatabaseTypes =
+  | 'mysql'
+  | 'postgres'
+  | 'sqlite'
+  | 'mssql'
+  | 'oracle'
+  | 'mongodb';
+
+const config = {
+  type: process.env.DB_TYPE as DatabaseTypes,
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
+  schema: process.env.DB_SCHEMA,
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT, 10),
+  port: Number(process.env.DB_PORT),
 
-  entities: ['./dist/**/*.entity{.ts,.js}'],
+  entities: [join(__dirname, '../../dist/**/*.entity{.ts,.js}')],
+  migrations: [join(__dirname, '../../dist/typeorm/migrations/*{.ts,.js}')],
   migrationsTableName: 'migrations_typeorm',
-  migrations: ['./dist/typeorm/migrations/*{.ts,.js}'],
-});
+} as DataSourceOptions;
+
+const AppDataSource = new DataSource(config);
 
 AppDataSource.initialize()
   .then(() => {

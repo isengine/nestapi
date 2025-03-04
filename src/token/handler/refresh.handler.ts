@@ -29,10 +29,6 @@ export class RefreshHandler {
       data.client_id = result.client_id;
     }
 
-    if (result.person_id) {
-      data.person_id = result.person_id;
-    }
-
     if (result.id) {
       data.id = result.id;
     }

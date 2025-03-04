@@ -12,7 +12,7 @@ import * as session from 'express-session';
 const FileStoreSession = fileStore(session);
 
 async function bootstrap() {
-    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     cors: {
       allowedHeaders: [
         'Content-Type',
@@ -59,9 +59,9 @@ async function bootstrap() {
     const redocConfig = {
       title: process.env.SWAGGER_TITLE || '',
       version: process.env.SWAGGER_VERSION || '',
-      specUrl: `/${process.env.SWAGGER_PREFIX}-json`,
+      specUrl: `${process.env.SWAGGER_PREFIX}-json`,
     };
-    app.use(`/${process.env.SWAGGER_PREFIX_REDOC}`, redoc(redocConfig));
+    app.use(`${process.env.SWAGGER_PREFIX_REDOC}`, redoc(redocConfig));
   }
 
   console.log('SESSION_EXPIRES', Number(process.env.SESSION_EXPIRES));
@@ -81,8 +81,8 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  app.useStaticAssets(join(__dirname, '..', 'public'));
-  app.setBaseViewsDir(join(__dirname, '..', 'views/static'));
+  app.useStaticAssets(join(process.env.ROOT_PATH, 'public'));
+  app.setBaseViewsDir(join(process.env.ROOT_PATH, 'views/static'));
   app.setViewEngine('ejs');
 
   const port = process.env.PORT || 5000;

@@ -1,217 +1,176 @@
 import { BadRequestException } from '@nestjs/common';
-import { DeepPartial, FindOptionsOrder, FindOptionsWhere, In, Repository } from 'typeorm';
-import { OptionsDto } from '@src/common/dto/options.dto';
+import {
+  And,
+  DeepPartial,
+  EntityTarget,
+  FindOptionsOrder,
+  FindOptionsWhere,
+  In,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { SearchDto } from '@src/common/dto/search.dto';
-import { entityGetParams } from '@src/common/service/entity.service';
-import { relationsCreate } from '@src/common/service/relations.service';
-import { filterService } from '@src/common/service/filter.service';
-import { optionsService } from '@src/common/service/options.service';
+import { relationsOrder } from '@src/common/service/relations.service';
 import { CommonDto } from '@src/common/common.dto';
 import { CommonEntity } from '@src/common/common.entity';
+import { FindDto } from './dto/find.dto';
+import { FindManyDto } from './dto/find_many.dto';
+import { FindOneDto } from './dto/find_one.dto';
+import { parseWhereObject } from './service/where.service';
+import { removePrivateFields } from './service/private_fields.service';
+import { searchService } from './service/search.service';
+import { bind } from './service/bind.service';
+import { BindDto } from './dto/bind.dto';
 
-export class CommonService<
-  Entity extends CommonEntity,
-  Dto extends CommonDto,
-  Filter
-> {
+export class CommonService<Dto extends CommonDto, Entity extends CommonEntity> {
   protected readonly repository: Repository<Entity>;
 
   async find(
-    where: FindOptionsWhere<any> = undefined,
-    order: FindOptionsOrder<any> = { id: 'ASC' },
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
+    find: FindDto = {},
+    bind: BindDto = { allow: true },
   ): Promise<Entity[]> {
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where = { ...where };
-      where[authKey || 'auth'] = auth;
-    }
-    try {
-      return await this.repository.find({
-        relations: relationsDto?.map(i => i.name),
-        order,
-        where,
-      });
-    }
-    catch (e) {
-      this.error(e);
-    }
-  }
+    const {
+      relations,
+      limit: take,
+      offset: skip,
+      search,
+      ...otherParams
+    } = find;
 
-  async findAll(
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
-  ): Promise<Entity[]> {
-    const order: FindOptionsOrder<any> = { id: 'ASC' };
-    const where: FindOptionsWhere<any> = {};
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where[authKey || 'auth'] = auth;
-    }
-    try {
-      return await this.repository.find({
-        relations: relationsDto?.map(i => i.name),
-        order,
-        where,
-      });
-    }
-    catch (e) {
-      this.error(e);
-    }
-  }
+    const { id, name } = bind;
 
-  async first(
-    where: FindOptionsWhere<any> = undefined,
-    order: FindOptionsOrder<any> = { id: 'ASC' },
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
-  ): Promise<Entity> {
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where = { ...where };
-      where[authKey || 'auth'] = auth;
+    let where = parseWhereObject(find.where);
+    // "username.not.like": "%user%"
+    // "username.and.not.like": ["%user1%", "%user2%"]
+
+    if (id !== undefined) {
+      where = { ...where, [name]: { id } };
     }
+
+    const params = {
+      ...otherParams,
+      relations: relations?.map((i) => i.name),
+      where,
+      take,
+      skip,
+    };
+
     try {
-      const [ result ] = await this.repository.find({
-        relations: relationsDto?.map(i => i.name),
-        order,
-        where,
-        take: 1,
-      });
+      let result;
+
+      result = await this.repository.find(params);
+      result = relationsOrder(result, relations);
+
+      if (search) {
+        result = result
+          .map((i) => {
+            const contains = searchService(i, search);
+            return contains ? i : false;
+          })
+          .filter(Boolean);
+      }
+
+      result = await removePrivateFields(
+        {
+          result,
+          repository: this.repository,
+        },
+        bind,
+      );
       return result;
-      // return await this.repository.findOne({
-      //   relations: relationsDto?.map(i => i.name),
-      //   order,
-      //   where,
-      // });
-    }
-    catch (e) {
+    } catch (e) {
       this.error(e);
     }
   }
 
-  async many(
-    ids: Array<number | string>,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
+  async findFirst(
+    find: FindDto,
+    bind: BindDto = { allow: true },
+  ): Promise<Entity> {
+    const [result] = await this.find(
+      {
+        ...find,
+        limit: 1,
+      },
+      bind,
+    );
+    return result;
+  }
+
+  async findMany(
+    findMany: FindManyDto,
+    bind: BindDto = { allow: true },
   ): Promise<Entity[]> {
+    const { ids, ...find } = findMany;
     const order: FindOptionsOrder<any> = { id: 'ASC' };
-    const where: FindOptionsWhere<any> = { id: In(ids?.map(i => Number(i) || 0)) };
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where[authKey || 'auth'] = auth;
-    }
-    try {
-      return await this.repository.find({
-        relations: relationsDto?.map(i => i.name),
+    const where: FindOptionsWhere<any> = {
+      id: In(ids?.map((i) => Number(i) || 0)),
+    };
+    return await this.find(
+      {
+        ...find,
         order,
         where,
-      });
-    }
-    catch (e) {
-      this.error(e);
-    }
+        limit: 0,
+        offset: 0,
+      },
+      bind,
+    );
   }
 
   async findOne(
-    id: number,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
+    findOne: FindOneDto,
+    bind: BindDto = { allow: true },
   ): Promise<Entity> {
-    const where: FindOptionsWhere<any> = { id };
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where[authKey || 'auth'] = auth;
-    }
-    try {
-      return await this.repository.findOne({
-        relations: relationsDto?.map(i => i.name),
+    const { id, ...find } = findOne;
+    const where: FindOptionsWhere<any> = { ...find.where, id };
+    const [result] = await this.find(
+      {
+        ...find,
         where,
-      });
-    }
-    catch (e) {
-      this.error(e);
-    }
+        limit: 1,
+        offset: 0,
+      },
+      bind,
+    );
+    return result;
   }
 
-  async filter(
-    dto: Dto,
-    searchDto: SearchDto,
-    optionsDto: OptionsDto,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
-  ): Promise<Filter[]> {
-    if (relationsDto.length) {
-      relationsDto = relationsDto.map(i => {
-        if (i.order === undefined) {
-          i.order = 'id';
-        }
-        if (i.desc === undefined) {
-          i.desc = false;
-        }
-        return i;
-      });
-    }
-
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      dto = { ...dto };
-      dto[authKey || 'auth'] = auth;
-      if (!relationsDto) {
-        relationsDto = [];
-      }
-      relationsDto.push({ name: 'auth', order: 'id', desc: false });
-    }
-
-    const { root, core, fields } = entityGetParams(this.repository.target);
-    const query = this.repository.createQueryBuilder(root);
-    const where = filterService(
-      dto,
-      searchDto,
-      root,
-      core,
-      fields,
-    );
-    query.where(where);
-    relationsCreate(query, relationsDto, root);
-
-    try {
-      return await optionsService(query, optionsDto, relationsDto, root);
-    }
-    catch (e) {
-      this.error(e);
-    }
+  async count(find: FindDto, bind: BindDto = { allow: true }): Promise<number> {
+    find.select = { id: true };
+    const result = await this.find(find, bind);
+    return result && Array.isArray(result) ? result.length : 0;
   }
 
   async create(
     dto: Dto,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
+    relations: Array<RelationsDto> = undefined,
+    bind: BindDto = { allow: true },
   ): Promise<Entity> {
-    delete dto.createdAt;
-    delete dto.updatedAt;
-    const entry: DeepPartial<any> = { ...dto };
-    if (entry.id) {
-      entry.id = `${entry.id}`;
+    // next this columns from bind
+    delete dto.id;
+    // delete dto.createdAt;
+    // delete dto.updatedAt;
+
+    if (bind.id !== undefined) {
+      dto[bind.name || 'auth'] = { id: bind.id };
     }
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      entry[authKey || 'auth'] = auth;
-    }
+
+    const entity: DeepPartial<any> = { ...dto };
+
     try {
-      const created = await this.repository.save(entry);
-      return await this.findOne(created.id, relationsDto, authId);
-    }
-    catch (e) {
+      const { id } = await this.repository.save(entity);
+      return await this.findOne(
+        {
+          id,
+          relations,
+        },
+        bind,
+      );
+    } catch (e) {
       this.error(e);
     }
   }
@@ -219,106 +178,163 @@ export class CommonService<
   async update(
     id: number,
     dto: Dto,
-    relationsDto: Array<RelationsDto> = undefined,
-    authId: number = undefined,
-    authKey: string = '',
+    relations: Array<RelationsDto> = undefined,
+    bind: BindDto = { allow: true },
   ): Promise<Entity> {
     if (id === undefined) {
       return;
     }
 
-    const where: FindOptionsWhere<any> = { id };
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where[authKey || 'auth'] = auth;
-    }
-    const find = await this.repository.findOne({
-      where,
-    });
+    const select = { id: true };
+    const find = await this.findOne({ id, select, relations }, bind);
     if (!find) {
       return;
     }
 
-    dto.id = id;
-    const entry: DeepPartial<any> = { ...dto };
-    if (entry.id) {
-      entry.id = `${entry.id}`;
-    }
+    // next from bind
+    // delete dto.createdAt;
+    // delete dto.updatedAt;
+
+    const entity: DeepPartial<any> = { ...dto, id };
 
     try {
-      await this.updateRelations(entry, relationsDto, authId);
-      await this.repository.update({ id: entry.id }, entry);
-      return await this.findOne(entry.id, relationsDto, authId);
-      // const created = await this.repository.save(entry);
-      // return await this.findOne(created.id, relationsDto, authId);
-    }
-    catch (e) {
+      await this.repository.save(entity);
+      return await this.findOne(
+        {
+          id,
+          relations,
+        },
+        bind,
+      );
+    } catch (e) {
       this.error(e);
     }
   }
 
-  async remove(
-    id: number,
-    authId: number = undefined,
-    authKey: string = '',
-  ): Promise<boolean> {
+  async remove(id: number, bind: BindDto = { allow: true }): Promise<boolean> {
     const where: FindOptionsWhere<any> = { id };
-    if (authId !== undefined) {
-      const auth = { id: authId };
-      where[authKey || 'auth'] = auth;
+    if (bind.id !== undefined) {
+      where[bind.name || 'auth'] = { id: bind.id };
     }
     try {
       const result = await this.repository.delete(where);
       return !!result?.affected;
-    }
-    catch (e) {
+    } catch (e) {
       this.error(e);
     }
   }
 
-  async updateRelations (entry, relationsDto, authId) {
-    if (!relationsDto?.length) {
+  async sortPosition(
+    field: string,
+    find: FindDto,
+    bind: BindDto = { allow: true },
+  ): Promise<boolean> {
+    const entries = await this.find(find, bind);
+
+    if (!entries) {
       return;
     }
 
-    const relationEntries = [];
+    try {
+      await this.repository.manager.transaction(
+        async (transactionalManager) => {
+          const entityTarget: EntityTarget<Entity> = this.repository.target;
 
-    for (const relation of relationsDto) {
-      const { name } = relation;
-      if (entry[name]) {
-        relationEntries.push({
-          name,
-          data: entry[name],
-        });
-        delete entry[name];
-      }
-    }
+          if (find.where) {
+            const resetEntries: DeepPartial<any> = {
+              [field]: 0,
+            };
 
-    if (!relationEntries.length) {
-      return;
-    }
-
-    const result = await this.findOne(entry.id, relationsDto, authId);
-
-    for (const relationEntry of relationEntries) {
-      const { name, data } = relationEntry;
-      const r = result[name];
-
-      if (r?.length) {
-        for (const val of r.entries()) {
-          const type = val.constructor.name;
-          const item = data.filter(i => `${i.id}` === `${val.id}`)?.[0];
-          if (item) {
-            const subRepository = this.repository.manager.getRepository(`${type}`);
-            await subRepository.update({ id: item.id }, item);
+            await transactionalManager.update(entityTarget, {}, resetEntries);
           }
-        }
-      } else {
-        const type = r.constructor.name;
-        const subRepository = this.repository.manager.getRepository(`${type}`);
-        await subRepository.update({ id: r.id }, relationEntry.data);
-      }
+
+          entries.forEach((entrie, index) => {
+            entrie[field] = index + 1;
+          });
+
+          await transactionalManager.save(entityTarget, entries);
+        },
+      );
+
+      return true;
+    } catch (e) {
+      this.error(e);
     }
+  }
+
+  async movePosition(
+    id: number,
+    field: string,
+    position: number,
+    bind: BindDto = { allow: true },
+  ): Promise<boolean> {
+    if (position === undefined || position === null) {
+      return false;
+    }
+
+    const entrie = await this.findOne(
+      {
+        id,
+        select: {
+          [field]: true,
+        },
+      },
+      bind,
+    );
+
+    if (!entrie) {
+      return false;
+    }
+
+    try {
+      const oldPosition = +entrie[field] || 0;
+      const newPosition = +position || 0;
+
+      if (oldPosition === newPosition) {
+        return false;
+      }
+
+      await this.repository.manager.transaction(
+        async (transactionalManager) => {
+          const entityTarget: EntityTarget<Entity> = this.repository.target;
+
+          const updateEntries: DeepPartial<any> = {
+            [field]: () =>
+              oldPosition > newPosition ? `${field} + 1` : `${field} - 1`,
+          };
+
+          const whereEntries: DeepPartial<any> = {
+            [field]:
+              oldPosition > newPosition
+                ? And(MoreThanOrEqual(newPosition), LessThan(oldPosition))
+                : And(MoreThan(oldPosition), LessThanOrEqual(newPosition)),
+          };
+
+          await transactionalManager.update(
+            entityTarget,
+            whereEntries,
+            updateEntries,
+          );
+
+          const updateCurrentEntrie: DeepPartial<any> = {
+            [field]: newPosition,
+          };
+          await transactionalManager.update(
+            entityTarget,
+            id,
+            updateCurrentEntrie,
+          );
+        },
+      );
+
+      return true;
+    } catch (e) {
+      this.error(e);
+    }
+  }
+
+  bind(entrie, data) {
+    return bind(entrie, data);
   }
 
   error(e) {

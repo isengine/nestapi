@@ -16,11 +16,11 @@ import { GrantsTokenService } from '@src/token/service/grants.token.service';
 
 import { AuthorizationCodeGrant } from '@src/token/grant/authorization_code.grant';
 import { ClientCredentialsGrant } from '@src/token/grant/client_credentials.grant';
+import { KeyGrant } from '@src/token/grant/key.grant';
 import { PasswordGrant } from '@src/token/grant/password.grant';
-import { PersonCredentialsGrant } from '@src/token/grant/person_credentials.grant';
 import { RefreshTokenGrant } from '@src/token/grant/refresh_token.grant';
 import { AuthModule } from '@src/auth/auth.module';
-import { PersonsModule } from '@src/persons/persons.module';
+import { UsersModule } from '@src/db/users/users.module';
 
 @Module({
   controllers: [TokenController],
@@ -33,7 +33,7 @@ import { PersonsModule } from '@src/persons/persons.module';
     }),
     forwardRef(() => ClientsModule),
     forwardRef(() => AuthModule),
-    forwardRef(() => PersonsModule),
+    forwardRef(() => UsersModule),
   ],
   providers: [
     TokenService,
@@ -42,8 +42,8 @@ import { PersonsModule } from '@src/persons/persons.module';
     GrantsTokenService,
     AuthorizationCodeGrant,
     ClientCredentialsGrant,
+    KeyGrant,
     PasswordGrant,
-    PersonCredentialsGrant,
     RefreshTokenGrant,
 
     OneHandler,
@@ -52,9 +52,6 @@ import { PersonsModule } from '@src/persons/persons.module';
     RefreshHandler,
     VerifyHandler,
   ],
-  exports: [
-    TokenService,
-    GrantsTokenService,
-  ],
+  exports: [TokenService, GrantsTokenService],
 })
 export class TokenModule {}

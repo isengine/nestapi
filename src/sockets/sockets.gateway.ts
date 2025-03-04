@@ -9,9 +9,9 @@ import {
 } from '@nestjs/websockets';
 import { Req } from '@nestjs/common';
 import { Socket, Server } from 'socket.io';
-import { SocketsDto } from '@src/sockets/sockets.dto';
-import { SocketsEntity } from '@src/sockets/sockets.entity';
-import { SocketsService } from '@src/sockets/sockets.service';
+import { SocketsDto } from './sockets.dto';
+import { SocketsEntity } from './sockets.entity';
+import { SocketsService } from './sockets.service';
 
 @WebSocketGateway({
   cors: {
@@ -28,10 +28,10 @@ export class SocketsGateway
 
   @SubscribeMessage('sockets')
   async handleEvent(
-    @MessageBody() socketsDto: SocketsDto,
+    @MessageBody() sockets: SocketsDto,
     @Req() client: Socket,
   ): Promise<SocketsEntity> {
-    const result = await this.socketsService.create(socketsDto);
+    const result = await this.socketsService.create(sockets);
     this.server.emit('event', result);
     console.log('client', client.id);
     return result;

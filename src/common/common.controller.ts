@@ -10,109 +10,135 @@ import {
   Patch,
   Type,
 } from '@nestjs/common';
-import { OptionsDto } from '@src/common/dto/options.dto';
 import { RelationsDto } from '@src/common/dto/relations.dto';
-import { SearchDto } from '@src/common/dto/search.dto';
 import { Data, Doc } from '@src/common/common.decorator';
 import { CommonService } from '@src/common/common.service';
 import { CommonDto } from '@src/common/common.dto';
 import { CommonEntity } from '@src/common/common.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthDto } from '@src/auth/auth.dto';
+import { Auth, Self } from '@src/auth/auth.decorator';
 
 export const CommonController = <T extends Type<unknown>>(
   name: string,
-  classEntity: T,
   classDto,
+  classEntity: T,
+  authTable = '',
 ) => {
   @ApiTags(name)
   class BaseController<
-    Service extends CommonService<Entity, Dto, Filter>,
-    Entity extends CommonEntity,
     Dto extends CommonDto,
-    Filter
+    Entity extends CommonEntity,
+    Service extends CommonService<Dto, Entity>,
   > {
     readonly service: Service;
 
+    @Auth('noBlock')
     @Get('find')
     @Doc('find', classDto)
     async find(
+      @Data('search') search: object,
+      @Data('select') select: object,
       @Data('where') where: object,
       @Data('order') order: object,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Data('limit') limit: number = undefined,
+      @Data('offset') offset: number = undefined,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self('noBlock') auth: AuthDto,
     ): Promise<Entity[]> {
-      return await this.service.find(where, order, relationsDto);
+      return await this.service.find({
+        search,
+        select,
+        where,
+        order,
+        limit,
+        offset,
+        relations,
+      });
     }
 
+    @Auth('noBlock')
+    @Get('find/first')
+    @Doc('findFirst', classDto)
+    async findFirst(
+      @Data('search') search: object,
+      @Data('select') select: object,
+      @Data('where') where: object,
+      @Data('order') order: object,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self('noBlock') auth: AuthDto,
+    ): Promise<Entity> {
+      return await this.service.findFirst({
+        search,
+        select,
+        where,
+        order,
+        relations,
+      });
+    }
+
+    @Auth('noBlock')
+    @Get('find/many/:ids')
+    @Doc('findMany', classDto)
+    async findMany(
+      @Param('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
+      ids: Array<number>,
+      @Data('select') select: object,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self('noBlock') auth: AuthDto,
+    ): Promise<Entity[]> {
+      const result = await this.service.findMany({
+        ids,
+        select,
+        relations,
+      });
+      if (!result) {
+        throw new NotFoundException('Entrie not found');
+      }
+      return result;
+    }
+
+    @Auth('noBlock')
     @Get('find/:id')
     @Doc('findOne', classDto)
     async findOne(
       @Param('id', ParseIntPipe) id: number,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
+      @Data('select') select: object,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self('noBlock') auth: AuthDto,
     ): Promise<Entity> {
-      const result = await this.service.findOne(Number(id), relationsDto);
+      const result = await this.service.findOne({
+        id: Number(id),
+        select,
+        relations,
+      });
       if (!result) {
-        throw new NotFoundException('Entry not found');
+        throw new NotFoundException('Entrie not found');
       }
       return result;
     }
 
-    @Get('first')
-    @Doc('first', classDto)
-    async first(
-      @Data('where') where: Object,
-      @Data('order') order: object,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
-    ): Promise<Entity> {
-      return await this.service.first(where, order, relationsDto);
-    }
-
-    @Get('many/:ids')
-    @Doc('many', classDto)
-    async many(
-      @Param('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: Array<number>,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
-    ): Promise<Entity[]> {
-      const result = await this.service.many(ids, relationsDto);
-      if (!result) {
-        throw new NotFoundException('Entry not found');
-      }
-      return result;
-    }
-
-    @Get('filter')
-    @Doc('filter', classDto)
-    async filter(
-      @Data('where') dto: Dto,
-      @Data('search') searchDto: SearchDto,
-      @Data('options') optionsDto: OptionsDto,
-      @Data('relations') relationsDto: Array<RelationsDto>,
-      auth: AuthDto = undefined,
-    ): Promise<Filter[]> {
-      const result = await this.service.filter(
-        dto,
-        searchDto,
-        optionsDto,
-        relationsDto,
-      );
-      if (!result) {
-        throw new NotFoundException('Any results not found');
-      }
-      return result;
+    @Auth('noBlock')
+    @Get('count')
+    @Doc('count', classDto)
+    async count(
+      @Data('where') where: object,
+      @Data('limit') limit: number = undefined,
+      @Data('offset') offset: number = undefined,
+      @Data('relations') relations: Array<RelationsDto>,
+      @Self('noBlock') auth: AuthDto,
+    ): Promise<number> {
+      return await this.service.count({ where, limit, offset, relations });
     }
 
     @Post('create')
     @Doc('create', classDto)
     async create(
       @Body('create') dto: Dto,
-      @Body('relations') relationsDto: Array<RelationsDto>,
+      @Body('relations') relations: Array<RelationsDto>,
       auth: AuthDto = undefined,
     ): Promise<Entity> {
-      return await this.service.create(dto, relationsDto);
+      return await this.service.create(dto, relations);
     }
 
     @Patch('update/:id')
@@ -120,12 +146,14 @@ export const CommonController = <T extends Type<unknown>>(
     async update(
       @Param('id', ParseIntPipe) id: number,
       @Body('update') dto: Dto,
-      @Body('relations') relationsDto: Array<RelationsDto>,
+      @Body('relations') relations: Array<RelationsDto>,
       auth: AuthDto = undefined,
     ): Promise<Entity> {
-      const result = await this.service.update(Number(id), dto, relationsDto);
+      const result = await this.service.update(Number(id), dto, relations, {
+        allow: true,
+      });
       if (!result) {
-        throw new NotFoundException('Entry not found');
+        throw new NotFoundException('Entrie not found');
       }
       return result;
     }
@@ -138,6 +166,49 @@ export const CommonController = <T extends Type<unknown>>(
     ): Promise<boolean> {
       return await this.service.remove(id);
     }
+
+    @Post('position/sort')
+    @Doc('sortPosition', classDto)
+    async sortPosition(
+      @Data('field') field: string,
+      @Data('select') select: object,
+      @Data('where') where: object,
+      @Data('order') order: object,
+      @Data('limit') limit: number = undefined,
+      @Data('offset') offset: number = undefined,
+      @Data('relations') relations: Array<RelationsDto>,
+      auth: AuthDto = undefined,
+    ): Promise<boolean> {
+      const result = await this.service.sortPosition(field, {
+        select,
+        where,
+        order,
+        limit,
+        offset,
+        relations,
+      });
+      if (!result) {
+        throw new NotFoundException('Entries not found');
+      }
+      return result;
+    }
+
+    @Post('position/move/:id')
+    @Doc('movePosition', classDto)
+    async movePosition(
+      @Param('id', ParseIntPipe) id: number,
+      @Data('field') field: string,
+      @Data('position') position: number = undefined,
+      auth: AuthDto = undefined,
+    ): Promise<boolean> {
+      const result = await this.service.movePosition(id, field, position, {
+        allow: true,
+      });
+      if (!result) {
+        throw new NotFoundException('Entrie position has not been moved');
+      }
+      return result;
+    }
   }
   return BaseController;
-}
+};

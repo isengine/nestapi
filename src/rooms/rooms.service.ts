@@ -1,17 +1,12 @@
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoomsDto } from '@src/rooms/rooms.dto';
-import { RoomsEntity } from '@src/rooms/rooms.entity';
-import { RoomsFilter } from '@src/rooms/rooms.filter';
 import { CommonService } from '@src/common/common.service';
+import { RoomsDto } from './rooms.dto';
+import { RoomsEntity } from './rooms.entity';
 
 @Injectable()
-export class RoomsService extends CommonService<
-  RoomsEntity,
-  RoomsDto,
-  RoomsFilter
-> {
+export class RoomsService extends CommonService<RoomsDto, RoomsEntity> {
   constructor(
     @InjectRepository(RoomsEntity)
     protected readonly repository: Repository<RoomsEntity>,

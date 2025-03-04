@@ -1,17 +1,20 @@
 export class FilesInterface {
   buffer?: Buffer;
-  originalname: string;
+  error?: string;
   mimetype: string;
-  url?: string;
+  originalname: string;
   size?: number;
+  timestamp?: Date;
+  url?: string;
 
   width?: number;
   height?: number;
 
   constructor(file: Express.Multer.File | FilesInterface) {
     this.buffer = file.buffer;
-    this.originalname = file.originalname;
     this.mimetype = file.mimetype;
+    this.originalname = file.originalname;
     this.size = file.size;
+    this.timestamp = new Date();
   }
 }

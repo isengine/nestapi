@@ -1,8 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-import { RoomsDto } from '@src/rooms/rooms.dto';
 import { CommonDto } from '@src/common/common.dto';
-import { UsersDto } from '@src/users/users.dto';
+import { RoomsDto } from '@src/rooms/rooms.dto';
 
 @InputType()
 export class SocketsDto extends CommonDto {
@@ -30,6 +29,7 @@ export class SocketsDto extends CommonDto {
   @ApiProperty({
     required: false,
     description: 'Данные комнаты, связанной с этим подключением',
+    type: () => RoomsDto,
   })
   @Field(() => RoomsDto, { nullable: true })
   room?: RoomsDto;

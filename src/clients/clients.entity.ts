@@ -5,103 +5,61 @@ import {
   OneToMany,
   // Generated,
 } from 'typeorm';
-import { ProtectedEntity } from '@src/common/entity/protected.entity';
+import {
+  BooleanColumn,
+  CreatedColumn,
+  EnumColumn,
+  TextColumn,
+  UpdatedColumn,
+  VarcharColumn,
+} from '@src/common/common.column';
 import { TypeClients } from '@src/common/common.enum';
-import { ClientsRedirectsEntity } from '@src/clients_redirects/clients_redirects.entity';
+import { ProtectedEntity } from '@src/common/entity/protected.entity';
+import { ClientsRedirectsEntity } from './clients_redirects/clients_redirects.entity';
 
 @ObjectType()
 @Entity({ name: 'clients' })
 export class ClientsEntity extends ProtectedEntity {
+  @CreatedColumn()
+  createdAt?: Date;
+
+  @UpdatedColumn()
+  updatedAt?: Date;
+
   @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 64,
-    nullable: true,
-    unique: true,
-  })
+  @VarcharColumn('client_id', 'normal', { index: 'unique' })
   client_id: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 1024,
-    nullable: true,
-  })
+  @VarcharColumn('client_secret', 'long')
   client_secret: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 1024,
-    nullable: true,
-  })
+  @VarcharColumn('client_password', 'long')
   client_password: string;
 
-  @Field(() => TypeClients, {
-    nullable: true,
-    defaultValue: TypeClients.DEFAULT,
-  })
-  @Column({
-    type: 'enum',
-    enum: TypeClients,
-    default: TypeClients.DEFAULT,
-    nullable: true,
-  })
+  @EnumColumn('client_type', TypeClients, TypeClients.DEFAULT)
   client_type?: TypeClients;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 200,
-    nullable: true,
-  })
+  @VarcharColumn('title')
   title: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'text',
-    nullable: true,
-  })
+  @TextColumn('description')
   description: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 2048,
-    nullable: true,
-  })
+  @VarcharColumn('client_uri', 'long')
   client_uri: string;
 
-  @Field({ nullable: true })
-  @Column({
-    type: 'varchar',
-    length: 2048,
-    nullable: true,
-  })
+  @VarcharColumn('code', 'long')
   code: string;
 
-  @Field({ defaultValue: () => 'CURRENT_TIMESTAMP', nullable: true })
-  @Column({
-    type: 'timestamp',
-    nullable: true,
-    default: () => 'CURRENT_TIMESTAMP',
-    name: 'published_at',
-  })
+  @CreatedColumn('published_at')
   publishedAt: Date;
 
-  @Field({ defaultValue: true, nullable: true })
-  @Column({
-    type: 'boolean',
-    nullable: true,
-    default: true,
-    name: 'is_published',
-  })
+  @BooleanColumn('is_published', true)
   isPublished: boolean;
 
   @Field(() => [ClientsRedirectsEntity], { nullable: true })
   @OneToMany(() => ClientsRedirectsEntity, (redirect) => redirect.client, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
+    cascade: true,
   })
   redirects: ClientsRedirectsEntity[];
 }

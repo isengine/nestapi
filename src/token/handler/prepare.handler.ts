@@ -3,8 +3,7 @@ import { TokenDto } from '@src/token/token.dto';
 
 @Injectable()
 export class PrepareHandler {
-  constructor(
-  ) {}
+  constructor() {}
 
   async prepare(token: TokenDto, state: any): Promise<any> {
     const {

@@ -11,7 +11,8 @@ export const CreateDoc = (classDto) => {
       queries: [
         {
           name: 'create',
-          description: 'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
+          description:
+            'Объект с нужными полями записей и их значениями, по которым записи будут фильтроваться',
           type: classDto.name,
         },
         {
@@ -21,6 +22,6 @@ export const CreateDoc = (classDto) => {
           example: [{ name: 'table', order: 'id', desc: true }],
         },
       ],
-    })
+    }),
   );
 };

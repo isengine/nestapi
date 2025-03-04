@@ -3,9 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class VerifyHandler {
-  constructor(
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   async verify(token: string, type: string): Promise<any> {
     let result;
