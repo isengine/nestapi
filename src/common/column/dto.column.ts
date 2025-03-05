@@ -2,7 +2,10 @@ import { Field } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
 
-export function DtoColumn(description, options = undefined): PropertyDecorator {
+export function DtoColumn(
+  description = '',
+  options = undefined,
+): PropertyDecorator {
   const { required = false, defaultValue = undefined } = options || {};
 
   return function (object: object, propertyName: string) {

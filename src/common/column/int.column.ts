@@ -1,5 +1,5 @@
 import { Field } from '@nestjs/graphql';
-import { Column } from 'typeorm';
+import { Column, DeepPartial } from 'typeorm';
 import { IndexedColumn } from './indexed.column';
 
 class IntColumnTransformer {
@@ -16,7 +16,11 @@ export function IntColumn(
   value = 0,
   options = undefined,
 ): PropertyDecorator {
-  const { comment = undefined, index = undefined } = options || {};
+  const {
+    comment = undefined,
+    index = undefined,
+    width = undefined,
+  } = options || {};
 
   return function (object: object, propertyName: string) {
     if (index) {
@@ -25,12 +29,18 @@ export function IntColumn(
 
     Field({ nullable: true })(object, propertyName);
 
-    Column({
+    const props: DeepPartial<any> = {
       comment,
       default: +value || 0,
       name,
       transformer: new IntColumnTransformer(),
       type: 'int',
-    })(object, propertyName);
+    };
+
+    if (width) {
+      props.width = width;
+    }
+
+    Column(props)(object, propertyName);
   };
 }
