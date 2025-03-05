@@ -37,7 +37,7 @@ export class UsersEntity extends PrivateOneEntity {
   @VarcharColumn('avatar', 'long')
   avatar?: string;
 
-  @DateColumn('birthday', null)
+  @DateColumn('birthday')
   birthday?: Date;
 
   @VarcharColumn('locale', 'tiny')
