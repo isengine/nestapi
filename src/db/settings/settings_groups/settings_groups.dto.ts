@@ -1,37 +1,21 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import { DtoColumn } from '@src/common/common.column';
 import { ClosedDto } from '@src/common/dto/closed.dto';
 import { SettingsDto } from '../settings.dto';
 
 @InputType()
 export class SettingsGroupsDto extends ClosedDto {
-  @ApiProperty({
-    required: false,
-    description: 'Имя группы',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Имя группы')
   name?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Описание или комментарий',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Описание или комментарий')
   description?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Позиция для ручной сортировки',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Позиция для ручной сортировки')
   position?: number;
 
-  @ApiProperty({
-    required: false,
-    default: false,
-    description: 'Флаг, который показывает, выключена или нет эта группа',
-  })
-  @Field({ nullable: true, defaultValue: false })
+  @DtoColumn('Флаг, который показывает, выключена или нет эта группа')
   isDisabled?: boolean;
 
   @ApiProperty({

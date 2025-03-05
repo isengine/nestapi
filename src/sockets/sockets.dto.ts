@@ -1,29 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import { DtoColumn } from '@src/common/common.column';
 import { CommonDto } from '@src/common/common.dto';
 import { RoomsDto } from '@src/rooms/rooms.dto';
 
 @InputType()
 export class SocketsDto extends CommonDto {
-  @ApiProperty({
-    required: false,
-    description: 'Имя сокета',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Имя сокета')
   name?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Данные сокета',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Данные сокета')
   data?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Сообщение',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Сообщение')
   message?: string;
 
   @ApiProperty({

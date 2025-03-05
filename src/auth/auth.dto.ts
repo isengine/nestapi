@@ -1,6 +1,11 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  DtoColumn,
+  DtoCreatedColumn,
+  DtoUpdatedColumn,
+} from '@src/common/common.column';
 import { CommonDto } from '@src/common/common.dto';
 import { AuthSessionsDto } from './auth_sessions/auth_sessions.dto';
 import { AuthStrategiesDto } from './auth_strategies/auth_strategies.dto';
@@ -13,56 +18,35 @@ import { UsersDto } from '@src/db/users/users.dto';
 
 @InputType()
 export class AuthDto extends CommonDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoCreatedColumn()
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @Field()
   @IsEmail()
-  @ApiProperty({
+  @DtoColumn('Имя пользователя, обычно здесь используется email', {
     required: true,
-    description: 'Имя пользователя, обычно здесь используется email',
   })
   username?: string;
 
-  @Field({ nullable: true })
   @MinLength(6, {
     message: 'Password cannot be less than 6 symbols!',
   })
   @IsString()
-  @ApiProperty({
-    required: false,
-    description: 'Пароль, заданный пользователем',
-  })
+  @DtoColumn('Пароль, заданный пользователем')
   password?: string;
 
-  @ApiProperty({
-    required: false,
-    default: false,
-    description:
-      'Флаг, который показывает, является ли учетная запись пользователя активированной. Например, подтвержденной по email.',
-  })
-  @Field({ nullable: true, defaultValue: false })
+  @DtoColumn(
+    'Флаг, который показывает, является ли учетная запись пользователя активированной. Например, подтвержденной по email.',
+    { default: false },
+  )
   isActivated?: boolean;
 
-  @ApiProperty({
-    required: false,
-    default: false,
-    description:
-      'Флаг, который показывает, назначены ли учетной записи пользователя права суперпользователя (администратора).',
-  })
-  @Field({ nullable: true, defaultValue: false })
+  @DtoColumn(
+    'Флаг, который показывает, назначены ли учетной записи пользователя права суперпользователя (администратора).',
+    { required: false },
+  )
   isSuperuser?: boolean;
 
   @ApiProperty({

@@ -1,31 +1,15 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { InputType } from '@nestjs/graphql';
 import { CommonDto } from '@src/common/common.dto';
+import { DtoColumn } from '@src/common/common.column';
 
 @InputType()
 export class TokenDto extends CommonDto {
-  @ApiProperty({
-    required: false,
-    description: 'Токен доступа',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Токен доступа')
   access_token?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Срок действия токена доступа',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Срок действия токена доступа')
   expires_in?: number;
 
-  @ApiProperty({
-    required: false,
-    description: 'Токен обновления',
-  })
-  @Field({ nullable: true })
-  @IsString({
-    message: 'You did not pass refresh token or it is not a string!',
-  })
+  @DtoColumn('Токен обновления')
   refresh_token?: string;
 }

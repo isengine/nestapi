@@ -1,52 +1,30 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import { DtoColumn } from '@src/common/common.column';
 import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { PostsCategoriesDto } from './posts_categories/posts_categories.dto';
 import { PostsTagsDto } from './posts_tags/posts_tags.dto';
 
 @InputType()
 export class PostsDto extends ProtectedDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Дата и время создания записи, назначается автоматически')
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Дата и время последнего обновления записи, назначается автоматически',
+  )
   updatedAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description: 'Заголовок',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Заголовок')
   title: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Содержимое',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Содержимое')
   content: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Дата публикации, начиная с которой запись будет видна',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Дата публикации, начиная с которой запись будет видна')
   publishedAt: Date;
 
-  @ApiProperty({
-    required: false,
-    description: 'Флаг публикации, отключение может сделать запись недоступной',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Флаг публикации, отключение может сделать запись недоступной')
   isPublished: boolean;
 
   @ApiProperty({

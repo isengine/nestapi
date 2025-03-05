@@ -1,72 +1,40 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  DtoColumn,
+  DtoCreatedColumn,
+  DtoUpdatedColumn,
+} from '@src/common/common.column';
 import { CommonDto } from '@src/common/common.dto';
 import { AuthDto } from '../auth.dto';
 
 @InputType()
 export class AuthSessionsDto extends CommonDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoCreatedColumn()
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description: 'Поле с описанием или комментариями к этой записи',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Поле с описанием или комментариями к этой записи')
   description?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'IP-адрес пользователя',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('IP-адрес пользователя')
   ip?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Агент (браузер) пользователя',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Агент (браузер) пользователя')
   userAgent?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Ссылка, по которой была открыта сессия',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Ссылка, по которой была открыта сессия')
   referrer?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Метод, по которому была открыта сессия',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Метод, по которому была открыта сессия')
   method?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Текущая языковая локаль пользователя',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Текущая языковая локаль пользователя')
   locale?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Временная зона, формат +/-00:00',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Временная зона, формат +/-00:00')
   timezone?: string;
 
   @ApiProperty({

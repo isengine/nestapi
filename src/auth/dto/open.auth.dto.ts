@@ -1,35 +1,21 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
+import { InputType } from '@nestjs/graphql';
+import { DtoColumn, DtoEnumColumn } from '@src/common/common.column';
 import { CommonDto } from '@src/common/common.dto';
 import { TypeResponses } from '@src/common/common.enum';
 
 @InputType()
 export class OpenAuthDto extends CommonDto {
-  @ApiProperty({
+  @DtoEnumColumn('Тип запроса. Один из token или code', TypeResponses, {
     required: true,
-    description: 'Тип запроса. Один из token или code',
   })
-  @Field(() => TypeResponses)
   response_type: TypeResponses;
 
-  @ApiProperty({
-    required: false,
-    description: 'ID клиентского приложения',
-  })
-  @Field()
+  @DtoColumn('ID клиентского приложения')
   client_id: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Url перенаправления после авторизации',
-  })
-  @Field()
+  @DtoColumn('Url перенаправления после авторизации')
   redirect_uri: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Состояние, используется для защиты от CSRF',
-  })
-  @Field()
+  @DtoColumn('Состояние, используется для защиты от CSRF')
   state: string;
 }

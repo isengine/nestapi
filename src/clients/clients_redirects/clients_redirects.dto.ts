@@ -1,30 +1,22 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  DtoColumn,
+  DtoCreatedColumn,
+  DtoUpdatedColumn,
+} from '@src/common/common.column';
 import { CommonDto } from '@src/common/common.dto';
 import { ClientsDto } from '@src/clients/clients.dto';
 
 @InputType()
 export class ClientsRedirectsDto extends CommonDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoCreatedColumn()
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description: 'Зарегистрированная ссылка для клиента',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Зарегистрированная ссылка для клиента')
   uri: string;
 
   @ApiProperty({

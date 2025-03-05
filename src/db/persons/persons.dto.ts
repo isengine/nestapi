@@ -1,125 +1,63 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
+import { InputType } from '@nestjs/graphql';
 import { IsEmail, IsString, MinLength } from 'class-validator';
-// import { IsEnum, NotEquals } from 'class-validator';
+import {
+  DtoColumn,
+  DtoCreatedColumn,
+  DtoEnumColumn,
+  DtoUpdatedColumn,
+} from '@src/common/common.column';
 import { PrivateDto } from '@src/common/dto/private.dto';
 import { TypeGenders } from '@src/common/common.enum';
 
 @InputType()
 export class PersonsDto extends PrivateDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoCreatedColumn()
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @Field({ nullable: true })
   @IsEmail()
-  @ApiProperty({
-    required: false,
-    description: 'Имя пользователя, обычно здесь используется email',
-  })
+  @DtoColumn('Имя пользователя, обычно здесь используется email')
   username?: string;
 
-  @Field({ nullable: true })
   @MinLength(6, {
     message: 'Password cannot be less than 6 symbols!',
   })
   @IsString()
-  @ApiProperty({
-    required: false,
-    description: 'Пароль, заданный пользователем',
-  })
+  @DtoColumn('Пароль, заданный пользователем')
   password?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Контактный email, не обязательно совпадает с логином',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Контактный email, не обязательно совпадает с логином')
   email?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Контактный телефон',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Контактный телефон')
   phone?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Имя',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Имя')
   name?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Фамилия',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Фамилия')
   lastName?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Отчество',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Отчество')
   parentName?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Ссылка на аватарку',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Ссылка на аватарку')
   avatar?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Дата рождения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Дата рождения')
   birthday?: Date;
 
-  @ApiProperty({
-    required: false,
-    description: 'Предпочитаемый язык',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Предпочитаемый язык')
   locale?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Адрес',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Адрес')
   address?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Временна зона в формате +/-00:00',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Временна зона в формате +/-00:00')
   timezone?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Пол',
-  })
-  @Field(() => TypeGenders, {
-    nullable: true,
-    defaultValue: TypeGenders.DEFAULT,
-  })
-  // @IsEnum(TypeGenders)
-  // @NotEquals(TypeGenders[TypeGenders.DEFAULT])
+  @DtoEnumColumn('Пол', TypeGenders, TypeGenders.DEFAULT)
   gender?: TypeGenders;
 }

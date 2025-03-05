@@ -1,112 +1,65 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  DtoColumn,
+  DtoCreatedColumn,
+  DtoEnumColumn,
+  DtoUpdatedColumn,
+} from '@src/common/common.column';
 import { TypeClients } from '@src/common/common.enum';
 import { ProtectedDto } from '@src/common/dto/protected.dto';
 import { ClientsRedirectsDto } from './clients_redirects/clients_redirects.dto';
 
 @InputType()
 export class ClientsDto extends ProtectedDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoCreatedColumn()
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Уникальное имя клиентского приложения, по-умолчанию в формате uuid',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Уникальное имя клиентского приложения, по-умолчанию в формате uuid',
+  )
   client_id?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Секретный ключ, необходим для работы клиентского приложения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Секретный ключ, необходим для работы клиентского приложения')
   client_secret?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Пароль к клиентскому приложению',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Пароль к клиентскому приложению')
   client_password?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Тип клиентского приложения',
-  })
-  @Field(() => TypeClients, {
-    nullable: true,
-    defaultValue: TypeClients.DEFAULT,
-  })
+  @DtoEnumColumn('Тип клиентского приложения', TypeClients, TypeClients.DEFAULT)
   client_type?: TypeClients;
 
-  @ApiProperty({
-    required: false,
-    description: 'Название клиентского приложения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Название клиентского приложения')
   title?: string;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дополнительное поле с описанием или комментариями к клиентскому приложению',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Дополнительное поле с описанием или комментариями к клиентскому приложению',
+  )
   description?: string;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дополнительное поле со ссылкой на сайт клиентского приложения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Дополнительное поле со ссылкой на сайт клиентского приложения')
   client_uri?: string;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Временный одноразовый код авторизации, выданный этому приложению',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Временный одноразовый код авторизации, выданный этому приложению')
   code?: string;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата публикации, начиная с которой клиентское приложение будет активно',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Дата публикации, начиная с которой клиентское приложение будет активно',
+  )
   publishedAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Флаг публикации, отключение может сделать запись клиентское приложение недоступным',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Флаг публикации, отключение может сделать запись клиентское приложение недоступным',
+  )
   isPublished?: boolean;
 
   // virtual field
-  @ApiProperty({
-    required: false,
-    description:
-      'Поле с разрешенным редиректом, по которому сервер будет отправлять данные авторизации',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Поле с разрешенным редиректом, по которому сервер будет отправлять данные авторизации',
+  )
   redirect_uri?: string;
 
   @ApiProperty({

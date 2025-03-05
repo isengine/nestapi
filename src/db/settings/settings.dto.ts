@@ -1,65 +1,33 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
-// import { IsEnum, NotEquals } from 'class-validator';
-import { ClosedDto } from '@src/common/dto/closed.dto';
+import { DtoColumn, DtoEnumColumn } from '@src/common/common.column';
 import { TypeValues } from '@src/common/common.enum';
+import { ClosedDto } from '@src/common/dto/closed.dto';
 import { SettingsGroupsDto } from './settings_groups/settings_groups.dto';
 
 @InputType()
 export class SettingsDto extends ClosedDto {
-  @ApiProperty({
-    required: false,
-    description: 'Имя для настройки',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Имя для настройки')
   name?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Описание или комментарий',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Описание или комментарий')
   description?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Тип данных',
-  })
-  @Field(() => TypeValues, {
-    nullable: true,
-    defaultValue: TypeValues.DEFAULT,
-  })
-  // @IsEnum(TypeValues)
-  // @NotEquals(TypeValues[TypeValues.DEFAULT])
+  @DtoEnumColumn('Тип данных', TypeValues, TypeValues.DEFAULT)
   type?: TypeValues;
 
-  @ApiProperty({
-    required: false,
-    description: 'Позиция для ручной сортировки',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Позиция для ручной сортировки')
   position?: number;
 
-  @ApiProperty({
-    required: false,
-    description: 'Значение по-умолчанию',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Значение по-умолчанию')
   default?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Значение',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Значение')
   value?: string;
 
-  @ApiProperty({
-    required: false,
-    default: false,
-    description: 'Флаг, который показывает, выключена или нет эта настройка',
+  @DtoColumn('Флаг, который показывает, выключена или нет эта настройка', {
+    defaultValue: false,
   })
-  @Field({ nullable: true, defaultValue: false })
   isDisabled?: boolean;
 
   @ApiProperty({

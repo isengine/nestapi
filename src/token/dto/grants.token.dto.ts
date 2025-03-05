@@ -1,86 +1,46 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
+import { InputType } from '@nestjs/graphql';
+import { DtoColumn, DtoEnumColumn } from '@src/common/common.column';
 import { CommonDto } from '@src/common/common.dto';
 import { TypeGrants } from '@src/common/common.enum';
 
 @InputType()
 export class GrantsTokenDto extends CommonDto {
-  @ApiProperty({
-    required: true,
-    description:
-      'Тип гранта. Один из password, refresh_token, authorization_code, client_credentials',
-  })
-  @Field(() => TypeGrants)
+  @DtoEnumColumn(
+    'Тип гранта. Один из password, refresh_token, authorization_code, client_credentials',
+    TypeGrants,
+    { required: true },
+  )
   grant_type: TypeGrants;
 
-  @ApiProperty({
-    required: false,
-    description: 'ID клиентского приложения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('ID клиентского приложения')
   client_id?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Секретный ключ клиентского приложения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Секретный ключ клиентского приложения')
   client_secret?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Пароль приложения',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Пароль приложения')
   client_password?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Имя пользователя',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Имя пользователя')
   username?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Пароль пользователя',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Пароль пользователя')
   password?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Токен обновления',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Токен обновления')
   refresh_token?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Код авторизации',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Код авторизации')
   code?: string;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Ключ для беспарольного доступа, сгенерированный как хэш от chatId',
-  })
-  @Field({ nullable: true })
+  @DtoColumn(
+    'Ключ для беспарольного доступа, сгенерированный как хэш от chatId',
+  )
   key?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Url перенаправления после авторизации',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Url перенаправления после авторизации')
   redirect_uri?: string;
 
-  @ApiProperty({
-    required: false,
-    description: 'Состояние, используется для защиты от CSRF',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Состояние, используется для защиты от CSRF')
   state?: string;
 }

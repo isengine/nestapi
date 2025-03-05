@@ -1,30 +1,22 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import {
+  DtoColumn,
+  DtoCreatedColumn,
+  DtoUpdatedColumn,
+} from '@src/common/common.column';
 import { ClosedDto } from '@src/common/dto/closed.dto';
 import { PostsDto } from '../posts.dto';
 
 @InputType()
 export class PostsTagsDto extends ClosedDto {
-  @ApiProperty({
-    required: false,
-    description: 'Дата и время создания записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoCreatedColumn()
   createdAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description:
-      'Дата и время последнего обновления записи, назначается автоматически',
-  })
-  @Field({ nullable: true })
+  @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @ApiProperty({
-    required: false,
-    description: 'Название тега',
-  })
-  @Field({ nullable: true })
+  @DtoColumn('Название тега')
   title?: string;
 
   @ApiProperty({
