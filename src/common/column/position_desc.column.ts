@@ -17,7 +17,7 @@ export function PositionDescColumn(
 
     Column({
       comment,
-      default: 2147483647,
+      default: 0,
       name,
       nullable: true,
       type: 'int',

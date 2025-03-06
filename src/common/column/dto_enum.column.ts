@@ -6,7 +6,7 @@ import { DeepPartial } from 'typeorm';
 export function DtoEnumColumn(
   description,
   value,
-  defaultValue = undefined,
+  defaultValue = null,
   options = undefined,
 ): PropertyDecorator {
   const { required = false } = options || {};

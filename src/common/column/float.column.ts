@@ -19,6 +19,7 @@ export function FloatColumn(
   const {
     comment = undefined,
     index = undefined,
+    nullable = undefined,
     precision = 15,
     scale = 2,
   } = options || {};
@@ -34,6 +35,7 @@ export function FloatColumn(
       comment,
       default: +value || 0,
       name,
+      nullable: Boolean(nullable),
       precision: +precision || 0,
       scale: +scale || 0,
       transformer: new FloatColumnTransformer(),

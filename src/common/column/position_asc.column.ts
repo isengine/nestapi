@@ -17,7 +17,7 @@ export function PositionAscColumn(
 
     Column({
       comment,
-      default: 0,
+      default: 2147483647,
       name,
       nullable: true,
       type: 'int',

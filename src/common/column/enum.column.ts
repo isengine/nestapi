@@ -5,7 +5,7 @@ import { IndexedColumn } from './indexed.column';
 export function EnumColumn(
   name,
   value,
-  defaultValue = undefined,
+  defaultValue = null,
   options = undefined,
 ): PropertyDecorator {
   const { comment = undefined, index = undefined } = options || {};

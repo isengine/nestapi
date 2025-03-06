@@ -19,6 +19,8 @@ export function IntColumn(
   const {
     comment = undefined,
     index = undefined,
+    nullable = undefined,
+    unsigned = undefined,
     width = undefined,
   } = options || {};
 
@@ -37,8 +39,16 @@ export function IntColumn(
       type: 'int',
     };
 
+    if (nullable) {
+      props.nullable = true;
+    }
+
     if (width) {
       props.width = width;
+    }
+
+    if (unsigned) {
+      props.unsigned = true;
     }
 
     Column(props)(object, propertyName);
