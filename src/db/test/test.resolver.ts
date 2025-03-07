@@ -1,11 +1,11 @@
 import { Resolver } from '@nestjs/graphql';
-import { ClosedResolver } from '@src/common/resolver/closed.resolver';
+import { CommonResolver } from '@src/common/common.resolver';
 import { TestDto } from './test.dto';
 import { TestEntity } from './test.entity';
 import { TestService } from './test.service';
 
 @Resolver(TestEntity)
-export class TestResolver extends ClosedResolver('test', TestDto, TestEntity)<
+export class TestResolver extends CommonResolver('test', TestDto, TestEntity)<
   TestDto,
   TestEntity,
   TestService

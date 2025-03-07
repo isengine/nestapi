@@ -1,11 +1,11 @@
 import { Controller } from '@nestjs/common';
-import { ClosedController } from '@src/common/controller/closed.controller';
+import { CommonController } from '@src/common/common.controller';
 import { TestDto } from './test.dto';
 import { TestEntity } from './test.entity';
 import { TestService } from './test.service';
 
 @Controller('test')
-export class TestController extends ClosedController(
+export class TestController extends CommonController(
   'Тест',
   TestDto,
   TestEntity,

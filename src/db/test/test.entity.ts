@@ -14,11 +14,11 @@ import {
   VarcharColumn,
 } from '@src/common/common.column';
 import { TypeValues } from '@src/common/common.enum';
-import { ClosedEntity } from '@src/common/entity/closed.entity';
+import { CommonEntity } from '@src/common/common.entity';
 
 @ObjectType()
 @Entity({ name: 'test' })
-export class TestEntity extends ClosedEntity {
+export class TestEntity extends CommonEntity {
   @CreatedColumn()
   createdAt?: Date;
 

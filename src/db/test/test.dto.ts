@@ -7,10 +7,10 @@ import {
   DtoUpdatedColumn,
 } from '@src/common/common.column';
 import { TypeValues } from '@src/common/common.enum';
-import { ClosedDto } from '@src/common/dto/closed.dto';
+import { CommonDto } from '@src/common/common.dto';
 
 @InputType()
-export class TestDto extends ClosedDto {
+export class TestDto extends CommonDto {
   @DtoCreatedColumn()
   createdAt?: Date;
 
