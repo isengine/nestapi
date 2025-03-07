@@ -17,30 +17,33 @@ export class TestDto extends CommonDto {
   @DtoUpdatedColumn()
   updatedAt?: Date;
 
-  @DtoColumn('title')
-  title?: string;
-
-  @DtoColumn('bigint type')
-  bigint?: number;
-
-  @DtoColumn('boolean type')
-  boolean?: boolean;
-
-  @DtoColumn('date type')
-  date?: Date;
-
-  @DtoEnumColumn('enum type', TypeValues, TypeValues.DEFAULT)
-  enum?: TypeValues;
-
-  @DtoColumn('float type')
-  float?: number;
-
-  @DtoColumn('int type')
+  @DtoColumn('int type description')
   int?: number;
 
-  @DtoJsonColumn('json type')
+  @DtoColumn('bigint type description')
+  bigint?: number;
+
+  @DtoColumn('smallint type description')
+  smallint?: number;
+
+  @DtoColumn('float type description')
+  float?: number;
+
+  @DtoColumn('boolean type description')
+  boolean?: boolean;
+
+  @DtoColumn('varchar type description')
+  varchar?: string;
+
+  @DtoColumn('text type description')
+  text?: string;
+
+  @DtoJsonColumn('json type description')
   json?: object | null;
 
-  @DtoColumn('text type')
-  text?: string;
+  @DtoColumn('date type description')
+  date?: Date;
+
+  @DtoEnumColumn('enum type description', TypeValues, TypeValues.DEFAULT)
+  enum?: TypeValues;
 }
