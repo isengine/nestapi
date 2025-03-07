@@ -32,7 +32,7 @@ export function BooleanColumn(
       default: defaultValue,
       name,
       transformer: new BooleanColumnTransformer(),
-      type: 'int',
+      type: 'smallint',
       width: 1,
     })(object, propertyName);
   };
