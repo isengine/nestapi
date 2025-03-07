@@ -6,6 +6,7 @@ import { PostsTagsEntity } from './posts_tags/posts_tags.entity';
 import {
   BooleanColumn,
   CreatedColumn,
+  DateColumn,
   TextColumn,
   UpdatedColumn,
   VarcharColumn,
@@ -26,7 +27,7 @@ export class PostsEntity extends ProtectedEntity {
   @TextColumn('content')
   content: string;
 
-  @CreatedColumn('published_at')
+  @DateColumn('published_at')
   publishedAt: Date;
 
   @BooleanColumn('is_published')

@@ -4,6 +4,7 @@ import { CreatedColumn } from '@src/common/column/created.column';
 import { DateColumn } from './column/date.column';
 import { DtoColumn } from './column/dto.column';
 import { DtoEnumColumn } from './column/dto_enum.column';
+import { DtoJsonColumn } from './column/dto_json.column';
 import { EnumColumn } from './column/enum.column';
 import { FloatColumn } from './column/float.column';
 import { IdColumn } from '@src/common/column/id.column';
@@ -25,6 +26,7 @@ export {
   DtoColumn,
   DtoCreatedColumn,
   DtoEnumColumn,
+  DtoJsonColumn,
   DtoUpdatedColumn,
   EnumColumn,
   FloatColumn,
