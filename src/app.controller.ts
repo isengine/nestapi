@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Header,
-  NotFoundException,
-  Param,
-} from '@nestjs/common';
+import { Controller, Get, Header } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { AppService } from '@src/app.service';
