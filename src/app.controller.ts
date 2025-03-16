@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiExcludeController } from '@nestjs/swagger';
 import { AppService } from '@src/app.service';
 import { join } from 'path';
+import { Hidden, SimpleHidden } from './common/common.decorator';
 
 @ApiExcludeController()
 @Controller()
@@ -24,13 +25,10 @@ export class AppController {
     return this.appService.hello();
   }
 
-  @Get('test/:secret')
+  @SimpleHidden()
+  @Get('test')
   @Header('Content-Type', 'application/json')
-  test(@Param('secret') secret: string): string {
-    const key = this.configService.get<string>('AES_SECRET');
-    if (secret !== key) {
-      throw new NotFoundException('Not found');
-    }
+  test() {
     return JSON.stringify({
       dir: join(__dirname),
       prefix: join(this.configService.get<string>('PREFIX')),
@@ -38,5 +36,12 @@ export class AppController {
       uploadsPath: join(this.configService.get<string>('UPLOADS_PATH')),
       views: join(this.configService.get<string>('ROOT_PATH'), 'views/mail'),
     });
+  }
+
+  @Hidden()
+  @Get('test/hidden')
+  @Header('Content-Type', 'application/json')
+  hidden() {
+    return { status: 'ok' };
   }
 }

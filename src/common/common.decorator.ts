@@ -2,6 +2,7 @@ import {
   applyDecorators,
   createParamDecorator,
   ExecutionContext,
+  UseGuards,
 } from '@nestjs/common';
 import { FindDoc } from '@src/common/doc/find.doc';
 import { FindOneDoc } from '@src/common/doc/find_one.doc';
@@ -14,6 +15,11 @@ import { UpdateDoc } from '@src/common/doc/update.doc';
 import { RemoveDoc } from '@src/common/doc/remove.doc';
 import { SortPositionDoc } from '@src/common/doc/position_sort.doc';
 import { MovePositionDoc } from '@src/common/doc/position_move.doc';
+import { ApiType } from './type/api.type';
+import { GqlHiddenGuard } from './guard/gql.hidden.guard';
+import { GqlSimpleHiddenGuard } from './guard/gql.simple.hidden.guard';
+import { HiddenGuard } from './guard/hidden.guard';
+import { SimpleHiddenGuard } from './guard/simple.hidden.guard';
 
 export const Data = createParamDecorator(
   async (arg = '', context: ExecutionContext) => {
@@ -64,4 +70,20 @@ export const Doc = (type, classDto) => {
   if (type === 'movePosition') {
     return applyDecorators(MovePositionDoc());
   }
+};
+
+export const Hidden = (apiType: ApiType = undefined) => {
+  if (apiType === 'gql' || apiType === 'gqlNoBlock') {
+    return applyDecorators(UseGuards(GqlHiddenGuard));
+  }
+
+  return applyDecorators(UseGuards(HiddenGuard));
+};
+
+export const SimpleHidden = (apiType: ApiType = undefined) => {
+  if (apiType === 'gql' || apiType === 'gqlNoBlock') {
+    return applyDecorators(UseGuards(GqlSimpleHiddenGuard));
+  }
+
+  return applyDecorators(UseGuards(SimpleHiddenGuard));
 };
