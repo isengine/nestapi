@@ -162,7 +162,7 @@ export class CommonService<Dto extends CommonDto, Entity extends CommonEntity> {
     const entity: DeepPartial<any> = { ...dto };
 
     try {
-      const { id } = await this.repository.save(entity);
+      const { id } = await this.createEntity(entity);
       return await this.findOne(
         {
           id,
@@ -173,6 +173,10 @@ export class CommonService<Dto extends CommonDto, Entity extends CommonEntity> {
     } catch (e) {
       this.error(e);
     }
+  }
+
+  async createEntity(entity: DeepPartial<any>): Promise<any> {
+    return await this.repository.save(entity);
   }
 
   async update(
@@ -198,7 +202,7 @@ export class CommonService<Dto extends CommonDto, Entity extends CommonEntity> {
     const entity: DeepPartial<any> = { ...dto, id };
 
     try {
-      await this.repository.save(entity);
+      await this.updateEntity(entity);
       return await this.findOne(
         {
           id,
@@ -209,6 +213,10 @@ export class CommonService<Dto extends CommonDto, Entity extends CommonEntity> {
     } catch (e) {
       this.error(e);
     }
+  }
+
+  async updateEntity(entity: DeepPartial<any>): Promise<any> {
+    return await this.repository.save(entity);
   }
 
   async remove(id: number, bind: BindDto = { allow: true }): Promise<boolean> {

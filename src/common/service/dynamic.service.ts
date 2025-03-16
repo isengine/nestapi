@@ -1,5 +1,6 @@
+import * as moment from 'moment';
 import { BadRequestException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeepPartial, EntityTarget, Repository } from 'typeorm';
 import { CommonDto } from '@src/common/common.dto';
 import { CommonEntity } from '@src/common/common.entity';
 import { FindDto } from '../dto/find.dto';
@@ -7,24 +8,74 @@ import { CommonService } from '../common.service';
 import { parseDynamicWhereObject } from './dynamic.where.service';
 import { prepareQuotes } from './quotes.service';
 import { BindDto } from '../dto/bind.dto';
+import { parseDynamicSaveObject } from './dynamic.save.service';
 
 export class DynamicService<
   Dto extends CommonDto,
   Entity extends CommonEntity,
 > extends CommonService<Dto, Entity> {
-  protected readonly repository: Repository<Entity>;
+  // protected readonly repository: Repository<Entity>;
+  protected readonly repository: Repository<any>;
+
+  async createEntity(entity: DeepPartial<any>): Promise<any> {
+    const quotes = prepareQuotes();
+    const tableName = this.getTableName();
+
+    const entityData = parseDynamicSaveObject(entity);
+    const keys = Object.keys(entityData)
+      .map((key) => `${quotes}${key}${quotes}`)
+      .join(', ');
+    const values = Object.values(entityData).join(', ');
+
+    try {
+      const query = `
+        INSERT INTO ${tableName}
+        (${keys})
+        VALUES (${values});
+      `;
+      const result = await this.repository.query(query);
+      return { id: result.insertId };
+    } catch (e) {
+      this.error(e);
+    }
+  }
+
+  async updateEntity(entity: DeepPartial<any>): Promise<any> {
+    const { id } = entity;
+
+    const quotes = prepareQuotes();
+    const tableName = this.getTableName();
+
+    const entityData = parseDynamicSaveObject(entity);
+    const set = Object.entries(entityData)
+      .map(([key, value]) => `${quotes}${key}${quotes} = ${value}`)
+      .join(', ');
+
+    const where = `${quotes}id${quotes} = ${id}`;
+
+    try {
+      const query = `
+        UPDATE ${tableName}
+        SET ${set}
+        WHERE ${where};
+      `;
+      return await this.repository.query(query);
+    } catch (e) {
+      this.error(e);
+    }
+  }
 
   async find(find: FindDto, bind: BindDto): Promise<Entity[]> {
     const { limit, offset, order, select } = find;
     const { id, name } = bind;
 
-    if (id !== undefined) {
-      find.where[`${name || 'auth'}_id`] = +id;
-    }
-
-    const where = parseDynamicWhereObject(find.where);
+    let where = parseDynamicWhereObject(find.where);
     // "username.not.like": "%user%"
     // "username.and.not.like": ["%user1%", "%user2%"]
+
+    if (id !== undefined) {
+      where = { ...where, [name]: id };
+    }
 
     try {
       const query = `
@@ -41,10 +92,15 @@ export class DynamicService<
     }
   }
 
-  protected fromToString() {
+  protected getTableName() {
     const { tableName } = this.repository.metadata;
     const quotes = prepareQuotes();
-    return ` FROM ${quotes}${tableName}${quotes}`;
+    return `${quotes}${tableName}${quotes}`;
+  }
+
+  protected fromToString() {
+    const tableName = this.getTableName();
+    return ` FROM ${tableName}`;
   }
 
   protected limitToString(limit) {
